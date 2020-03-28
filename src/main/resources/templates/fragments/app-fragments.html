@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <!-- Required meta tags -->
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <title>App Fragments</title>
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <nav th:fragment = "nav-default" class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" th:href="@{/}">Kempenrust</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link" th:href="@{/}">Nav</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Footer -->
+        <div th:fragment="copyright">
+            &copy; Kempenrust PR4_Team1 2020
+        </div>
+    </body>
+</html>
