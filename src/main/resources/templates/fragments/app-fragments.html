@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <!-- Required meta tags -->
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <title>App Fragments</title>
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <nav th:fragment = "nav-default" class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" th:href="@{/}">Kempenrust</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link">Hotel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Prijzen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Ligging</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/reserveren}">Reserveren</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown">
+                            Personeel
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" th:href="@{/reserveringen}">Reserveringen</a>
+                            <a class="dropdown-item" th:href="@{/overzicht}">Overzicht</a>
+                            <a class="dropdown-item" th:href="@{/voorschotten}">Voorschotten</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown">
+                            Adminbeheer
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" th:href="@{/kamers}">Kamers</a>
+                            <a class="dropdown-item" th:href="@{/arrangementen}">Arangementen</a>
+                            <a class="dropdown-item" th:href="@{/afgelopen_reservaties}">Afgelopen reservaties</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Footer -->
+        <div th:fragment="copyright">
+            &copy; Kempenrust PR4_Team1 2020
+        </div>
+    </body>
+</html>
