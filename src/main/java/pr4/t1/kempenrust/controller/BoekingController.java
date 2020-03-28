@@ -10,4 +10,19 @@ public class BoekingController {
     public String Reserveren() {
         return "layouts/boeking/reserveren";
     }
+
+    @RequestMapping("/reserveringen")
+    public String Reserveringen() {
+        return "layouts/boeking/reserveringen";
+    }
+
+    @RequestMapping("/overzicht")
+    public String Overzicht() {
+        return "layouts/boeking/overzicht";
+    }
+
+    @RequestMapping("/voorschotten")
+    public String Voorschotten() {
+        return "layouts/boeking/voorschotten";
+    }
 }

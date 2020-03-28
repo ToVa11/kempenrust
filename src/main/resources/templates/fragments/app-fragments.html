@@ -14,17 +14,45 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <a class="nav-item nav-link">Hotel</a>
-                    <a class="nav-item nav-link">Zwembad</a>
-                    <a class="nav-item nav-link">Prijzen</a>
-                    <a class="nav-item nav-link">Arrangementen</a>
-                    <a class="nav-item nav-link">Ligging</a>
-                    <a class="nav-item nav-link">Ontspanning</a>
-                    <a class="nav-item nav-link">Contact</a>
-                    <a class="nav-item nav-link">Foto</a>
-                    <a class="nav-item nav-link" th:href="@{/reserveren}">Reserveren</a>
-                </div>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link">Hotel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Zwembad</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Prijzen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Arrangementen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Ligging</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Ontspanning</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Foto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/reserveren}">Reserveren</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown">
+                            Personeel
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" th:href="@{/reserveringen}">Reserveringen</a>
+                            <a class="dropdown-item" th:href="@{/overzicht}">Overzicht</a>
+                            <a class="dropdown-item" th:href="@{/voorschotten}">Voorschotten</a>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </nav>
 
