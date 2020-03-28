@@ -19,25 +19,13 @@
                         <a class="nav-link">Hotel</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link">Zwembad</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link">Prijzen</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link">Arrangementen</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link">Ligging</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link">Ontspanning</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link">Foto</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/reserveren}">Reserveren</a>
@@ -50,6 +38,16 @@
                             <a class="dropdown-item" th:href="@{/reserveringen}">Reserveringen</a>
                             <a class="dropdown-item" th:href="@{/overzicht}">Overzicht</a>
                             <a class="dropdown-item" th:href="@{/voorschotten}">Voorschotten</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown">
+                            Adminbeheer
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" th:href="@{/kamers}">Kamers</a>
+                            <a class="dropdown-item" th:href="@{/arrangementen}">Arangementen</a>
+                            <a class="dropdown-item" th:href="@{/afgelopen_reservaties}">Afgelopen reservaties</a>
                         </div>
                     </li>
                 </ul>

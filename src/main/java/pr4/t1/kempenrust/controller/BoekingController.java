@@ -25,4 +25,9 @@ public class BoekingController {
     public String Voorschotten() {
         return "layouts/boeking/voorschotten";
     }
+
+    @RequestMapping("/afgelopen_reservaties")
+    public String AfgelopenReserveringen() {
+        return "layouts/boeking/afgelopen_reservaties";
+    }
 }
