@@ -66,7 +66,7 @@ public class Prijs {
         return verblijfsKeuze;
     }
 
-    public void setVerblijfsKeuz(VerblijfsKeuze verblijfsKeuze) {
+    public void setVerblijfsKeuze(VerblijfsKeuze verblijfsKeuze) {
         this.verblijfsKeuze = verblijfsKeuze;
     }
 }
