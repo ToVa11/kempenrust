@@ -25,7 +25,7 @@ Omschrijving VARCHAR(500)
 );
 
 INSERT INTO VerblijfsKeuzes (Naam, Omschrijving) VALUES ('Overnachting met ontbijt','');
-INSERT INTO VerblijfsKeuzes (Naam, Omschrijving) VALUES ('Halfpension','3-gangenmenu \'s avonds');
+INSERT INTO VerblijfsKeuzes (Naam, Omschrijving) VALUES ('Halfpension','3-gangenmenu ''s avonds');
 
 CREATE TABLE Boekingen
 (
@@ -42,14 +42,14 @@ FOREIGN KEY (KlantID) REFERENCES Klanten(KlantID),
 FOREIGN KEY (VerblijfsKeuzeID) REFERENCES VerblijfsKeuzes(VerblijfsKeuzeID)
 );
 
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2020-03-17','',5,'2020-09-12','2020-09-14');
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2020-02-07','',2,'2020-08-13','2020-08-17');
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,2,'2020-01-28','',1,'2020-07-10','2020-07-11');
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (4,2,'2020-03-18','',4,'2020-10-18','2020-10-20');
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (5,1,'2020-01-02','',1,'2021-01-05','2021-01-09');
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2020-01-06','',5,'2020-11-28','2020-12-02');
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2020-02-29','',3,'2020-12-15','2020-12-18');
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,1,'2020-03-17','',4,'2020-09-01','2020-09-03');
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2020-03-17',0,5,'2020-09-12','2020-09-14',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2020-02-07',0,2,'2020-08-13','2020-08-17',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,2,'2020-01-28',0,1,'2020-07-10','2020-07-11',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (4,2,'2020-03-18',0,4,'2020-10-18','2020-10-20',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (5,1,'2020-01-02',0,1,'2021-01-05','2021-01-09',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2020-01-06',0,5,'2020-11-28','2020-12-02',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2020-02-29',0,3,'2020-12-15','2020-12-18',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,1,'2020-03-17',0,4,'2020-09-01','2020-09-03',false);
 
 CREATE TABLE KamerTypes
 (
@@ -105,8 +105,8 @@ CREATE TABLE BoekingDetails
 BoekingDetailsID INT PRIMARY KEY AUTO_INCREMENT,
 BoekingID INT,
 KamerID INT,
-FOREIGN KEY BoekingID REFERENCES Boekingen(BoekingID),
-FOREIGN KEY KamerID REFERENCES Kamers(KamerID)
+FOREIGN KEY (BoekingID) REFERENCES Boekingen(BoekingID),
+FOREIGN KEY (KamerID) REFERENCES Kamers(KamerID)
 );
 
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (1,1);
