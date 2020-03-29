@@ -1,7 +1,7 @@
 package pr4.t1.kempenrust.model;
 
 public class Klant {
-    private int klanID;
+    private int klantID;
     private String voornaam;
     private String naam;
     private String straat;
@@ -21,12 +21,12 @@ public class Klant {
         this.gemeente = gemeente;
     }
 
-    public int getKlanID() {
-        return klanID;
+    public int getKlantID() {
+        return klantID;
     }
 
-    public void setKlanID(int klanID) {
-        this.klanID = klanID;
+    public void setKlanID(int klantID) {
+        this.klantID = klantID;
     }
 
     public String getVoornaam() {
