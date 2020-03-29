@@ -12,7 +12,7 @@ public class VerblijfsKeuze {
         return verblijfskeuzeID;
     }
 
-    public void setVerblijfskeuzeID(int verblijfsKeuzID) {
+    public void setVerblijfskeuzeID(int verblijfsKeuzeID) {
         this.verblijfskeuzeID = verblijfskeuzeID;
     }
 

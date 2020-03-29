@@ -54,11 +54,11 @@ public class Prijs {
         this.kamerType = kamerType;
     }
 
-    public int getVerblijfsKeuzID() {
+    public int getVerblijfsKeuzeID() {
         return verblijfsKeuzeID;
     }
 
-    public void setVerblijfsKeuzID(int verblijfsKeuzeID) {
+    public void setVerblijfsKeuzeID(int verblijfsKeuzeID) {
         this.verblijfsKeuzeID = verblijfsKeuzeID;
     }
 
