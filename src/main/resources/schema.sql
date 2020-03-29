@@ -36,7 +36,7 @@ Datum DATE,
 BedragVoorschot DECIMAL,
 AantalPersonen INT NOT NULL,
 DatumVan DATE NOT NULL,
-DatumTot DATE NOT NULL,
+DatumTot DATE,
 IsBetaald BOOLEAN,
 FOREIGN KEY (KlantID) REFERENCES Klanten(KlantID),
 FOREIGN KEY (VerblijfsKeuzeID) REFERENCES VerblijfsKeuzes(VerblijfsKeuzeID)
@@ -93,7 +93,7 @@ CREATE TABLE KamersOnbeschikbaar
 (
 KamersOnbeschikbaarID INT PRIMARY KEY AUTO_INCREMENT,
 KamerID INT,
-DatumVan DATE,
+DatumVan DATE NOT NULL,
 DatumTot DATE,
 FOREIGN KEY (KamerID) REFERENCES Kamers(KamerID)
 );
