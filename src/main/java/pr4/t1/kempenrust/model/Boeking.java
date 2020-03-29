@@ -13,8 +13,8 @@ public class Boeking {
     private boolean isBetaald;
     private int klantID;
     private Klant klant;
-    private int verblijfsKeuzID;
-    private VerblijfsKeuze verblijfsKeuz;
+    private int verblijfsKeuzeID;
+    private VerblijfsKeuze verblijfsKeuze;
 
     public Boeking() {
     }
@@ -22,12 +22,12 @@ public class Boeking {
     public int getBoekingID() {
         return boekingID;
     }
-    public VerblijfsKeuze getVerblijfsKeuz() {
-        return verblijfsKeuz;
+    public VerblijfsKeuze getVerblijfsKeuze() {
+        return verblijfsKeuze;
     }
 
-    public void setVerblijfsKeuz(VerblijfsKeuze verblijfsKeuz) {
-        this.verblijfsKeuz = verblijfsKeuz;
+    public void setVerblijfsKeuze(VerblijfsKeuze verblijfsKeuze) {
+        this.verblijfsKeuze = verblijfsKeuze;
     }
 
 
@@ -99,12 +99,12 @@ public class Boeking {
         this.klant = klant;
     }
 
-    public int getVerblijfsKeuzID() {
-        return verblijfsKeuzID;
+    public int getVerblijfsKeuzeID() {
+        return verblijfsKeuzeID;
     }
 
-    public void setVerblijfsKeuzID(int verblijfsKeuzID) {
-        this.verblijfsKeuzID = verblijfsKeuzID;
+    public void setVerblijfsKeuzeID(int verblijfsKeuzID) {
+        this.verblijfsKeuzeID = verblijfsKeuzeID;
     }
 }
 

@@ -1,19 +1,19 @@
 package pr4.t1.kempenrust.model;
 
 public class VerblijfsKeuze {
-    private int verblijfsKeuzID;
+    private int verblijfskeuzeID;
     private String naam;
     private String omschrijving;
 
     public VerblijfsKeuze() {
     }
 
-    public int getVerblijfsKeuzID() {
-        return verblijfsKeuzID;
+    public int getVerblijfskeuzeID() {
+        return verblijfskeuzeID;
     }
 
-    public void setVerblijfsKeuzID(int verblijfsKeuzID) {
-        this.verblijfsKeuzID = verblijfsKeuzID;
+    public void setVerblijfskeuzeID(int verblijfsKeuzID) {
+        this.verblijfskeuzeID = verblijfskeuzeID;
     }
 
     public String getNaam() {

@@ -7,7 +7,7 @@ public class Klant {
     private String straat;
     private String huisnummer;
     private String postcode;
-    private String telefoonnmmer;
+    private String telefoonnummer;
     private String email;
     private String gemeente;
 
@@ -25,7 +25,7 @@ public class Klant {
         return klantID;
     }
 
-    public void setKlanID(int klantID) {
+    public void setKlantID(int klantID) {
         this.klantID = klantID;
     }
 
@@ -69,12 +69,12 @@ public class Klant {
         this.postcode = postcode;
     }
 
-    public String getTelefoonnmmer() {
-        return telefoonnmmer;
+    public String getTelefoonnummer() {
+        return telefoonnummer;
     }
 
-    public void setTelefoonnmmer(String telefoonnmmer) {
-        this.telefoonnmmer = telefoonnmmer;
+    public void setTelefoonnummer(String telefoonnmmer) {
+        this.telefoonnummer = telefoonnummer;
     }
 
     public String getEmail() {

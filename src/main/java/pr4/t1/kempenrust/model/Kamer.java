@@ -2,7 +2,7 @@ package pr4.t1.kempenrust.model;
 
 public class Kamer {
     private int kamerID;
-    private int kammerNummer;
+    private int kamerNummer;
     private int kamerTypeID;
     private KamerType kamerType;
 
@@ -17,12 +17,12 @@ public class Kamer {
         this.kamerID = kamerID;
     }
 
-    public int getKammerNummer() {
-        return kammerNummer;
+    public int getKamerNummer() {
+        return kamerNummer;
     }
 
-    public void setKammerNummer(int kammerNummer) {
-        this.kammerNummer = kammerNummer;
+    public void setKamerNummer(int kamerNummer) {
+        this.kamerNummer = kamerNummer;
     }
 
     public int getKamerTypeID() {
