@@ -51,6 +51,15 @@ INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPers
 INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2020-02-29',0,3,'2020-12-15','2020-12-18',false);
 INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,1,'2020-03-17',0,4,'2020-09-01','2020-09-03',false);
 
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2019-03-17',0,5,'2019-09-12','2019-09-14',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2019-02-07',0,2,'2019-08-13','2019-08-17',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,2,'2019-01-28',0,1,'2019-07-10','2019-07-11',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (4,2,'2019-03-18',0,4,'2019-10-18','2019-10-20',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (5,1,'2019-01-02',0,1,'2019-01-05','2019-01-09',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2019-01-06',0,5,'2019-11-28','2019-12-02',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2019-02-28',0,3,'2019-12-15','2019-12-18',false);
+
+
 CREATE TABLE KamerTypes
 (
 KamerTypeID INT PRIMARY KEY AUTO_INCREMENT,
@@ -117,3 +126,11 @@ INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (5,1);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (6,1);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (7,3);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (8,1);
+
+INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (9,1);
+INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (10,3);
+INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (11,3);
+INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (12,3);
+INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (13,1);
+INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (14,1);
+INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (15,3);
