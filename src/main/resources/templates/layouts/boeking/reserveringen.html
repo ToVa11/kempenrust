@@ -23,6 +23,25 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Reserveringen</h1>
+
+    <table class="table">
+        <tr>
+            <th>Aankomst</th>
+            <th>Vertrek</th>
+            <th>Naam</th>
+            <th>Email</th>
+            <th>Kamer</th>
+            <th><i class="fas fa-plus"></i> </th>
+        </tr>
+        <tr th:each="detail: ${details}">
+            <td th:text="${#dates.format(detail.getBoeking().getDatumVan(), 'dd/MM/yy')}"></td>
+            <td th:text="${#dates.format(detail.getBoeking().getDatumTot(), 'dd/MM/yy')}"></td>
+            <td th:text="${detail.getBoeking().getKlant().getNaam()}"></td>
+            <td th:text="${detail.getBoeking().getKlant().getEmail()}"></td>
+            <td th:text="'Kamer ' + ${detail.getKamer().getKamerNummer()}"></td>
+            <td><i class="fas fa-pen"></i>    <i class="fas fa-trash"></i></td>
+        </tr>
+    </table>
 </div>
 
 <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
