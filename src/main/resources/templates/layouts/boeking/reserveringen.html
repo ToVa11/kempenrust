@@ -26,20 +26,25 @@
 
     <table class="table">
         <tr>
-            <th>Aankomst</th>
-            <th>Vertrek</th>
-            <th>Naam</th>
-            <th>Email</th>
-            <th>Kamer</th>
-            <th><i class="fas fa-plus"></i> </th>
+            <th class="align-middle">Aankomst</th>
+            <th class="align-middle">Vertrek</th>
+            <th class="align-middle">Naam</th>
+            <th class="align-middle">Email</th>
+            <th class="align-middle">Kamer</th>
+            <th>
+                <button class="btn btn-secondary"><i class="fas fa-plus"></i></button>
+            </th>
         </tr>
         <tr th:each="detail: ${details}">
-            <td th:text="${#dates.format(detail.getBoeking().getDatumVan(), 'dd/MM/yy')}"></td>
-            <td th:text="${#dates.format(detail.getBoeking().getDatumTot(), 'dd/MM/yy')}"></td>
-            <td th:text="${detail.getBoeking().getKlant().getNaam()}"></td>
-            <td th:text="${detail.getBoeking().getKlant().getEmail()}"></td>
-            <td th:text="'Kamer ' + ${detail.getKamer().getKamerNummer()}"></td>
-            <td><i class="fas fa-pen"></i>    <i class="fas fa-trash"></i></td>
+            <td th:text="${#dates.format(detail.getBoeking().getDatumVan(), 'dd/MM/yy')}" class="align-middle"></td>
+            <td th:text="${#dates.format(detail.getBoeking().getDatumTot(), 'dd/MM/yy')}" class="align-middle"></td>
+            <td th:text="${detail.getBoeking().getKlant().getNaam()} + ' ' + ${detail.getBoeking().getKlant().getVoornaam()}" class="align-middle"></td>
+            <td th:text="${detail.getBoeking().getKlant().getEmail()}" class="align-middle"></td>
+            <td th:text="'Kamer ' + ${detail.getKamer().getKamerNummer()}" class="align-middle"></td>
+            <td>
+                <button class="btn btn-secondary"><i class="fas fa-pen"></i></button>
+                <button class="btn btn-secondary"><i class="fas fa-trash"></i></button>
+            </td>
         </tr>
     </table>
 </div>

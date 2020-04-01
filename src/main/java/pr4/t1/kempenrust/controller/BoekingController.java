@@ -23,7 +23,7 @@ public class BoekingController {
     @RequestMapping("/reserveringen")
     public String Reserveringen(Model model) {
 
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAllDetailsFromToday();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getAllFutureDetails();
 
         model.addAttribute("details",details);
 

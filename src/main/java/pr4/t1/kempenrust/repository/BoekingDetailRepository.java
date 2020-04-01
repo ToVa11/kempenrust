@@ -19,15 +19,20 @@ public class BoekingDetailRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ArrayList<BoekingDetail> getAllDetailsFromToday() {
+    public ArrayList<BoekingDetail> getAllFutureDetails() {
 
         ArrayList<BoekingDetail> details = new ArrayList<>();
 
         Date datumVan = new Date(new java.util.Date().getTime());
 
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet("SELECT * FROM boekingDetails INNER JOIN " +
-                "(boekingen INNER JOIN klanten ON boekingen.klantId = klanten.klantId) ON boekingDetails.boekingId = boekingen.boekingID " +
-                "INNER JOIN kamers ON boekingDetails.kamerId = kamers.kamerId WHERE boekingen.datumVan > ? ORDER BY boekingen.datumVan", Date.valueOf(LocalDate.now()));
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
+                    "SELECT * FROM boekingDetails INNER JOIN " +
+                        "(boekingen INNER JOIN klanten ON boekingen.klantId = klanten.klantId) " +
+                        "ON boekingDetails.boekingId = boekingen.boekingID " +
+                        "INNER JOIN kamers ON boekingDetails.kamerId = kamers.kamerId " +
+                        "WHERE boekingen.datumVan > ? " +
+                        "ORDER BY boekingen.datumVan",
+                         Date.valueOf(LocalDate.now()));
         
         while(rowSet.next()) {
             BoekingDetail detail = new BoekingDetail();
@@ -37,6 +42,7 @@ public class BoekingDetailRepository {
 
             klant.setEmail(rowSet.getString("email"));
             klant.setNaam(rowSet.getString("naam"));
+            klant.setVoornaam(rowSet.getString("voornaam"));
 
             boeking.setDatumVan(rowSet.getDate("datumVan"));
             boeking.setDatumTot(rowSet.getDate("datumTot"));
