@@ -20,8 +20,45 @@
 </div>
 
 <div id="main-content-kempenrust">
-    <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1>Reserveren</h1>
+    <h2>Reserveratie boeken</h2>
+
+    <form th:action="@{/zoek-kamers}">
+        <div class="row" th:method="post">
+            <div class="form-group col-md-4 mt-3">
+                <label for="datumAankomst">Datum aankomst</label>
+                <input type="date" class="form-control" id="datumAankomst" name="datumAankomst">
+            </div>
+            <div class="form-group col-md-4 mt-md-3">
+                <label for="datumVertrek">Datum vertrek</label>
+                <input type="date" class="form-control" id="datumVertrek" name="datumVertrek">
+            </div>
+
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+
+            <div class="form-group col-md-4">
+                <label for="aantalPersonen">Aantal personen</label>
+                <input type="number" class="form-control" id="aantalPersonen" name="aantalPersonen">
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="keuzeArrangement">Type Arrangement</label>
+                <select class="form-control" id="keuzeArrangement" name="keuzeArrangement">
+                    <option value="">Kies een arrangement</option>
+                    <option th:each="keuze : ${verblijfskeuzes}"
+                            th:value="${keuze.getVerblijfskeuzeID()}"
+                            th:text="${keuze.getNaam()}"></option>
+                </select>
+            </div>
+
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+
+            <div class="form-group col-md-8">
+                <button type="submit" class="btn btn-primary w-100">Zoek</button>
+            </div>
+        </div>
+    </form>
 </div>
 
 <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
