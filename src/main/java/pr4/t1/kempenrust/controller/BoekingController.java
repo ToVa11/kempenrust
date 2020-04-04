@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pr4.t1.kempenrust.model.BoekingDetail;
 import pr4.t1.kempenrust.model.Kamer;
+import pr4.t1.kempenrust.model.Prijs;
 import pr4.t1.kempenrust.model.VerblijfsKeuze;
 import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.KamerRepository;
@@ -48,7 +49,7 @@ public class BoekingController {
         int aantalPersonen = Integer.parseInt(request.getParameter("aantalPersonen"));
         int verblijfsKeuzeID = Integer.parseInt(request.getParameter("keuzeArrangement"));
 
-        ArrayList<Kamer> vrijeKamers = kamerRepository.getAllAvailableRooms(verblijfsKeuzeID, datumAankomst, datumVertrek);
+        ArrayList<Prijs> vrijeKamers = kamerRepository.getAllAvailableRooms(verblijfsKeuzeID, datumAankomst, datumVertrek);
 
         model.addAttribute("vrijeKamers", vrijeKamers);
 

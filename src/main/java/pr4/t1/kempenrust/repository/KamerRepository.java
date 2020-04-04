@@ -18,23 +18,23 @@ public class KamerRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ArrayList<Kamer> getAllAvailableRooms(int verblijfskeuzeID, LocalDate datumAankomst, LocalDate datumVertrek) {
-        ArrayList<Kamer> kamers = new ArrayList<>();
+    public ArrayList<Prijs> getAllAvailableRooms(int verblijfskeuzeID, LocalDate datumAankomst, LocalDate datumVertrek) {
+        ArrayList<Prijs> kamers = new ArrayList<>();
 
         Date datumVan = Date.valueOf(datumAankomst);
         Date datumTot = (datumVertrek != null) ? Date.valueOf(datumVertrek) : null;
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
                 "SELECT * " +
-                "FROM Kamers INNER JOIN " +
-                        "(KamerTypes INNER JOIN Prijzen " +
-                                "ON KamerTypes.KamerTypeID = Prijzen.KamerTypeID) " +
-                        "ON Kamers.KamerTypeID = KamerTypes.KamerTypeID " +
-                "WHERE VerblijfsKeuzeID = ? AND KamerID NOT IN " +
-                        "(SELECT KamerID " +
-                        "FROM BoekingDetails INNER JOIN Boekingen " +
-                                "ON BoekingDetails.BoekingID = Boekingen.BoekingID " +
-                        "WHERE DatumVan >= ? AND DatumTot <= ?)",
+                "FROM Prijzen INNER JOIN Kamers " +
+                    "ON Prijzen.KamerID = Kamers.KamerID " +
+                "INNER JOIN KamerTypes " +
+                    "ON Kamers.KamerTypeID = KamerTypes.KamerTypeID " +
+                "WHERE VerblijfsKeuzeID = ? AND Kamers.KamerID NOT IN " +
+                    "(SELECT BoekingDetails.KamerID " +
+                    "FROM BoekingDetails INNER JOIN Boekingen " +
+                        "ON BoekingDetails.BoekingID = Boekingen.BoekingID " +
+                    "WHERE DatumVan >= ? AND DatumTot <= ?)",
                 verblijfskeuzeID,
                 datumAankomst,
                 datumVertrek);
@@ -53,13 +53,13 @@ public class KamerRepository {
             kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
 
             prijs.setPrijsID(rowSet.getInt("PrijsID"));
-//            prijs.setKamerTypeID(rowSet.getInt("KamerTypeID"));
-//            prijs.setKamerType(kamerType);
+            prijs.setKamerID(rowSet.getInt("KamerID"));
+            prijs.setKamer(kamer);
             prijs.setVerblijfsKeuzeID(rowSet.getInt("VerblijfsKeuzeID"));
             prijs.setPrijsPerPersoon(rowSet.getBigDecimal("PrijsPerPersoon"));
             prijs.setDatumVanaf(rowSet.getDate("DatumVanaf"));
 
-            kamers.add(kamer);
+            kamers.add(prijs);
         }
         return kamers;
     }
