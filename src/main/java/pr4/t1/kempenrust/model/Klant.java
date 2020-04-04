@@ -74,7 +74,7 @@ public class Klant {
     }
 
     public void setTelefoonnummer(String telefoonnmmer) {
-        this.telefoonnummer = telefoonnummer;
+        this.telefoonnummer = telefoonnmmer;
     }
 
     public String getEmail() {

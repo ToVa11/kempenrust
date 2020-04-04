@@ -103,7 +103,7 @@ public class Boeking {
         return verblijfsKeuzeID;
     }
 
-    public void setVerblijfsKeuzeID(int verblijfsKeuzID) {
+    public void setVerblijfsKeuzeID(int verblijfsKeuzeID) {
         this.verblijfsKeuzeID = verblijfsKeuzeID;
     }
 }
