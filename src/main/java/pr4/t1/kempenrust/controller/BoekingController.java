@@ -51,6 +51,14 @@ public class BoekingController {
 
         ArrayList<Prijs> vrijeKamers = kamerRepository.getAllAvailableRooms(verblijfsKeuzeID, datumAankomst, datumVertrek);
 
+        //Hier ga ik nog eens verblijfskeuzes ophalen, hebben jullie een betere oplossing?
+        ArrayList<VerblijfsKeuze> verblijfsKeuzes = verblijfsKeuzeRepository.getAllVerblijfsKeuzes();
+
+        model.addAttribute("verblijfskeuzes", verblijfsKeuzes);
+        model.addAttribute("datumAankomst", datumAankomst);
+        model.addAttribute("datumVertrek", datumVertrek);
+        model.addAttribute("aantalPersonen", aantalPersonen);
+        model.addAttribute("verblijfsKeuzeID", verblijfsKeuzeID);
         model.addAttribute("vrijeKamers", vrijeKamers);
 
         return "layouts/boeking/reserveren";

@@ -26,11 +26,12 @@
         <div class="row">
             <div class="form-group col-md-4 mt-3">
                 <label for="datumAankomst">Datum aankomst</label>
-                <input type="date" class="form-control" id="datumAankomst" name="datumAankomst" required>
+                <input type="date" class="form-control" id="datumAankomst" name="datumAankomst" required th:value="${datumAankomst}">
             </div>
+
             <div class="form-group col-md-4 mt-md-3">
                 <label for="datumVertrek">Datum vertrek</label>
-                <input type="date" class="form-control" id="datumVertrek" name="datumVertrek">
+                <input type="date" class="form-control" id="datumVertrek" name="datumVertrek" th:value="${datumVertrek}">
             </div>
 
             <!-- Force next columns to break to new line -->
@@ -38,7 +39,7 @@
 
             <div class="form-group col-md-4">
                 <label for="aantalPersonen">Aantal personen</label>
-                <input type="number" class="form-control" id="aantalPersonen" name="aantalPersonen" min="1" required>
+                <input type="number" class="form-control" id="aantalPersonen" name="aantalPersonen" min="1" required th:value="${aantalPersonen}">
             </div>
 
             <div class="form-group col-md-4">
@@ -47,7 +48,8 @@
                     <option value="">Kies een arrangement</option>
                     <option th:each="keuze : ${verblijfskeuzes}"
                             th:value="${keuze.getVerblijfskeuzeID()}"
-                            th:text="${keuze.getNaam()}"></option>
+                            th:text="${keuze.getNaam()}"
+                            th:selected="${keuze.getVerblijfskeuzeID() == verblijfsKeuzeID}"></option>
                 </select>
             </div>
 
@@ -56,6 +58,40 @@
 
             <div class="form-group col-md-8">
                 <button type="submit" class="btn btn-primary w-100">Zoek</button>
+            </div>
+        </div>
+
+        <div  class="row" th:if="${vrijeKamers != null}">
+            <div class="form-group col-md-4 mt-3">
+                <label for="voornaam">Voornaam</label>
+                <input type="text" class="form-control" id="voornaam" name="voornaam">
+            </div>
+
+            <div class="form-group col-md-4 mt-md-3">
+                <label for="naam">Familienaam</label>
+                <input type="text" class="form-control" id="naam" name="naam" required>
+            </div>
+
+            <div class="form-group col-md-8">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+
+            <div class="form-group col-md-8">
+                <label for="telefoon">Telefoon</label>
+                <input type="tel" class="form-control" id="telefoon" name="telefoon">
+            </div>
+
+            <div class="form-group col-md-8">
+                <label for="kamers">Kamers</label>
+                <select multiple class="form-control" id="kamers" name="kamers" required>
+                    <option th:each="kamer : ${vrijeKamers}"
+                            th:value="${kamer.getKamerID()}">
+<!--                     Prijs moet hier nog rechts uitgelijnd worden, iemand enig idee?-->
+                        <p th:text="'Kamer ' + ${kamer.getKamer().getKamerNummer()} + '  (' + ${kamer.getKamer().getKamerType().getOmschrijving()} + ')'"></p>
+                        <p th:text="'€ ' + ${kamer.getPrijsPerPersoon()} + ' pp'"></p>
+                    </option>
+                </select>
             </div>
         </div>
     </form>
