@@ -7,8 +7,8 @@ public class Prijs {
     private int prijsID;
     private BigDecimal prijsPerPersoon;
     private Date datumVanaf;
-    private int kamerTypeID;
-    private KamerType kamerType;
+    private int kamerID;
+    private Kamer kamer;
     private int verblijfsKeuzeID;
     private VerblijfsKeuze verblijfsKeuze;
 
@@ -38,20 +38,20 @@ public class Prijs {
         this.datumVanaf = datumVanaf;
     }
 
-    public int getKamerTypeID() {
-        return kamerTypeID;
+    public int getKamerID() {
+        return kamerID;
     }
 
-    public void setKamerTypeID(int kamerTypeID) {
-        this.kamerTypeID = kamerTypeID;
+    public void setKamerID(int kamerID) {
+        this.kamerID = kamerID;
     }
 
-    public KamerType getKamerType() {
-        return kamerType;
+    public Kamer getKamer() {
+        return kamer;
     }
 
-    public void setKamerType(KamerType kamerType) {
-        this.kamerType = kamerType;
+    public void setKamer(Kamer kamer) {
+        this.kamer = kamer;
     }
 
     public int getVerblijfsKeuzeID() {

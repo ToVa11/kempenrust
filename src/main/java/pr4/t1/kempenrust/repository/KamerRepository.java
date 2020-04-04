@@ -53,8 +53,8 @@ public class KamerRepository {
             kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
 
             prijs.setPrijsID(rowSet.getInt("PrijsID"));
-            prijs.setKamerTypeID(rowSet.getInt("KamerTypeID"));
-            prijs.setKamerType(kamerType);
+//            prijs.setKamerTypeID(rowSet.getInt("KamerTypeID"));
+//            prijs.setKamerType(kamerType);
             prijs.setVerblijfsKeuzeID(rowSet.getInt("VerblijfsKeuzeID"));
             prijs.setPrijsPerPersoon(rowSet.getBigDecimal("PrijsPerPersoon"));
             prijs.setDatumVanaf(rowSet.getDate("DatumVanaf"));
