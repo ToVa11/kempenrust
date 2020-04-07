@@ -22,16 +22,16 @@
 <div id="main-content-kempenrust">
     <h2>Reserveratie boeken</h2>
 
-    <form th:action="@{/zoek-kamers}" method="post">
+    <form action="#" data-th-action="@{/reserveren}" th:object="${reserveringDetails}" method="post">
         <div class="row">
             <div class="form-group col-md-4 mt-3">
                 <label for="datumAankomst">Datum aankomst</label>
-                <input type="date" class="form-control" id="datumAankomst" name="datumAankomst" required th:value="${datumAankomst}">
+                <input type="date" class="form-control" id="datumAankomst" th:field="*{datumAankomst}" required>
             </div>
 
             <div class="form-group col-md-4 mt-md-3">
                 <label for="datumVertrek">Datum vertrek</label>
-                <input type="date" class="form-control" id="datumVertrek" name="datumVertrek" th:value="${datumVertrek}">
+                <input type="date" class="form-control" id="datumVertrek" th:field="*{datumVertrek}">
             </div>
 
             <!-- Force next columns to break to new line -->
@@ -39,17 +39,17 @@
 
             <div class="form-group col-md-4">
                 <label for="aantalPersonen">Aantal personen</label>
-                <input type="number" class="form-control" id="aantalPersonen" name="aantalPersonen" min="1" required th:value="${aantalPersonen}">
+                <input type="number" class="form-control" id="aantalPersonen" min="1" required th:field="*{aantalPersonen}">
             </div>
 
             <div class="form-group col-md-4">
                 <label for="keuzeArrangement">Type Arrangement</label>
-                <select class="form-control" id="keuzeArrangement" name="keuzeArrangement" required>
-                    <option value="">Kies een arrangement</option>
-                    <option th:each="keuze : ${verblijfskeuzes}"
-                            th:value="${keuze.getVerblijfskeuzeID()}"
+                <select class="form-control" id="keuzeArrangement" th:field="*{keuzeArrangement}" required>
+<!--                    <option value="">Kies een arrangement</option>-->
+                    <option th:each="keuze : *{verblijfsKeuzes}"
+                            th:selected="${keuze.getVerblijfskeuzeID() == reserveringDetails.getKeuzeArrangement()}"
                             th:text="${keuze.getNaam()}"
-                            th:selected="${keuze.getVerblijfskeuzeID() == verblijfsKeuzeID}"></option>
+                            th:value="${keuze.getVerblijfskeuzeID()}"></option>
                 </select>
             </div>
 
@@ -57,41 +57,50 @@
             <div class="w-100"></div>
 
             <div class="form-group col-md-8">
-                <button type="submit" class="btn btn-primary w-100">Zoek</button>
+                <button type="submit" name="action" value="zoek-kamers" class="btn btn-primary w-100">Zoek</button>
             </div>
         </div>
 
-        <div  class="row" th:if="${vrijeKamers != null}">
+        <div  class="row" th:if="*{vrijeKamers != null}">
             <div class="form-group col-md-4 mt-3">
                 <label for="voornaam">Voornaam</label>
-                <input type="text" class="form-control" id="voornaam" name="voornaam">
+                <input type="text" class="form-control" id="voornaam" th:field="*{voornaam}">
             </div>
 
             <div class="form-group col-md-4 mt-md-3">
                 <label for="naam">Familienaam</label>
-                <input type="text" class="form-control" id="naam" name="naam" required>
+                <input type="text" class="form-control" id="naam" th:field="*{naam}" required>
             </div>
 
             <div class="form-group col-md-8">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <input type="email" class="form-control" id="email" th:field="*{email}" required>
             </div>
 
             <div class="form-group col-md-8">
                 <label for="telefoon">Telefoon</label>
-                <input type="tel" class="form-control" id="telefoon" name="telefoon">
+                <input type="tel" class="form-control" id="telefoon" th:field="*{telefoon}">
             </div>
 
             <div class="form-group col-md-8">
                 <label for="kamers">Kamers</label>
-                <select multiple class="form-control" id="kamers" name="kamers" required>
-                    <option th:each="kamer : ${vrijeKamers}"
-                            th:value="${kamer.getKamerID()}">
+                <select multiple class="form-control" id="kamers" th:field="*{kamers}" required>
+                    <option th:each="kamer : *{vrijeKamers}"
+                            th:value="${kamer}">
 <!--                     Prijs moet hier nog rechts uitgelijnd worden, iemand enig idee?-->
-                        <p th:text="'Kamer ' + ${kamer.getKamer().getKamerNummer()} + '  (' + ${kamer.getKamer().getKamerType().getOmschrijving()} + ')'"></p>
-                        <p th:text="'€ ' + ${kamer.getPrijsPerPersoon()} + ' pp'"></p>
+                        <div class="d-inline-flex justify-content-between">
+                            <span th:text="'Kamer ' + ${kamer.getKamer().getKamerNummer()} + '  (' + ${kamer.getKamer().getKamerType().getOmschrijving()} + ')'"></span>
+                            <span class="float-right" th:text="'€ ' + ${kamer.getPrijsPerPersoon()} + ' pp'"></span>
+                        </div>
                     </option>
                 </select>
+            </div>
+
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+
+            <div class="form-group col-md-8">
+                <button type="submit" name="action" value="bevestigen" class="btn btn-primary w-100">Reserveren</button>
             </div>
         </div>
     </form>

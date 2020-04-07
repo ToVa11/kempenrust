@@ -1,6 +1,5 @@
 package pr4.t1.kempenrust.repository;
 
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -10,7 +9,6 @@ import pr4.t1.kempenrust.model.KamerType;
 import pr4.t1.kempenrust.model.Prijs;
 
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 @Repository
@@ -18,11 +16,8 @@ public class KamerRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ArrayList<Prijs> getAllAvailableRooms(int verblijfskeuzeID, LocalDate datumAankomst, LocalDate datumVertrek) {
-        ArrayList<Prijs> kamers = new ArrayList<>();
-
-        Date datumVan = Date.valueOf(datumAankomst);
-        Date datumTot = (datumVertrek != null) ? Date.valueOf(datumVertrek) : null;
+    public ArrayList<Prijs> getAllAvailableRooms(int verblijfskeuzeID, Date datumAankomst, Date datumVertrek) {
+        ArrayList<Prijs> prijzenKamers = new ArrayList<>();
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
                 "SELECT * " +
@@ -59,8 +54,8 @@ public class KamerRepository {
             prijs.setPrijsPerPersoon(rowSet.getBigDecimal("PrijsPerPersoon"));
             prijs.setDatumVanaf(rowSet.getDate("DatumVanaf"));
 
-            kamers.add(prijs);
+            prijzenKamers.add(prijs);
         }
-        return kamers;
+        return prijzenKamers;
     }
 }
