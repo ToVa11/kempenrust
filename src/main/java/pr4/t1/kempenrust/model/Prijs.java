@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Prijs {
     private int prijsID;
-    private BigDecimal prijsPerPersoon;
+    private BigDecimal prijsPerKamer;
     private Date datumVanaf;
     private int kamerID;
     private Kamer kamer;
@@ -22,12 +22,12 @@ public class Prijs {
         this.prijsID = prijsID;
     }
 
-    public BigDecimal getPrijsPerPersoon() {
-        return prijsPerPersoon;
+    public BigDecimal getPrijsPerKamer() {
+        return prijsPerKamer;
     }
 
-    public void setPrijsPerPersoon(BigDecimal prijsPerPersoon) {
-        this.prijsPerPersoon = prijsPerPersoon;
+    public void setPrijsPerKamer(BigDecimal prijsPerKamer) {
+        this.prijsPerKamer = prijsPerKamer;
     }
 
     public Date getDatumVanaf() {

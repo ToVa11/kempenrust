@@ -90,20 +90,20 @@ CREATE TABLE Prijzen
 PrijsID INT PRIMARY KEY AUTO_INCREMENT,
 KamerID INT,
 VerblijfsKeuzeID INT,
-PrijsPerPersoon DECIMAL,
+PrijsPerKamer DECIMAL,
 DatumVanaf DATE,
 FOREIGN KEY (KamerID) REFERENCES Kamers(KamerID),
 FOREIGN KEY (VerblijfsKeuzeID) REFERENCES VerblijfsKeuzes(VerblijfsKeuzeID)
 );
 
-INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerPersoon,DatumVanaf) VALUES (1,1,'31.50','2020-01-01');
-INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerPersoon,DatumVanaf) VALUES (1,2,'47.00','2020-01-01');
-INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerPersoon,DatumVanaf) VALUES (2,1,'35.00','2020-01-01');
-INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerPersoon,DatumVanaf) VALUES (2,2,'50.00','2020-01-01');
-INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerPersoon,DatumVanaf) VALUES (3,1,'28.50','2020-01-01');
-INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerPersoon,DatumVanaf) VALUES (3,2,'42.00','2020-01-01');
-INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerPersoon,DatumVanaf) VALUES (4,1,'40.00','2020-01-01');
-INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerPersoon,DatumVanaf) VALUES (4,2,'55.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (1,1,'63.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (1,2,'94.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (2,1,'70.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (2,2,'100.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (3,1,'57.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (3,2,'84.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (4,1,'80.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (4,2,'110.00','2020-01-01');
 
 CREATE TABLE KamersOnbeschikbaar
 (
