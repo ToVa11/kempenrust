@@ -84,14 +84,14 @@
 
             <div class="form-group col-md-8">
                 <label for="kamers">Kamers</label>
-                <select multiple class="form-control" id="kamers" th:field="*{prijsKamers}" required>
+                <select multiple class="form-control" id="kamers" th:field="*{kamers}" required>
                     <option th:each="kamer : *{prijsVrijeKamers}"
-                            th:value="${kamer}">
+                            th:value="${kamer.getKamerID()}">
 <!--                     Prijs moet hier nog rechts uitgelijnd worden, iemand enig idee?-->
-                        <div class="d-inline-flex justify-content-between">
+<!--                        <div class="d-inline-flex justify-content-between">-->
                             <span th:text="'Kamer ' + ${kamer.getKamer().getKamerNummer()} + '  (' + ${kamer.getKamer().getKamerType().getOmschrijving()} + ')'"></span>
                             <span class="float-right" th:text="'€ ' + ${kamer.getPrijsPerKamer()}"></span>
-                        </div>
+
                     </option>
                 </select>
             </div>

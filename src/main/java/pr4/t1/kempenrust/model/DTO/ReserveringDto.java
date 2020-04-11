@@ -19,7 +19,7 @@ public class ReserveringDto {
     private String email;
     private String telefoon;
     private List<Prijs> prijsVrijeKamers;
-    private List<Prijs> prijsKamers;
+    private List<Integer> kamers;
 
     public ReserveringDto() {
     }
@@ -104,11 +104,11 @@ public class ReserveringDto {
         this.prijsVrijeKamers = prijsVrijeKamers;
     }
 
-    public List<Prijs> getPrijsKamers() {
-        return prijsKamers;
+    public List<Integer> getKamers() {
+        return kamers;
     }
 
-    public void setPrijsKamers(List<Prijs> prijsKamers) {
-        this.prijsKamers = prijsKamers;
+    public void setKamers(List<Integer> kamers) {
+        this.kamers = kamers;
     }
 }

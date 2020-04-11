@@ -7,16 +7,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import pr4.t1.kempenrust.model.BoekingDetail;
+import pr4.t1.kempenrust.model.*;
 import pr4.t1.kempenrust.model.DTO.ReserveringDto;
-import pr4.t1.kempenrust.model.Kamer;
-import pr4.t1.kempenrust.model.Prijs;
-import pr4.t1.kempenrust.model.VerblijfsKeuze;
-import pr4.t1.kempenrust.repository.BoekingDetailRepository;
-import pr4.t1.kempenrust.repository.KamerRepository;
-import pr4.t1.kempenrust.repository.VerblijfsKeuzeRepository;
+import pr4.t1.kempenrust.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -26,11 +22,15 @@ import java.util.List;
 @Controller
 public class BoekingController {
     @Autowired
+    BoekingRepository boekingRepository;
+    @Autowired
     BoekingDetailRepository boekingDetailRepository;
     @Autowired
     VerblijfsKeuzeRepository verblijfsKeuzeRepository;
     @Autowired
     KamerRepository kamerRepository;
+    @Autowired
+    KlantRepository klantRepository;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -67,10 +67,32 @@ public class BoekingController {
 
     // via params kan ik meerdere submits in mijn form gebruiken
     @PostMapping(value = "/reserveren", params = "action=bevestigen")
-    public String ReserveringBevestigen(@ModelAttribute("reserveringDetails") ReserveringDto requestReservering,  Model model, HttpServletRequest request) {
-        var test = requestReservering;
+    public String ReserveringBevestigen(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails,  Model model) {
+        if(klantRepository.customerExists(reserveringDetails.getEmail()) == false) {
+            klantRepository.createCustomer(
+                    reserveringDetails.getVoornaam(),
+                    reserveringDetails.getNaam(),
+                    reserveringDetails.getTelefoon(),
+                    reserveringDetails.getEmail());
+        }
+        Klant klant = klantRepository.getCustomerByEmail(reserveringDetails.getEmail());
+
+        var datumAankomst = Date.valueOf(reserveringDetails.getDatumAankomst());
+        var datumVertrek = (reserveringDetails.getDatumVertrek() != "")
+                ? Date.valueOf(reserveringDetails.getDatumVertrek())
+                : null;
+        BigDecimal bedragVoorschot = new BigDecimal(0);
+
+        int BoekingID = boekingRepository.createReservation(
+                klant.getKlantID(),
+                reserveringDetails.getKeuzeArrangement(),
+                bedragVoorschot,
+                reserveringDetails.getAantalPersonen(),
+                datumAankomst,
+                datumVertrek);
+
         return "test";
-    }
+}
 
     @RequestMapping("/reserveringen")
     public String Reserveringen(Model model) {
