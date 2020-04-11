@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!--  main-fragment (title, nav, mainContent, footer)  -->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #nav-kempenrust},
+                                                ~{:: #main-content-kempenrust},
+                                                ~{:: #footer-kempenrust}
+                                               )}">
+<head>
+    <!-- Required meta tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- Kan je aanpassen = tabblad titel-->
+    <title>Kamers</title>
+</head>
+<body>
+
+<div id="nav-kempenrust" th:replace="~{/fragments/app-fragments :: nav-default}">
+    Nav
+</div>
+
+<div id="main-content-kempenrust">
+    <!-- Enkel hier en title aanpassen!! Rest laten staan-->
+    <h1>Kamer Beschikbaarheid</h1>
+    <table class="table" th:if="${kamer.datumVan}">
+        <thead>
+        <tr>
+            <th>Kamer Nummer</th>
+            <th>Onbeschikbaar Van</th>
+            <th>Onbeschikbaar Tot</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${kamer.kamerNummer}"></td>
+            <td th:text="${kamer.datumVan}"></td>
+            <td th:text="${kamer.datumTot}"></td>
+            <td><a th:href="@{/kamerBeschikbaarMaken(kamerId=${kamer.kamerID})}"
+                   style="width:150px" class="btn btn-primary w-100">
+                   Beschikbaar Maken
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="col-md-8">
+        <form th:action="@{/kamerOnBeschikbaarMaken}" method="post" th:object="${kamer}" >
+            <input type="hidden" name="kamerID" th:field="*{kamerID}">
+            <div class="form-group col-md-8">
+                <input name="kamerNummer" th:field="*{kamerNummer}" id="kamerNummer" type="text" class="form-control" required/>
+            </div>
+            <div class="form-group col-md-8">
+                <input name="datumVan" th:field="*{datumVan}" id="datumVan" type="date" class="form-control" required/>
+            </div>
+            <div class="form-group col-md-8">
+                <input name="datumTot" th:field="*{datumTot}" id="datumTot" type="date" class="form-control" required/>
+            </div>
+            <div class="form-group col-md-8">
+                <button type="submit" class="btn btn-primary w-100" name="wijzig">Onbeschikbaar Maken</button>
+            </div>
+        </form>
+    </div>
+</div>
+    <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
+        Footer
+    </div>
+</body>
+</html>

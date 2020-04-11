@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<!--  main-fragment (title, nav, mainContent, footer)  -->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #nav-kempenrust},
+                                                ~{:: #main-content-kempenrust},
+                                                ~{:: #footer-kempenrust}
+                                               )}">
+<head>
+    <!-- Required meta tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- Kan je aanpassen = tabblad titel-->
+    <title>Kamer Beheren</title>
+</head>
+<body>
+
+<div id="nav-kempenrust" th:replace="~{/fragments/app-fragments :: nav-default}">
+    Nav
+</div>
+
+<div id="main-content-kempenrust">
+    <!-- Enkel hier en title aanpassen!! Rest laten staan-->
+    <h1>Kamer Beheren</h1>
+    <div class="col-md-8">
+   <form th:action="@{/wijzigKamer}" method="post" th:object="${kamer}" >
+       <input type="hidden" name="kamerID" th:field="*{kamerID}">
+       <div class="form-group col-md-8">
+              <input name="kamerNummer" th:field="*{kamerNummer}"
+              id="kamerNummer" type="text"
+              class="form-control" required/>
+       </div>
+       <div class="form-group col-md-8">
+           <select  class="custom-select" id="omschrijving" th:field="*{kamerTypeID}" name="omschrijving" required>
+                   <option th:each="kamerType : ${kamer.kamerTypes}"
+                           th:value="${kamerType.kamerTypeID}"
+                           th:text="${kamerType.omschrijving}">
+                   </option>
+           </select>
+       </div>
+       <div class="form-row">
+           <div class="form-group col-md-4">
+               <button type="submit" class="btn btn-primary w-100"
+               name="wijzig">Wijzig</button>
+           </div>
+           <div class="form-group col-md-4">
+               <a th:href="@{/kamerVerwijderen(kamerId=${kamer.kamerID})}"
+                  class="btn btn-primary w-100" name="verwijderen">Verwijderen
+               </a>
+           </div>
+       </div>
+   </form>
+    </div>
+</div>
+    <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
+        Footer
+    </div>
+
+</body>
+</html>
