@@ -13,7 +13,7 @@ public class VerblijfsKeuze {
     }
 
     public void setVerblijfskeuzeID(int verblijfsKeuzeID) {
-        this.verblijfskeuzeID = verblijfskeuzeID;
+        this.verblijfskeuzeID = verblijfsKeuzeID;
     }
 
     public String getNaam() {

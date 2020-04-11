@@ -5,10 +5,10 @@ import java.util.Date;
 
 public class Prijs {
     private int prijsID;
-    private BigDecimal prijsPerPersoon;
+    private BigDecimal prijsPerKamer;
     private Date datumVanaf;
-    private int kamerTypeID;
-    private KamerType kamerType;
+    private int kamerID;
+    private Kamer kamer;
     private int verblijfsKeuzeID;
     private VerblijfsKeuze verblijfsKeuze;
 
@@ -22,12 +22,12 @@ public class Prijs {
         this.prijsID = prijsID;
     }
 
-    public BigDecimal getPrijsPerPersoon() {
-        return prijsPerPersoon;
+    public BigDecimal getPrijsPerKamer() {
+        return prijsPerKamer;
     }
 
-    public void setPrijsPerPersoon(BigDecimal prijsPerPersoon) {
-        this.prijsPerPersoon = prijsPerPersoon;
+    public void setPrijsPerKamer(BigDecimal prijsPerKamer) {
+        this.prijsPerKamer = prijsPerKamer;
     }
 
     public Date getDatumVanaf() {
@@ -38,20 +38,20 @@ public class Prijs {
         this.datumVanaf = datumVanaf;
     }
 
-    public int getKamerTypeID() {
-        return kamerTypeID;
+    public int getKamerID() {
+        return kamerID;
     }
 
-    public void setKamerTypeID(int kamerTypeID) {
-        this.kamerTypeID = kamerTypeID;
+    public void setKamerID(int kamerID) {
+        this.kamerID = kamerID;
     }
 
-    public KamerType getKamerType() {
-        return kamerType;
+    public Kamer getKamer() {
+        return kamer;
     }
 
-    public void setKamerType(KamerType kamerType) {
-        this.kamerType = kamerType;
+    public void setKamer(Kamer kamer) {
+        this.kamer = kamer;
     }
 
     public int getVerblijfsKeuzeID() {

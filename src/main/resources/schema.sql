@@ -72,32 +72,38 @@ INSERT INTO KamerTypes (Omschrijving) VALUES ('2-persoonskamer met bad');
 INSERT INTO KamerTypes (Omschrijving) VALUES ('1-persoonskamer met douche');
 INSERT INTO KamerTypes (Omschrijving) VALUES ('1-persoonskamer met bad');
 
-CREATE TABLE Prijzen
-(
-PrijsID INT PRIMARY KEY AUTO_INCREMENT,
-KamerTypeID INT,
-VerblijfsKeuzeID INT,
-PrijsPerPersoon DECIMAL,
-DatumVanaf DATE,
-FOREIGN KEY (KamerTypeID) REFERENCES KamerTypes(KamerTypeID),
-FOREIGN KEY (VerblijfsKeuzeID) REFERENCES VerblijfsKeuzes(VerblijfsKeuzeID)
-);
-
-INSERT INTO Prijzen (KamerTypeID,VerblijfsKeuzeID,PrijsPerPersoon,DatumVanaf) VALUES (1,1,'31.50','2020-01-01');
-INSERT INTO Prijzen (KamerTypeID,VerblijfsKeuzeID,PrijsPerPersoon,DatumVanaf) VALUES (3,2,'47.00','2020-01-01');
-
 CREATE TABLE Kamers
 (
-KamerID INT PRIMARY KEY AUTO_INCREMENT,
-KamerTypeID INT,
-KamerNummer INT,
-FOREIGN KEY (KamerTypeID) REFERENCES KamerTypes(KamerTypeID)
+    KamerID INT PRIMARY KEY AUTO_INCREMENT,
+    KamerTypeID INT,
+    KamerNummer INT,
+    FOREIGN KEY (KamerTypeID) REFERENCES KamerTypes(KamerTypeID)
 );
 
 INSERT INTO Kamers (KamerTypeID,KamerNummer) VALUES (1,6);
 INSERT INTO Kamers (KamerTypeID,KamerNummer) VALUES (1,8);
 INSERT INTO Kamers (KamerTypeID,KamerNummer) VALUES (3,4);
 INSERT INTO Kamers (KamerTypeID,KamerNummer) VALUES (2,2);
+
+CREATE TABLE Prijzen
+(
+PrijsID INT PRIMARY KEY AUTO_INCREMENT,
+KamerID INT,
+VerblijfsKeuzeID INT,
+PrijsPerKamer DECIMAL,
+DatumVanaf DATE,
+FOREIGN KEY (KamerID) REFERENCES Kamers(KamerID),
+FOREIGN KEY (VerblijfsKeuzeID) REFERENCES VerblijfsKeuzes(VerblijfsKeuzeID)
+);
+
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (1,1,'63.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (1,2,'94.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (2,1,'70.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (2,2,'100.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (3,1,'57.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (3,2,'84.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (4,1,'80.00','2020-01-01');
+INSERT INTO Prijzen (KamerID,VerblijfsKeuzeID,PrijsPerKamer,DatumVanaf) VALUES (4,2,'110.00','2020-01-01');
 
 CREATE TABLE KamersOnbeschikbaar
 (
