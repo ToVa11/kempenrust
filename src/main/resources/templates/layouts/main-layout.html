@@ -17,7 +17,7 @@
     <title th:replace="${title}">Page 1 Title</title>
 </head>
 <body>
-<div class="container mh-100">
+<div class="container">
     <section>
         <nav th:insert="${nav} ? ${nav} : ~{}">
             <ul>
@@ -26,7 +26,7 @@
             </ul>
         </nav>
 
-        <article th:insert="${mainContent} ? ${mainContent} : ~{}">
+        <article id="content-wrap" th:insert="${mainContent} ? ${mainContent} : ~{}">
             <h1>Page 1</h1>
             <p>Main content of Page 1</p>
         </article>
