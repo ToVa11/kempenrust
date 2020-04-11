@@ -54,7 +54,7 @@ public class BoekingController {
         var datumVertrek = (reserveringDetails.getDatumVertrek() != "")
                 ? Date.valueOf(reserveringDetails.getDatumVertrek())
                 : null;
-        reserveringDetails.setVrijeKamers(kamerRepository.getAllAvailableRooms(reserveringDetails.getKeuzeArrangement(), datumAankomst, datumVertrek));
+        reserveringDetails.setPrijsVrijeKamers(kamerRepository.getAllAvailableRooms(reserveringDetails.getKeuzeArrangement(), datumAankomst, datumVertrek));
 
         //Hier ga ik nog eens verblijfskeuzes ophalen, hebben jullie een betere oplossing?
         //object Dto kan geen complexe objecten doorsturen (enkel int, double, String & List (van de afgelopen 3)

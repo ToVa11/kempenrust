@@ -18,8 +18,8 @@ public class ReserveringDto {
     private String naam;
     private String email;
     private String telefoon;
-    private List<Prijs> vrijeKamers;
-    private List<Prijs> kamers;
+    private List<Prijs> prijsVrijeKamers;
+    private List<Prijs> prijsKamers;
 
     public ReserveringDto() {
     }
@@ -96,19 +96,19 @@ public class ReserveringDto {
         this.telefoon = telefoon;
     }
 
-    public List<Prijs> getVrijeKamers() {
-        return vrijeKamers;
+    public List<Prijs> getPrijsVrijeKamers() {
+        return prijsVrijeKamers;
     }
 
-    public void setVrijeKamers(List<Prijs> vrijeKamers) {
-        this.vrijeKamers = vrijeKamers;
+    public void setPrijsVrijeKamers(List<Prijs> prijsVrijeKamers) {
+        this.prijsVrijeKamers = prijsVrijeKamers;
     }
 
-    public List<Prijs> getKamers() {
-        return kamers;
+    public List<Prijs> getPrijsKamers() {
+        return prijsKamers;
     }
 
-    public void setKamers(List<Prijs> kamers) {
-        this.kamers = kamers;
+    public void setPrijsKamers(List<Prijs> prijsKamers) {
+        this.prijsKamers = prijsKamers;
     }
 }
