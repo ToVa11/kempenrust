@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <div  class="row" th:if="*{vrijeKamers != null}">
+        <div  class="row" th:if="*{prijsVrijeKamers != null}">
             <div class="form-group col-md-4 mt-3">
                 <label for="voornaam">Voornaam</label>
                 <input type="text" class="form-control" id="voornaam" th:field="*{voornaam}">
@@ -84,8 +84,8 @@
 
             <div class="form-group col-md-8">
                 <label for="kamers">Kamers</label>
-                <select multiple class="form-control" id="kamers" th:field="*{kamers}" required>
-                    <option th:each="kamer : *{vrijeKamers}"
+                <select multiple class="form-control" id="kamers" th:field="*{prijsKamers}" required>
+                    <option th:each="kamer : *{prijsVrijeKamers}"
                             th:value="${kamer}">
 <!--                     Prijs moet hier nog rechts uitgelijnd worden, iemand enig idee?-->
                         <div class="d-inline-flex justify-content-between">
