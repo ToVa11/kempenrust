@@ -46,7 +46,7 @@ public class KamerRepository {
     }
 
     public void KamerToevoegen(int kamerNummer,int kamerTypeID){
-        jdbcTemplate.update("Insert INTO Kamers (KamerTypeID,KamerNummer) " +
+        jdbcTemplate.update("INSERT INTO Kamers (KamerTypeID,KamerNummer) " +
                 "VALUES (?,?)",kamerTypeID,kamerNummer);
     }
     public void  WijzigKamer(int kamerID,int kamerTypeID,int kamerNummer){
@@ -79,15 +79,12 @@ public class KamerRepository {
             Kamer kamer = new Kamer();
             KamerType kamerType = new KamerType();
             Prijs prijs = new Prijs();
-
             kamerType.setKamerTypeID(rowSet.getInt("KamerTypeID"));
             kamerType.setOmschrijving(rowSet.getString("Omschrijving"));
-
             kamer.setKamerID(rowSet.getInt("KamerID"));
             kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
             kamer.setKamerType(kamerType);
             kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
-
             prijs.setPrijsID(rowSet.getInt("PrijsID"));
             prijs.setKamerID(rowSet.getInt("KamerID"));
             prijs.setKamer(kamer);

@@ -48,7 +48,8 @@ public class KamerOnbeschikbaarRepository {
             kamer.setDatumTot(rowSet.getDate("DatumTot"));
             kamer.setKamerID(rowSet.getInt("KamerID"));
             kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
-            kamer.setBeschikbaarheid(true);
+            kamer.setBeschikbaarheid(false);
+            beschikbaarheidVerwijderen(kamerID);
         }
         return  kamer;
     }
@@ -65,4 +66,8 @@ public class KamerOnbeschikbaarRepository {
         jdbcTemplate.update("DELETE FROM KAMERSONBESCHIKBAAR WHERE KamerID =? ",kamerID);
 
     }
+    public void beschikbaarheidVerwijderen(int kamerID){
+        jdbcTemplate.update("DELETE FROM KamersOnbeschikbaar WHERE KamerID =? ",kamerID);
+    }
+
 }

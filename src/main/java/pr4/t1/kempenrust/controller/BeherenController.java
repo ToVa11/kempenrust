@@ -11,20 +11,12 @@ import pr4.t1.kempenrust.DTO.KamerBeheer;
 import pr4.t1.kempenrust.model.Kamer;
 import pr4.t1.kempenrust.model.KamerOnbeschikbaar;
 import pr4.t1.kempenrust.model.KamerType;
-import pr4.t1.kempenrust.repository.BoekingRepository;
-import pr4.t1.kempenrust.repository.KamerOnbeschikbaarRepository;
-import pr4.t1.kempenrust.repository.KamerRepository;
-import pr4.t1.kempenrust.repository.KamerTypeRepository;
+import pr4.t1.kempenrust.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.text.spi.DateFormatProvider;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
-import java.util.Date;
 
 @Controller
 public class BeherenController {
@@ -36,6 +28,8 @@ public class BeherenController {
     private BoekingRepository boekingRepository;
     @Autowired
     private KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
+    @Autowired
+    private PrijsRepository prijsRepository;
 //    Hier komen alle methodes in die iets te maken hebben met het beheren (CRUD) van het hotel
     @RequestMapping("/kamers")
     public String Kamers(Model model) {
@@ -64,21 +58,15 @@ public String WijzigKamer( Model model,@ModelAttribute("kamer") Kamer kamer){
         KamerBeheer kamer=null;
         int kamerId= Integer.parseInt((request.getParameter("kamerId")));
         kamer= boekingRepository.GeboekteKamer(kamerId);
-        if (kamer.getDatumVan()!= null)
+        if (kamer.getDatumVan() !=null && kamer.getDatumTot()!=null)
         {
             String omschrijving="Kamer reeds geboekt ";
             kamer.setOmschrijving(omschrijving);
             model.addAttribute("kamer",kamer);
             return "layouts/beheren/boodschap";
         }
-        kamer=kamerOnbeschikbaarRepository.VerOnbKamerDoorID(kamerId);
-        if (kamer.getDatumVan() != null)
-        {
-            String omschrijving="Kamer reeds onbeschikbaar ";
-            kamer.setOmschrijving(omschrijving);
-            model.addAttribute("kamer",kamer);
-            return "layouts/beheren/boodschap";
-        }
+        kamerOnbeschikbaarRepository.VerOnbKamerDoorID(kamerId);
+        prijsRepository.kamerTeVerwijderen(kamerId);
         kamerRepository.KamerVerwijderen(kamerId);
         ArrayList<KamerBeheer> kamers=kamerRepository.AlleKamers();
         model.addAttribute("kamers",kamers);

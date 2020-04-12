@@ -14,6 +14,16 @@ public class KamerBeheer {
     private Boolean Beschikbaarheid;
     private Boolean Geboekt;
 
+    public Boolean getRefInPrijs() {
+        return refInPrijs;
+    }
+
+    public void setRefInPrijs(Boolean refInPrijs) {
+        this.refInPrijs = refInPrijs;
+    }
+
+    private Boolean refInPrijs;
+
     public Boolean getGeboekt() {
         return Geboekt;
     }

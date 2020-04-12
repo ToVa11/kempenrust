@@ -16,11 +16,15 @@ public class BoekingRepository {
                 "from " +
                 "(" +
                 "(" +
+                "(" +
                 "     kamers  INNER JOIN BoekingDetails " +
                 "    ON kamers.KAMERID = BoekingDetails.KamerID " +
                 ")" +
                 "INNER JOIN Boekingen " +
                 "ON Boekingen.BoekingID = BoekingDetails.BoekingID" +
+                ")" +
+                "INNER JOIN Prijzen " +
+                "ON Prijzen.KamerID=Kamers.kamerID" +
                 ")" +
                 "WHERE Kamers.kamerID = ? ",kamerID);
         while(rowSet.next()){

@@ -23,9 +23,6 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Kamers</h1>
-    <div class="col-md-8">
-     <a th:href="@{/nieweKamerToeveogen}" class="btn btn-primary w-30" style="margin-left: -15px"><i class="fas fa-plus fa-2x"></i></a>
-    </div>
     <table class="table" th:if="${kamers.size()!=0}">
         <thead>
         <tr>
@@ -33,6 +30,11 @@
             <th>Omschrijving</th>
             <th>Onbeschikbaar Van</th>
             <th>Onbeschikbaar Tot</th>
+            <th>
+                <a th:href="@{/nieweKamerToeveogen}"
+                   class="btn btn-secondary">
+                    <i class="fas fa-plus"></i></a>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -41,12 +43,18 @@
             <td th:text="${kamer.omschrijving}"></td>
             <td th:text="${#dates.format(kamer.datumVan,'dd/MM/yyyy')}">Beschikbaar</td>
             <td th:text="${#dates.format(kamer.datumTot,'dd/MM/yyyy')}">Beschikbaar</td>
-            <td><a th:href="@{/kamerAanpassen(kamerId=${kamer.kamerID})}">
-                <li class="fas fa-pen"></li></a></td>
-            <td><a th:href="@{/kamerVerwijderen(kamerId=${kamer.kamerID})}">
-                <li class="fas fa-trash"></li></a>
+            <td>
+                <a class="btn btn-secondary"
+                    th:href="@{/kamerAanpassen(kamerId=${kamer.kamerID})}">
+                    <li class="fas fa-pen"></li></a>
+                <a class="btn btn-secondary"
+                        th:href="@{/kamerVerwijderen(kamerId=${kamer.kamerID})}">
+                    <li class="fas fa-trash"></li></a>
             </td>
-            <td><a th:href="@{/kamerBeschikbaarheid(kamerId=${kamer.kamerID})}">
+            </td>
+            <td>
+                <a class="btn btn-secondary"
+                th:href="@{/kamerBeschikbaarheid(kamerId=${kamer.kamerID})}">
                 Beschikbaarheid</a>
             </td>
         </tr>
