@@ -50,6 +50,7 @@ public class BoekingDetailRepository {
             kamer.setKamerNummer(rowSet.getInt("kamerNummer"));
 
             boeking.setKlant(klant);
+            detail.setBoekingID(rowSet.getInt("boekingID"));
             detail.setKamer(kamer);
             detail.setBoeking(boeking);
 
@@ -57,5 +58,40 @@ public class BoekingDetailRepository {
         }
 
         return details;
+    }
+
+    public BoekingDetail getReservingByID(int ID) {
+        BoekingDetail reservering = new BoekingDetail();
+
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
+                "SELECT * FROM boekingdetails INNER JOIN " +
+                        "(boekingen INNER JOIN klanten ON boekingen.klantId = klanten.klantId) " +
+                        "ON boekingDetails.boekingId = boekingen.boekingID " +
+                        "INNER JOIN kamers ON boekingDetails.kamerId = kamers.kamerId " +
+                        "WHERE " +
+                        "boekingdetails.boekingId = ?"
+                , ID);
+
+        while(rowSet.next()) {
+            Klant klant = new Klant();
+            Boeking boeking = new Boeking();
+            Kamer kamer = new Kamer();
+
+            klant.setEmail(rowSet.getString("email"));
+            klant.setNaam(rowSet.getString("naam"));
+            klant.setVoornaam(rowSet.getString("voornaam"));
+
+            boeking.setDatumVan(rowSet.getDate("datumVan"));
+            boeking.setDatumTot(rowSet.getDate("datumTot"));
+
+            kamer.setKamerNummer(rowSet.getInt("kamerNummer"));
+
+            boeking.setKlant(klant);
+            reservering.setKamer(kamer);
+            reservering.setBoeking(boeking);
+
+        }
+
+        return reservering;
     }
 }
