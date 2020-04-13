@@ -18,7 +18,7 @@ import java.util.Date;
 public class KamerRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    public ArrayList<KamerBeheer> AlleKamers(){
+    public ArrayList<KamerBeheer> getAlleKamers(){
         ArrayList<KamerBeheer> alleKamers=new ArrayList<>();
         SqlRowSet rowSet=jdbcTemplate.queryForRowSet("SELECT *" +
                 "FROM" +

@@ -10,7 +10,7 @@ import pr4.t1.kempenrust.DTO.KamerBeheer;
 public class BoekingRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    public KamerBeheer GeboekteKamer(int kamerID){
+    public KamerBeheer getGeboekteKamer(int kamerID){
         KamerBeheer kamer=new KamerBeheer();
         SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT *" +
                 "from " +

@@ -11,8 +11,24 @@ public class KamerBeheer {
     private int kamerOnbeschikbaarID;
     private int kamerNummer;
     private int kamerTypeID;
-    private Boolean Beschikbaarheid;
-    private Boolean Geboekt;
+    private Boolean isBeschikbaarheid;
+    private Boolean isGeboekt;
+
+    public Boolean getBeschikbaarheid() {
+        return isBeschikbaarheid;
+    }
+
+    public void setBeschikbaarheid(Boolean beschikbaarheid) {
+        isBeschikbaarheid = beschikbaarheid;
+    }
+
+    public Boolean getGeboekt() {
+        return isGeboekt;
+    }
+
+    public void setGeboekt(Boolean geboekt) {
+        isGeboekt = geboekt;
+    }
 
     public Boolean getRefInPrijs() {
         return refInPrijs;
@@ -24,13 +40,6 @@ public class KamerBeheer {
 
     private Boolean refInPrijs;
 
-    public Boolean getGeboekt() {
-        return Geboekt;
-    }
-
-    public void setGeboekt(Boolean geboekt) {
-        Geboekt = geboekt;
-    }
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date datumVan;
@@ -53,23 +62,16 @@ public class KamerBeheer {
         this.omschrijving = omschrijving;
     }
 
-    ArrayList <KamerOnbeschikbaar> lisjtkamers;
+    ArrayList <KamerOnbeschikbaar> lijstkamers;
 
-    public ArrayList<KamerOnbeschikbaar> getLisjtkamers() {
-        return lisjtkamers;
+    public ArrayList<KamerOnbeschikbaar> getLijstkamers() {
+        return lijstkamers;
     }
 
-    public void setLisjtkamers(ArrayList<KamerOnbeschikbaar> lisjtkamers) {
-        this.lisjtkamers = lisjtkamers;
+    public void setLijstkamers(ArrayList<KamerOnbeschikbaar> lijstkamers) {
+        this.lijstkamers = lijstkamers;
     }
 
-    public Boolean getBeschikbaarheid() {
-        return Beschikbaarheid;
-    }
-
-    public void setBeschikbaarheid(Boolean beschikbaarheid) {
-        Beschikbaarheid = beschikbaarheid;
-    }
 
     public Date getDatumVan() {
         return datumVan;
@@ -83,8 +85,8 @@ public class KamerBeheer {
         return datumTot;
     }
 
-    public void setDatumTot(Date daumTot) {
-        this.datumTot = daumTot;
+    public void setDatumTot(Date datumTot) {
+        this.datumTot = datumTot;
     }
 
     public ArrayList<KamerType> getKamerTypes() {

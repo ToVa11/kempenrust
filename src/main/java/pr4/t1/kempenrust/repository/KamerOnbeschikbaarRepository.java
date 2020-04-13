@@ -13,7 +13,7 @@ import java.util.Date;
 public class KamerOnbeschikbaarRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    public KamerBeheer OnbKamerDoorID(int kamerID){
+    public KamerBeheer getOnbeschikbaarKamerByID(int kamerID){
         KamerBeheer kamer=new KamerBeheer();
     SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT * " +
                 "from" +
@@ -32,7 +32,7 @@ public class KamerOnbeschikbaarRepository {
     }
     return  kamer;
     }
-    public KamerBeheer VerOnbKamerDoorID(int kamerID){
+    public KamerBeheer maakKamerBeschikbaarByID(int kamerID){
         KamerBeheer kamer=new KamerBeheer();
         SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT *" +
                 "FROM" +
@@ -49,7 +49,7 @@ public class KamerOnbeschikbaarRepository {
             kamer.setKamerID(rowSet.getInt("KamerID"));
             kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
             kamer.setBeschikbaarheid(false);
-            beschikbaarheidVerwijderen(kamerID);
+            KamerBeschikbaarMaken(kamerID);
         }
         return  kamer;
     }
@@ -65,9 +65,6 @@ public class KamerOnbeschikbaarRepository {
     public void KamerBeschikbaarMaken(int kamerID){
         jdbcTemplate.update("DELETE FROM KAMERSONBESCHIKBAAR WHERE KamerID =? ",kamerID);
 
-    }
-    public void beschikbaarheidVerwijderen(int kamerID){
-        jdbcTemplate.update("DELETE FROM KamersOnbeschikbaar WHERE KamerID =? ",kamerID);
     }
 
 }

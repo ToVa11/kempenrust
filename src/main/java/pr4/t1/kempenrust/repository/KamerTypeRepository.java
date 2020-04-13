@@ -14,7 +14,7 @@ public class KamerTypeRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ArrayList<KamerType> LijstKamerTypes(){
+    public ArrayList<KamerType>  getLijstKamerTypes(){
         ArrayList<KamerType> KamerTypes=new ArrayList<>();
         SqlRowSet rowSet=jdbcTemplate.queryForRowSet("SELECT * FROM KamerTypes");
         while(rowSet.next()){
@@ -25,7 +25,7 @@ public class KamerTypeRepository {
         }
         return KamerTypes;
     }
-    public KamerBeheer KamerTDoorID(int kamerID){
+    public KamerBeheer getKamerByID(int kamerID){
         KamerBeheer kamer=new KamerBeheer();
         SqlRowSet rowSet =jdbcTemplate.queryForRowSet("SELECT * FROM " +
                 "(Kamers INNER JOIN Kamertypes " +
