@@ -16,7 +16,9 @@ public class KamerTypeRepository {
 
     public ArrayList<KamerType>  getLijstKamerTypes(){
         ArrayList<KamerType> KamerTypes=new ArrayList<>();
-        SqlRowSet rowSet=jdbcTemplate.queryForRowSet("SELECT * FROM KamerTypes");
+        SqlRowSet rowSet=jdbcTemplate.queryForRowSet
+                ("SELECT * FROM KamerTypes " +
+                        "ORDER BY  KamerTypeID DESC ");
         while(rowSet.next()){
             KamerType kamerType=new KamerType();
             kamerType.setKamerTypeID(rowSet.getInt("KamerTypeID"));
@@ -28,9 +30,9 @@ public class KamerTypeRepository {
     public KamerBeheer getKamerByID(int kamerID){
         KamerBeheer kamer=new KamerBeheer();
         SqlRowSet rowSet =jdbcTemplate.queryForRowSet("SELECT * FROM " +
-                "(Kamers INNER JOIN Kamertypes " +
-                "ON Kamers.KamerTypeID = Kamertypes.kamertypeID" +
-                ") WHERE KamerID =? ",kamerID);
+                "Kamers INNER JOIN Kamertypes " +
+                    "ON Kamers.KamerTypeID = Kamertypes.kamertypeID " +
+                "WHERE KamerID =? ",kamerID);
         while (rowSet.next()){
             kamer.setKamerID(rowSet.getInt("KamerID"));
             kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
@@ -40,8 +42,9 @@ public class KamerTypeRepository {
     }
 
     public void KamerTypeToevoegen(String omschrijving){
-        jdbcTemplate.update("INSERT INTO Kamertypes (Omschrijving) " +
-                "VALUES (?)",omschrijving);
+        jdbcTemplate.update
+                ("INSERT INTO Kamertypes ( Omschrijving) " +
+                      "VALUES (?)",omschrijving);
     }
 
 }

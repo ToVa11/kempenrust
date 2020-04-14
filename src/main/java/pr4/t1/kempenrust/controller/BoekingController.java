@@ -96,7 +96,7 @@ public class BoekingController {
 
     @RequestMapping("/afgelopen_reservaties")
     public String AfgelopenReserveringen(Model model) {
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAllPastDetails();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties ();
         BoekingDetailDto boekingDetailDto=new BoekingDetailDto();
         model.addAttribute("details",details);
         model.addAttribute("boekingDetailDto",boekingDetailDto);
@@ -112,12 +112,12 @@ public class BoekingController {
             var datumTot = Date.valueOf(boekingDetailDto.getDatumTot());
 
             ArrayList<BoekingDetailDto> details = boekingDetailRepository
-            .getAllDetailsWithDates(datumVan,datumTot);
+            .getAlleDetailsMetDatums(datumVan,datumTot);
             model.addAttribute("details",details);
             model.addAttribute("boekingDetailDto",boekingDetailDto);
             return "layouts/boeking/afgelopen_reservaties";
         }
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAllPastDetails();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties ();
         model.addAttribute("details",details);
         model.addAttribute("boekingDetailDto",boekingDetailDto);
         return "layouts/boeking/afgelopen_reservaties";

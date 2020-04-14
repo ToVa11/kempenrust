@@ -105,7 +105,13 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
 
     @PostMapping("/KamerToevoegen")
     public String KamerTovoegen( Model model,@ModelAttribute("KamerBeheer") KamerBeheer kamer){
+        var test1=kamer.getKamerID();
+        var test2=kamer.getKamerNummer();
+        var test3=kamer.getKamerTypeID();
+
         kamerRepository.KamerToevoegen(kamer.getKamerNummer(),kamer.getKamerTypeID());
+        var test4=kamer.getKamerID();
+
         ArrayList<KamerBeheer> kamers=kamerRepository.getAlleKamers();
         model.addAttribute("kamers",kamers);
         return "layouts/beheren/kamers";

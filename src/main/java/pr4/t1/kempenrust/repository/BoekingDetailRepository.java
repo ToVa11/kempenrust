@@ -62,11 +62,9 @@ public class BoekingDetailRepository {
         return details;
     }
 
-    public ArrayList<BoekingDetail> getAllPastDetails() {
+    public ArrayList<BoekingDetail> getAfgelopenReservaties() {
 
-        ArrayList<BoekingDetail> details = new ArrayList<>();
-
-        Date datumVan = new Date(new java.util.Date().getTime());
+        ArrayList<BoekingDetail> reservaties = new ArrayList<>();
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
                 "SELECT * FROM boekingDetails INNER JOIN " +
@@ -75,7 +73,7 @@ public class BoekingDetailRepository {
                         "INNER JOIN kamers ON boekingDetails.kamerId = kamers.kamerId " +
                         "WHERE boekingen.DatumTot < ? " +
                         "ORDER BY boekingen.DatumTot",
-                Date.valueOf(LocalDate.now()));
+                         Date.valueOf(LocalDate.now()));
 
         while(rowSet.next()) {
             BoekingDetail detail = new BoekingDetail();
@@ -96,21 +94,23 @@ public class BoekingDetailRepository {
             detail.setKamer(kamer);
             detail.setBoeking(boeking);
 
-            details.add(detail);
+            reservaties.add(detail);
         }
 
-        return details;
+        return reservaties;
     }
-    public ArrayList<BoekingDetailDto> getAllDetailsWithDates(Date datumVan,Date datumTot ){
+    public ArrayList<BoekingDetailDto> getAlleDetailsMetDatums(Date datumVan,Date datumTot ){
         ArrayList<BoekingDetailDto> details = new ArrayList<>();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
                 "SELECT * FROM " +
-                        "((" +
-                        " (BOEKINGDETAILS INNER JOIN BOEKINGEN ON BOEKINGDETAILS.BOEKINGID =BOEKINGEN.BOEKINGID )" +
-                        "INNER JOIN KAMERS ON BOEKINGDETAILS.KAMERID =KAMERS .KAMERID  )" +
-                        "INNER JOIN KLANTEN ON BOEKINGEN.KLANTID =KLANTEN .KLANTID " +
-                        ")" +
-                        "WHERE BOEKINGEN.DatumTot < ? AND BOEKINGEN.DatumTot  BETWEEN '"+datumVan+"' AND '"+datumTot+"'" +
+                        " BOEKINGDETAILS INNER JOIN BOEKINGEN " +
+                            "ON BOEKINGDETAILS.BOEKINGID =BOEKINGEN.BOEKINGID " +
+                        "INNER JOIN KAMERS " +
+                            "ON BOEKINGDETAILS.KAMERID =KAMERS .KAMERID  " +
+                        "INNER JOIN KLANTEN " +
+                            "ON BOEKINGEN.KLANTID =KLANTEN .KLANTID " +
+                        "WHERE BOEKINGEN.DatumTot < ? " +
+                        "AND BOEKINGEN.DatumTot  BETWEEN '"+datumVan+"' AND '"+datumTot+"'" +
                         "ORDER BY BOEKINGEN.DatumTot", Date.valueOf(LocalDate.now()));
 
         while(rowSet.next()) {

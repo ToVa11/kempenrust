@@ -21,22 +21,18 @@ public class KamerRepository {
     public ArrayList<KamerBeheer> getAlleKamers(){
         ArrayList<KamerBeheer> alleKamers=new ArrayList<>();
         SqlRowSet rowSet=jdbcTemplate.queryForRowSet("SELECT *" +
-                "FROM" +
-                "(" +
-                "(" +
-                "Kamers INNER JOIN Kamertypes " +
-                "ON Kamers.KamerTypeID = Kamertypes.kamertypeID" +
-                ")" +
-                "LEFT JOIN Kamersonbeschikbaar " +
-                "ON Kamers.kamerID=Kamersonbeschikbaar.kamerID" +
-                ")" +
-                "ORDER BY Kamers.KamerNummer");
+                "FROM " +
+                        "( Kamers INNER JOIN Kamertypes " +
+                            "ON Kamers.KamerTypeID = Kamertypes.kamertypeID ) " +
+                        "LEFT JOIN Kamersonbeschikbaar " +
+                            "ON Kamers.kamerID=Kamersonbeschikbaar.kamerID " +
+                        "ORDER BY Kamers.KamerNummer");
         while (rowSet.next()){
             KamerBeheer kamer=new KamerBeheer();
             kamer.setKamerID(rowSet.getInt("KamerID"));
             kamer.setDatumTot (rowSet.getDate("DatumTot"));
             kamer.setDatumVan(rowSet.getDate("DatumVan"));
-            kamer.setKamerTypeID(rowSet.getInt(rowSet.getInt("KamerTypeID")));
+            kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
             kamer.setOmschrijving(rowSet.getString("Omschrijving"));
             kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
             kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
@@ -46,8 +42,8 @@ public class KamerRepository {
     }
 
     public void KamerToevoegen(int kamerNummer,int kamerTypeID){
-        jdbcTemplate.update("INSERT INTO Kamers (KamerTypeID,KamerNummer) " +
-                "VALUES (?,?)",kamerTypeID,kamerNummer);
+        jdbcTemplate.update("INSERT INTO Kamers ( KamerNummer, KamerTypeID) " +
+                "VALUES ( ?, ? )",kamerNummer,kamerTypeID );
     }
     public void  WijzigKamer(int kamerID,int kamerTypeID,int kamerNummer){
         jdbcTemplate.update("UPDATE Kamers SET KamerNummer = ? , KamerTypeID = ? " +

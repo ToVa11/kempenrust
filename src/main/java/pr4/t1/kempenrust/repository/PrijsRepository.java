@@ -15,17 +15,13 @@ public class PrijsRepository {
     }
     public KamerBeheer kamerTeVerwijderen(int kamerID){
         KamerBeheer kamer=new KamerBeheer();
-        SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT *" +
-                "FROM" +
-                "(" +
-                "     kamers  INNER JOIN Prijzen " +
-                "    ON kamers.KAMERID = Prijzen.KAMERID" +
-                ")" +
+        SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT * " +
+                "FROM " +
+                "kamers  INNER JOIN Prijzen " +
+                    "ON kamers.KAMERID = Prijzen.KAMERID " +
                 "WHERE Kamers.kamerID = ? ",kamerID);
         while(rowSet.next()){
             kamer.setKamerID(rowSet.getInt("KamerID"));
-            kamer.setOmschrijving("Eerst de prijs verwijderd worden");
-            kamer.setRefInPrijs(true);
             prijsVerwijderen(kamerID);
         }
         return  kamer;

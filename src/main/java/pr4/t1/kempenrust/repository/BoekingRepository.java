@@ -14,18 +14,12 @@ public class BoekingRepository {
         KamerBeheer kamer=new KamerBeheer();
         SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT *" +
                 "from " +
-                "(" +
-                "(" +
-                "(" +
-                "     kamers  INNER JOIN BoekingDetails " +
-                "    ON kamers.KAMERID = BoekingDetails.KamerID " +
-                ")" +
-                "INNER JOIN Boekingen " +
-                "ON Boekingen.BoekingID = BoekingDetails.BoekingID" +
-                ")" +
-                "INNER JOIN Prijzen " +
-                "ON Prijzen.KamerID=Kamers.kamerID" +
-                ")" +
+                        "(((kamers  INNER JOIN BoekingDetails " +
+                                "ON kamers.KAMERID = BoekingDetails.KamerID) " +
+                        "INNER JOIN Boekingen " +
+                            "ON Boekingen.BoekingID = BoekingDetails.BoekingID )" +
+                        "INNER JOIN Prijzen " +
+                            "ON Prijzen.KamerID=Kamers.kamerID )" +
                 "WHERE Kamers.kamerID = ? ",kamerID);
         while(rowSet.next()){
             kamer.setKamerID(rowSet.getInt("KamerID"));
@@ -36,5 +30,4 @@ public class BoekingRepository {
         }
         return  kamer;
     }
-
 }

@@ -13,6 +13,23 @@ public class KamerBeheer {
     private int kamerTypeID;
     private Boolean isBeschikbaarheid;
     private Boolean isGeboekt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date datumVan;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date datumTot;
+    private String omschrijving;
+    private ArrayList<KamerType> kamerTypes;
+    private Boolean IsInPrijs;
+    private ArrayList <KamerOnbeschikbaar> lijstkamers;
+
+
+    public Boolean getInPrijs() {
+        return IsInPrijs;
+    }
+
+    public void setInPrijs(Boolean inPrijs) {
+        IsInPrijs = inPrijs;
+    }
 
     public Boolean getBeschikbaarheid() {
         return isBeschikbaarheid;
@@ -30,23 +47,6 @@ public class KamerBeheer {
         isGeboekt = geboekt;
     }
 
-    public Boolean getRefInPrijs() {
-        return refInPrijs;
-    }
-
-    public void setRefInPrijs(Boolean refInPrijs) {
-        this.refInPrijs = refInPrijs;
-    }
-
-    private Boolean refInPrijs;
-
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date datumVan;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date datumTot;
-    private String omschrijving;
-
     public int getKamerOnbeschikbaarID() {
         return kamerOnbeschikbaarID;
     }
@@ -54,6 +54,7 @@ public class KamerBeheer {
     public void setKamerOnbeschikbaarID(int kamerOnbeschikbaarID) {
         this.kamerOnbeschikbaarID = kamerOnbeschikbaarID;
     }
+
     public String getOmschrijving() {
         return omschrijving;
     }
@@ -62,8 +63,6 @@ public class KamerBeheer {
         this.omschrijving = omschrijving;
     }
 
-    ArrayList <KamerOnbeschikbaar> lijstkamers;
-
     public ArrayList<KamerOnbeschikbaar> getLijstkamers() {
         return lijstkamers;
     }
@@ -71,7 +70,6 @@ public class KamerBeheer {
     public void setLijstkamers(ArrayList<KamerOnbeschikbaar> lijstkamers) {
         this.lijstkamers = lijstkamers;
     }
-
 
     public Date getDatumVan() {
         return datumVan;
@@ -96,8 +94,6 @@ public class KamerBeheer {
     public void setKamerTypes(ArrayList<KamerType> kamerTypes) {
         this.kamerTypes = kamerTypes;
     }
-
-    private ArrayList<KamerType> kamerTypes;
 
     public int getKamerID() {
         return kamerID;
