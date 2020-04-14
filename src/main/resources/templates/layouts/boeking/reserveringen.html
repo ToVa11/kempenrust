@@ -32,7 +32,7 @@
             <th class="align-middle">Email</th>
             <th class="align-middle">Kamer</th>
             <th>
-                <button class="btn btn-secondary"><i class="fas fa-plus"></i></button>
+                <a th:href="@{/reserveren}"><button class="btn btn-secondary"><i class="fas fa-plus"></i></button></a>
             </th>
         </tr>
         <tr th:each="detail: ${details}">
