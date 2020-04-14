@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class BoekingController {
@@ -33,8 +34,10 @@ public class BoekingController {
     PrijsRepository prijsRepository;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    Date datumAankomst;
+    Date datumVertrek;
 
-//    Hier komen alle methodes die iets te maken hebben met boekingen
+    //    Hier komen alle methodes die iets te maken hebben met boekingen
     @RequestMapping("/reserveren")
     public String Reserveren(Model model) {
 
@@ -49,11 +52,8 @@ public class BoekingController {
     // via params kan ik meerdere submits in mijn form gebruiken
     @RequestMapping(value = "/reserveren", method = RequestMethod.POST, params = "action=zoek-kamers")
     public String ZoekKamers(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model) {
+        vulDatumsOp(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
-        var datumAankomst = Date.valueOf(reserveringDetails.getDatumAankomst());
-        var datumVertrek = (reserveringDetails.getDatumVertrek() != "")
-                ? Date.valueOf(reserveringDetails.getDatumVertrek())
-                : null;
         reserveringDetails.setPrijsVrijeKamers(kamerRepository.getAllAvailableRooms(reserveringDetails.getKeuzeArrangement(), datumAankomst, datumVertrek));
 
         //Hier ga ik nog eens verblijfskeuzes ophalen, hebben jullie een betere oplossing?
@@ -68,20 +68,18 @@ public class BoekingController {
     // via params kan ik meerdere submits in mijn form gebruiken
     @PostMapping(value = "/reserveren", params = "action=bevestigen")
     public String ReserveringBevestigen(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails,  Model model) {
-        if(klantRepository.customerExists(reserveringDetails.getEmail()) == false) {
-            klantRepository.createCustomer(
-                    reserveringDetails.getVoornaam(),
-                    reserveringDetails.getNaam(),
-                    reserveringDetails.getTelefoon(),
-                    reserveringDetails.getEmail());
-        }
-        Klant klant = klantRepository.getCustomerByEmail(reserveringDetails.getEmail());
+        // Is enkel nodig als de page word gerefreshed, omdat ik hier met classvariables werk
+        vulDatumsOp(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
-        var datumAankomst = Date.valueOf(reserveringDetails.getDatumAankomst());
-        var datumVertrek = (reserveringDetails.getDatumVertrek() != "")
-                ? Date.valueOf(reserveringDetails.getDatumVertrek())
-                : null;
-        BigDecimal bedragVoorschot = new BigDecimal(0);
+        Klant klant = getKlantVoorBevestigingReservering(reserveringDetails);
+
+        var prijsVoorBoeking = prijsRepository.GetPrijzenVoorReservatie(
+                reserveringDetails.getKeuzeArrangement(),
+                reserveringDetails.getKamers());
+
+        BigDecimal totaalPrijs = getTotalePrijsVoorBoeking(prijsVoorBoeking);
+
+        BigDecimal bedragVoorschot = getBedragVoorschot(totaalPrijs);
 
         int BoekingID = boekingRepository.createReservation(
                 klant.getKlantID(),
@@ -95,20 +93,14 @@ public class BoekingController {
         ReserveringBevestigingDto bevestiging = new ReserveringBevestigingDto();
 
         var boeking = boekingRepository.getReservationByID(BoekingID);
-        var prijsVoorBoeking = prijsRepository.GetPrijzenVoorReservatie(
-                boeking.getVerblijfsKeuzeID(),
-                reserveringDetails.getKamers()
-        );
-        BigDecimal totaalPrijs = new BigDecimal(0);
-
-        for (Prijs prijs: prijsVoorBoeking) {
-            totaalPrijs = totaalPrijs.add(prijs.getPrijsPerKamer());
-        }
 
         bevestiging.setBoeking(boeking);
         bevestiging.setPrijzenKamers(prijsVoorBoeking);
         bevestiging.setTotaalPrijs(totaalPrijs);
-        return "test";
+
+        model.addAttribute("bevestiging", bevestiging);
+
+        return "layouts/boeking/bevestiging";
 }
 
     @RequestMapping("/reserveringen")
@@ -134,5 +126,52 @@ public class BoekingController {
     @RequestMapping("/afgelopen_reservaties")
     public String AfgelopenReserveringen() {
         return "layouts/boeking/afgelopen_reservaties";
+    }
+
+    private Klant getKlantVoorBevestigingReservering(ReserveringDto reserveringDetails) {
+        if(klantRepository.customerExists(reserveringDetails.getEmail()) == false) {
+            klantRepository.createCustomer(
+                    reserveringDetails.getVoornaam(),
+                    reserveringDetails.getNaam(),
+                    reserveringDetails.getTelefoon(),
+                    reserveringDetails.getEmail());
+        }
+        return klantRepository.getCustomerByEmail(reserveringDetails.getEmail());
+    }
+
+    private BigDecimal getTotalePrijsVoorBoeking(ArrayList<Prijs> prijzenReservatie) {
+        BigDecimal totaalPrijs = new BigDecimal(0);
+
+        for (Prijs prijs: prijzenReservatie) {
+            totaalPrijs = totaalPrijs.add(prijs.getPrijsPerKamer());
+        }
+        long diffDates = getVerschilDatums(datumAankomst, datumVertrek);
+
+        return totaalPrijs.multiply(new BigDecimal(diffDates));
+    }
+
+    private BigDecimal getBedragVoorschot(BigDecimal totaalPrijs) {
+        BigDecimal bedragVoorschot = new BigDecimal(0);
+        BigDecimal voorschotPercentage = new BigDecimal(10);
+        int dagenGeenVoorschot = 7;
+
+        var today = new Date(new java.util.Date().getTime());
+        long diffDates =  getVerschilDatums(today, datumAankomst);
+
+        if(diffDates > dagenGeenVoorschot)
+            bedragVoorschot = totaalPrijs.divide(voorschotPercentage);
+
+        return bedragVoorschot;
+    }
+
+    private void vulDatumsOp(String datumVan, String datumTot) {
+        datumAankomst = Date.valueOf(datumVan);
+        datumVertrek = (datumTot != "")
+                ? Date.valueOf(datumTot)
+                : null;
+    }
+
+    private long getVerschilDatums(Date datumVan, Date datumTot) {
+        return (datumTot.getTime() - datumVan.getTime()) / (24 * 60 * 60 * 1000);
     }
 }

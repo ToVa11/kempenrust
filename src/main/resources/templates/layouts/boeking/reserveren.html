@@ -29,9 +29,10 @@
                 <input type="date" class="form-control" id="datumAankomst" th:field="*{datumAankomst}" required>
             </div>
 
+            <!--Geen validatie of Datum vertrek na Datum aankomst ligt-->
             <div class="form-group col-md-4 mt-md-3">
                 <label for="datumVertrek">Datum vertrek</label>
-                <input type="date" class="form-control" id="datumVertrek" th:field="*{datumVertrek}">
+                <input type="date" class="form-control" id="datumVertrek" th:field="*{datumVertrek}" required>
             </div>
 
             <!-- Force next columns to break to new line -->
