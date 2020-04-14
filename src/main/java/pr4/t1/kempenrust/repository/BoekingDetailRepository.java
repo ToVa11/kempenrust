@@ -2,6 +2,8 @@ package pr4.t1.kempenrust.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import pr4.t1.kempenrust.model.Boeking;
@@ -10,6 +12,7 @@ import pr4.t1.kempenrust.model.Kamer;
 import pr4.t1.kempenrust.model.Klant;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -57,5 +60,24 @@ public class BoekingDetailRepository {
         }
 
         return details;
+    }
+
+    public int createReservationDetail(int boekingID, int kamerID) {
+        String SqlInsertStatement = "" +
+                "INSERT INTO BoekingDetails (BoekingID, KamerID) " +
+                "VALUES (?, ?)";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection
+                    .prepareStatement(SqlInsertStatement, new String[] {"BoekingDetailsID"});
+            ps.setInt(1, boekingID);
+            ps.setInt(2, kamerID);
+            return ps;
+        }, keyHolder);
+
+        // returns the PK of the newly created record
+        return keyHolder.getKey().intValue();
     }
 }

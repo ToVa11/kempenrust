@@ -8,16 +8,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import pr4.t1.kempenrust.model.*;
+import pr4.t1.kempenrust.model.DTO.ReserveringBevestigingDto;
 import pr4.t1.kempenrust.model.DTO.ReserveringDto;
 import pr4.t1.kempenrust.repository.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class BoekingController {
@@ -31,6 +29,8 @@ public class BoekingController {
     KamerRepository kamerRepository;
     @Autowired
     KlantRepository klantRepository;
+    @Autowired
+    PrijsRepository prijsRepository;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -89,8 +89,25 @@ public class BoekingController {
                 bedragVoorschot,
                 reserveringDetails.getAantalPersonen(),
                 datumAankomst,
-                datumVertrek);
+                datumVertrek,
+                reserveringDetails.getKamers());
 
+        ReserveringBevestigingDto bevestiging = new ReserveringBevestigingDto();
+
+        var boeking = boekingRepository.getReservationByID(BoekingID);
+        var prijsVoorBoeking = prijsRepository.GetPrijzenVoorReservatie(
+                boeking.getVerblijfsKeuzeID(),
+                reserveringDetails.getKamers()
+        );
+        BigDecimal totaalPrijs = new BigDecimal(0);
+
+        for (Prijs prijs: prijsVoorBoeking) {
+            totaalPrijs = totaalPrijs.add(prijs.getPrijsPerKamer());
+        }
+
+        bevestiging.setBoeking(boeking);
+        bevestiging.setPrijzenKamers(prijsVoorBoeking);
+        bevestiging.setTotaalPrijs(totaalPrijs);
         return "test";
 }
 
