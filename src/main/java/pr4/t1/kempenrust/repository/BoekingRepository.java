@@ -47,6 +47,7 @@ public class BoekingRepository {
             boeking.setBoekingID(boekingID);
             boeking.setKlant(klant);
         }
+        return boeking;
     }
 
     @Autowired

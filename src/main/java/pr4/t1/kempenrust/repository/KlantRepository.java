@@ -33,6 +33,7 @@ public class KlantRepository {
             klant.setNaam(rowSet.getString("naam"));
             klant.setVoornaam(rowSet.getString("voornaam"));
         }
+        return klant;
     }
 
     public Klant getKlantByEmail(String email) {

@@ -156,7 +156,7 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
         updateReserveringDTO.setAantalPersonen(boeking.getAantalPersonen());
         updateReserveringDTO.setKlant(boeking.getKlant());
         updateReserveringDTO.setBoekingID(Integer.parseInt(request.getParameter("Id")));
-        updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAllVerblijfsKeuzes());
+        updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
 
         if(redirectAttributes.containsAttribute("rows")) {
             model.addAttribute(redirectAttributes.getAttribute("rows"));
@@ -170,7 +170,7 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
         int rows = boekingRepository.updateBoeking(reservering.getDatumVan(),reservering.getDatumTot(),reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
 
         reservering.setKlant(klantRepository.getKlantVoorBoeking(reservering.getBoekingID()));
-        reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAllVerblijfsKeuzes());
+        reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
 
         redirectAttributes.addFlashAttribute("rows", rows);
 
@@ -182,7 +182,7 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
 
         boekingRepository.deleteBoeking(Integer.parseInt(request.getParameter("boekingID")));
 
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAllFutureDetails();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getAlleToekomstigeBoekingdetails();
 
         String message = "Reservatie verwijderd.";
 
