@@ -12,6 +12,7 @@ import pr4.t1.kempenrust.repository.BoekingRepository;
 import pr4.t1.kempenrust.repository.VerblijfsKeuzeRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 
 @Controller
 public class BeherenController {
@@ -64,5 +65,20 @@ public class BeherenController {
 
 
         return "layouts/beheren/reservering";
+    }
+
+    @RequestMapping("delete/reservering")
+    public String deleteReservering(HttpServletRequest request, Model model) {
+
+        boekingRepository.deleteBoeking(Integer.parseInt(request.getParameter("boekingID")));
+
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getDetailsInToekomst();
+
+        String message = "Reservatie verwijderd.";
+
+        model.addAttribute("details",details);
+        model.addAttribute("message", message);
+
+        return "layouts/boeking/reserveringen";
     }
 }

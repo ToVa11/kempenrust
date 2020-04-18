@@ -23,7 +23,7 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h2 th:text=" 'Reservatie van '+ ${reservering.getBoekingDetail().getBoeking().getKlant().getVoornaam()} +' ' + ${reservering.getBoekingDetail().getBoeking().getKlant().getNaam()} + ' beheren'"></h2>
-    <div th:if="${rows!=null && rows>0}" class="alert alert-success">
+    <div th:if="${rows!=null && rows>0}" class="alert alert-primary">
         Update gelukt
     </div>
     <div th:if="${rows!=null && rows==0}" class="alert alert-danger">

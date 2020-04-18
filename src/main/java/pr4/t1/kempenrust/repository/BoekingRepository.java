@@ -23,4 +23,15 @@ public class BoekingRepository {
 
         return rows;
     }
+
+    public void deleteBoeking(int boekingID) {
+
+        Object[] params = { boekingID };
+        int[] types = {Types.INTEGER};
+        String sqlDeleteBoekingDetails = "DELETE FROM boekingdetails WHERE boekingID = ?";
+        String sqlDeleteBoekingen = "DELETE FROM boekingen WHERE boekingID = ?";
+
+        jdbcTemplate.update(sqlDeleteBoekingDetails,params,types);
+        jdbcTemplate.update(sqlDeleteBoekingen,params,types);
+    }
 }
