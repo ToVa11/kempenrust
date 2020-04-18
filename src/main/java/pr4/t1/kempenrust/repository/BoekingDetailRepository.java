@@ -19,11 +19,9 @@ public class BoekingDetailRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ArrayList<BoekingDetail> getAllFutureDetails() {
+    public ArrayList<BoekingDetail> getDetailsInToekomst() {
 
         ArrayList<BoekingDetail> details = new ArrayList<>();
-
-        Date datumVan = new Date(new java.util.Date().getTime());
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
                     "SELECT * FROM boekingDetails INNER JOIN " +
@@ -83,6 +81,8 @@ public class BoekingDetailRepository {
 
             boeking.setDatumVan(rowSet.getDate("datumVan"));
             boeking.setDatumTot(rowSet.getDate("datumTot"));
+            boeking.setAantalPersonen(rowSet.getInt("aantalPersonen"));
+            boeking.setVerblijfsKeuzeID(rowSet.getInt("verblijfsKeuzeID"));
 
             kamer.setKamerNummer(rowSet.getInt("kamerNummer"));
 
