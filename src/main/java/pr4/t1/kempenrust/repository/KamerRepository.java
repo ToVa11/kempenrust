@@ -53,7 +53,7 @@ public class KamerRepository {
         jdbcTemplate.update("DELETE FROM Kamers WHERE KamerID =? ",kamerID);
     }
 
-    public ArrayList<Prijs> getAllAvailableRooms(int verblijfskeuzeID, Date datumAankomst, Date datumVertrek) {
+    public ArrayList<Prijs> getAlleVrijeKamers(int verblijfskeuzeID, Date datumAankomst, Date datumVertrek) {
         ArrayList<Prijs> prijzenKamers = new ArrayList<>();
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +

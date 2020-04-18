@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!--  main-fragment (title, nav, mainContent, footer)  -->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #nav-kempenrust},
+                                                ~{:: #main-content-kempenrust},
+                                                ~{:: #footer-kempenrust}
+                                               )}">
+<head>
+    <!-- Required meta tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- Kan je aanpassen = tabblad titel-->
+    <title>Bevestiging</title>
+</head>
+<body>
+
+<div id="nav-kempenrust" th:replace="~{/fragments/app-fragments :: nav-default}">
+    Nav
+</div>
+
+<div id="main-content-kempenrust">
+    <!-- Enkel hier en title aanpassen!! Rest laten staan-->
+    <div class="row mt-2" th:object="${bevestiging}">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between">
+                <div class="d-flex">
+                    <h3 class="mt-1"><i class="fas fa-check-circle fa-2x"></i></h3>
+                    <div class="ml-3">
+                        <h4 class="mb-0">Boeking <span th:text="*{getBoeking().getBoekingID()}"></span></h4>
+                        <h2>Thank you, <span th:text="*{getBoeking().getKlant().getVoornaam()}"></span></h2>
+                    </div>
+                </div>
+                <div>
+                    <a class="btn btn-primary d-print-none" th:href="@{/}"><i class="fas fa-backspace"></i></a>
+                    <button class="btn btn-primary d-print-none" onclick="window.print()"><i class="fas fa-print"></i></button>
+                </div>
+            </div>
+
+            <hr class="bg-secondary"/>
+
+            <p>We hebben uw boeking goed ontvangen.</p>
+            <div th:if="*{getBoeking().getBedragVoorschot() > 0}">
+                <p>Deze boeking wordt slechts definitief na betaling van het voorschot van <span th:text="*{getBoeking().getBedragVoorschot()}"></span> euro.</p>
+            </div>
+
+            <hr class="bg-secondary"/>
+
+            <h4>Boeking details</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Klant gegevens</h6>
+                    <p class="mb-0" th:text="*{getBoeking().getKlant().getVoornaam()} + ' ' + *{getBoeking().getKlant().getNaam()}"></p>
+                    <div th:if="*{getBoeking().getKlant().getStraat() != null}">
+                        <p class="mb-0" th:text="*{getBoeking().getKlant().getStraat()} + ' ' + *{getBoeking().getKlant().getHuisnummer()}"></p>
+                        <p class="mb-0" th:text="*{getBoeking().getKlant().getPostcode()}"></p>
+                    </div>
+                    <p class="mb-0">Email: <span th:text="*{getBoeking().getKlant().getEmail()}"></span></p>
+                    <div th:if="*{!getBoeking().getKlant().getTelefoonnummer().isEmpty()}">
+                        <p class="mb-0">Tel: <span th:text="*{getBoeking().getKlant().getTelefoonnummer()}"></span></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h6>Boeking gegevens</h6>
+                    <p class="mb-0">Arrangement: <span th:text="*{getBoeking().getVerblijfsKeuze().getNaam()}"></span></p>
+                    <p class="mb-0">Aantal personen: <span th:text="*{getBoeking().getAantalPersonen()}"></span></p>
+                    <p class="mb-0">Van: <span th:text="*{#dates.format(getBoeking().getDatumVan(), 'd MMMM yyyy')}"></span></p>
+                    <p class="mb-0">Tot: <span th:text="*{#dates.format(getBoeking().getDatumTot(), 'd MMMM yyyy')}"></span></p>
+                </div>
+                <div class="col">
+                    <h6>Kamer gegevens</h6>
+                    <ul class="list-unstyled">
+                        <li th:each="prijskamer: *{getPrijzenKamers()}">
+                            Kamer <span th:text="${prijskamer.getKamer().getKamerNummer()}"></span> (
+                            <span th:text="${prijskamer.getKamer().getKamerType().getOmschrijving()}"></span>)
+                            <span th:text="${prijskamer.getPrijsPerKamer()}"></span> EUR per nacht
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <h5 class="card-header">
+                    Samenvatting
+                </h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <p class="font-weight-bold mb-0">Totaal</p>
+                        <p class="mb-0"><span th:text="*{getTotaalPrijs()}"></span> EUR</p>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <p class="font-weight-bold mb-0">Voorschot</p>
+                        <p class="mb-0"><span th:text="*{getBoeking().getBedragVoorschot()}"></span> EUR</p>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <p class="font-weight-bold mb-0">Eindtotaal</p>
+                        <p class="mb-0"><span th:text="*{getTotaalPrijs() - getBoeking().getBedragVoorschot()}"></span> EUR</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
+    Footer
+</div>
+</body>
+</html>
