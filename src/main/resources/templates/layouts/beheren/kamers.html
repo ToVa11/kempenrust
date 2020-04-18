@@ -23,6 +23,43 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Kamers</h1>
+    <table class="table" th:if="${kamers.size()!=0}">
+        <thead>
+        <tr>
+            <th>Kamer Nummer</th>
+            <th>Omschrijving</th>
+            <th>Onbeschikbaar Van</th>
+            <th>Onbeschikbaar Tot</th>
+            <th>
+                <a th:href="@{/nieweKamerToeveogen}"
+                   class="btn btn-secondary">
+                    <i class="fas fa-plus"></i></a>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr  th:each="kamer :${kamers}">
+            <td th:text="${kamer.kamerNummer}"></td>
+            <td th:text="${kamer.omschrijving}"></td>
+            <td th:text="${#dates.format(kamer.datumVan,'dd/MM/yyyy')}">Beschikbaar</td>
+            <td th:text="${#dates.format(kamer.datumTot,'dd/MM/yyyy')}">Beschikbaar</td>
+            <td>
+                <a class="btn btn-secondary"
+                    th:href="@{/kamerAanpassen(kamerId=${kamer.kamerID})}">
+                    <li class="fas fa-pen"></li></a>
+                <a class="btn btn-secondary"
+                        th:href="@{/kamerVerwijderen(kamerId=${kamer.kamerID})}">
+                    <li class="fas fa-trash"></li></a>
+            </td>
+            </td>
+            <td>
+                <a class="btn btn-secondary"
+                th:href="@{/kamerBeschikbaarheid(kamerId=${kamer.kamerID})}">
+                Beschikbaarheid</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
 <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">

@@ -2,6 +2,7 @@ package pr4.t1.kempenrust.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -15,10 +16,13 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.util.List;
 
+import pr4.t1.kempenrust.DTO.KamerBeheer;
+
 @Repository
 public class BoekingRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
     @Autowired
     private BoekingDetailRepository boekingDetailRepository;
 
@@ -80,7 +84,7 @@ public class BoekingRepository {
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
-                    .prepareStatement(SqlInsertStatement, new String[] {"BoekingID"});
+                    .prepareStatement(SqlInsertStatement, new String[]{"BoekingID"});
             ps.setInt(1, klantID);
             ps.setInt(2, verblijfsKeuzeID);
             ps.setDate(3, new Date(new java.util.Date().getTime()));
@@ -93,13 +97,34 @@ public class BoekingRepository {
         }, keyHolder);
 
         // gets the PK of the newly created record
-        int boekingID =  keyHolder.getKey().intValue();
+        int boekingID = keyHolder.getKey().intValue();
 
-        for (int kamerID:
-             kamers) {
+        for (int kamerID :
+                kamers) {
             boekingDetailRepository.toevoegenBoekingsdetails(boekingID, kamerID);
         }
 
         return boekingID;
+    }
+
+    public KamerBeheer getGeboekteKamer(int kamerID){
+        KamerBeheer kamer=new KamerBeheer();
+        SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT *" +
+                "from " +
+                        "(((kamers  INNER JOIN BoekingDetails " +
+                                "ON kamers.KAMERID = BoekingDetails.KamerID) " +
+                        "INNER JOIN Boekingen " +
+                            "ON Boekingen.BoekingID = BoekingDetails.BoekingID )" +
+                        "INNER JOIN Prijzen " +
+                            "ON Prijzen.KamerID=Kamers.kamerID )" +
+                "WHERE Kamers.kamerID = ? ",kamerID);
+        while(rowSet.next()){
+            kamer.setKamerID(rowSet.getInt("KamerID"));
+            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
+            kamer.setDatumVan(rowSet.getDate("DatumVan"));
+            kamer.setDatumTot(rowSet.getDate("DatumTot"));
+            kamer.setGeboekt(true);
+        }
+        return  kamer;
     }
 }
