@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!--  main-fragment (title, nav, mainContent, footer)  -->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #nav-kempenrust},
+                                                ~{:: #main-content-kempenrust},
+                                                ~{:: #footer-kempenrust}
+                                               )}">
+<head>
+    <!-- Required meta tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- Kan je aanpassen = tabblad titel-->
+    <title>Kamers</title>
+</head>
+<body>
+
+<div id="nav-kempenrust" th:replace="~{/fragments/app-fragments :: nav-default}">
+    Nav
+</div>
+
+<div id="main-content-kempenrust">
+    <!-- Enkel hier en title aanpassen!! Rest laten staan-->
+    <h1>Attentie</h1>
+
+    <div class="col-md-8">
+        <table class="table" th:if="${kamer.datumVan}">
+            <thead>
+            <h2 th:text="${kamer.omschrijving}"></h2>
+            <tr>
+                <th>Datum Van</th>
+                <th>Datum Tot</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td th:text="${#dates.format(kamer.datumVan,'dd/MM/yyyy')}"></td>
+                <td th:text="${#dates.format(kamer.datumTot,'dd/MM/yyyy')}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/kamers}" class="btn btn-primary w-90" >Terug naar de lijst</a>
+    </div>
+</div>
+<div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
+    Footer
+</div>
+
+</body>
+</html>

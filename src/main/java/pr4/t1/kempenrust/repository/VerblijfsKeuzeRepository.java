@@ -13,7 +13,7 @@ public class VerblijfsKeuzeRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ArrayList<VerblijfsKeuze> getAllVerblijfsKeuzes() {
+    public ArrayList<VerblijfsKeuze> getAlleVerblijfsKeuzes() {
 
         ArrayList<VerblijfsKeuze> verblijfsKeuzes = new ArrayList<>();
 
