@@ -22,7 +22,7 @@ public class BoekingDetailRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ArrayList<BoekingDetail> getAllFutureDetails() {
+    public ArrayList<BoekingDetail> getAlleToekomstigeBoekingdetails() {
 
         ArrayList<BoekingDetail> details = new ArrayList<>();
 
@@ -62,7 +62,7 @@ public class BoekingDetailRepository {
         return details;
     }
 
-    public int createReservationDetail(int boekingID, int kamerID) {
+    public int toevoegenBoekingsdetails(int boekingID, int kamerID) {
         String SqlInsertStatement = "" +
                 "INSERT INTO BoekingDetails (BoekingID, KamerID) " +
                 "VALUES (?, ?)";

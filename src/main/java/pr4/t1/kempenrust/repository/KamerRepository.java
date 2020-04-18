@@ -16,7 +16,7 @@ public class KamerRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ArrayList<Prijs> getAllAvailableRooms(int verblijfskeuzeID, Date datumAankomst, Date datumVertrek) {
+    public ArrayList<Prijs> getAlleVrijeKamers(int verblijfskeuzeID, Date datumAankomst, Date datumVertrek) {
         ArrayList<Prijs> prijzenKamers = new ArrayList<>();
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +

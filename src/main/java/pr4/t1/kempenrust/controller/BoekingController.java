@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class BoekingController {
@@ -42,7 +41,7 @@ public class BoekingController {
     public String Reserveren(Model model) {
 
         ReserveringDto reserveringDto = new ReserveringDto();
-        reserveringDto.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAllVerblijfsKeuzes());
+        reserveringDto.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
 
         model.addAttribute("reserveringDetails", reserveringDto);
 
@@ -54,11 +53,11 @@ public class BoekingController {
     public String ZoekKamers(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model) {
         vulDatumsOp(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
-        reserveringDetails.setPrijsVrijeKamers(kamerRepository.getAllAvailableRooms(reserveringDetails.getKeuzeArrangement(), datumAankomst, datumVertrek));
+        reserveringDetails.setPrijsVrijeKamers(kamerRepository.getAlleVrijeKamers(reserveringDetails.getKeuzeArrangement(), datumAankomst, datumVertrek));
 
         //Hier ga ik nog eens verblijfskeuzes ophalen, hebben jullie een betere oplossing?
         //object Dto kan geen complexe objecten doorsturen (enkel int, double, String & List (van de afgelopen 3)
-        reserveringDetails.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAllVerblijfsKeuzes());
+        reserveringDetails.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
 
         model.addAttribute("reserveringDetails", reserveringDetails);
 
@@ -81,7 +80,7 @@ public class BoekingController {
 
         BigDecimal bedragVoorschot = getBedragVoorschot(totaalPrijs);
 
-        int BoekingID = boekingRepository.createReservation(
+        int BoekingID = boekingRepository.toevoegenReservatie(
                 klant.getKlantID(),
                 reserveringDetails.getKeuzeArrangement(),
                 bedragVoorschot,
@@ -92,7 +91,7 @@ public class BoekingController {
 
         ReserveringBevestigingDto bevestiging = new ReserveringBevestigingDto();
 
-        var boeking = boekingRepository.getReservationByID(BoekingID);
+        var boeking = boekingRepository.getReservatieByID(BoekingID);
 
         bevestiging.setBoeking(boeking);
         bevestiging.setPrijzenKamers(prijsVoorBoeking);
@@ -106,7 +105,7 @@ public class BoekingController {
     @RequestMapping("/reserveringen")
     public String Reserveringen(Model model) {
 
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAllFutureDetails();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getAlleToekomstigeBoekingdetails();
 
         model.addAttribute("details",details);
 
@@ -130,13 +129,13 @@ public class BoekingController {
 
     private Klant getKlantVoorBevestigingReservering(ReserveringDto reserveringDetails) {
         if(klantRepository.customerExists(reserveringDetails.getEmail()) == false) {
-            klantRepository.createCustomer(
+            klantRepository.toevoegenKlant(
                     reserveringDetails.getVoornaam(),
                     reserveringDetails.getNaam(),
                     reserveringDetails.getTelefoon(),
                     reserveringDetails.getEmail());
         }
-        return klantRepository.getCustomerByEmail(reserveringDetails.getEmail());
+        return klantRepository.getKlantByEmail(reserveringDetails.getEmail());
     }
 
     private BigDecimal getTotalePrijsVoorBoeking(ArrayList<Prijs> prijzenReservatie) {

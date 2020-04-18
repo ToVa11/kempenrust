@@ -22,7 +22,7 @@ public class BoekingRepository {
     @Autowired
     private BoekingDetailRepository boekingDetailRepository;
 
-    public Boeking getReservationByID(int boekingID) {
+    public Boeking getReservatieByID(int boekingID) {
         Boeking boeking = null;
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
@@ -71,7 +71,7 @@ public class BoekingRepository {
         return boeking;
     }
 
-    public int createReservation(int klantID, int verblijfsKeuzeID, BigDecimal bedragVoorschot, int aantalPersonen, Date datumVan, Date datumTot, List<Integer> kamers) {
+    public int toevoegenReservatie(int klantID, int verblijfsKeuzeID, BigDecimal bedragVoorschot, int aantalPersonen, Date datumVan, Date datumTot, List<Integer> kamers) {
         String SqlInsertStatement = "" +
                 "INSERT INTO Boekingen (KlantID, VerblijfsKeuzeID, Datum, BedragVoorschot, AantalPersonen, DatumVan, DatumTot, IsBetaald) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -97,7 +97,7 @@ public class BoekingRepository {
 
         for (int kamerID:
              kamers) {
-            boekingDetailRepository.createReservationDetail(boekingID, kamerID);
+            boekingDetailRepository.toevoegenBoekingsdetails(boekingID, kamerID);
         }
 
         return boekingID;

@@ -15,7 +15,7 @@ public class KlantRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public Klant getCustomerByEmail(String email) {
+    public Klant getKlantByEmail(String email) {
         Klant klant = null;
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
                 "SELECT * " +
@@ -39,7 +39,7 @@ public class KlantRepository {
         return klant;
     }
 
-    public int createCustomer(String voornaam, String achternaam, String telefoonnummer, String email){
+    public int toevoegenKlant(String voornaam, String achternaam, String telefoonnummer, String email){
         String SqlInsertStatement = "" +
                 "INSERT INTO Klanten (Voornaam, Naam, Telefoonnummer, Email) " +
                 "VALUES (?, ?, ?, ?)";
