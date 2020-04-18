@@ -19,7 +19,7 @@ public class BoekingDetailRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ArrayList<BoekingDetail> getDetailsInToekomst() {
+    public ArrayList<BoekingDetail> getAllFutureDetails() {
 
         ArrayList<BoekingDetail> details = new ArrayList<>();
 
@@ -58,14 +58,13 @@ public class BoekingDetailRepository {
         return details;
     }
 
-    public BoekingDetail getReservingByID(int ID) {
+    public BoekingDetail getReserveringByID(int ID) {
         BoekingDetail reservering = new BoekingDetail();
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
                 "SELECT * FROM boekingdetails INNER JOIN " +
                         "(boekingen INNER JOIN klanten ON boekingen.klantId = klanten.klantId) " +
                         "ON boekingDetails.boekingId = boekingen.boekingID " +
-                        "INNER JOIN kamers ON boekingDetails.kamerId = kamers.kamerId " +
                         "WHERE " +
                         "boekingdetails.boekingId = ?"
                 , ID);
@@ -73,7 +72,6 @@ public class BoekingDetailRepository {
         while(rowSet.next()) {
             Klant klant = new Klant();
             Boeking boeking = new Boeking();
-            Kamer kamer = new Kamer();
 
             klant.setEmail(rowSet.getString("email"));
             klant.setNaam(rowSet.getString("naam"));
@@ -85,10 +83,7 @@ public class BoekingDetailRepository {
             boeking.setVerblijfsKeuzeID(rowSet.getInt("verblijfsKeuzeID"));
             boeking.setBoekingID(rowSet.getInt("boekingID"));
 
-            kamer.setKamerNummer(rowSet.getInt("kamerNummer"));
-
             boeking.setKlant(klant);
-            reservering.setKamer(kamer);
             reservering.setBoeking(boeking);
 
         }

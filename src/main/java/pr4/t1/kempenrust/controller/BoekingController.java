@@ -9,19 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import pr4.t1.kempenrust.model.BoekingDetail;
 import pr4.t1.kempenrust.model.DTO.ReserveringDto;
-import pr4.t1.kempenrust.model.Kamer;
-import pr4.t1.kempenrust.model.Prijs;
-import pr4.t1.kempenrust.model.VerblijfsKeuze;
 import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.KamerRepository;
 import pr4.t1.kempenrust.repository.VerblijfsKeuzeRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class BoekingController {
@@ -75,7 +70,7 @@ public class BoekingController {
     @RequestMapping("/reserveringen")
     public String Reserveringen(Model model) {
 
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getDetailsInToekomst();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getAllFutureDetails();
 
         model.addAttribute("details",details);
 

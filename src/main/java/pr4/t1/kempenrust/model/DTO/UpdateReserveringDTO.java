@@ -1,13 +1,14 @@
 package pr4.t1.kempenrust.model.DTO;
 
 import pr4.t1.kempenrust.model.BoekingDetail;
+import pr4.t1.kempenrust.model.Klant;
 import pr4.t1.kempenrust.model.VerblijfsKeuze;
 
 import java.util.List;
 
 public class UpdateReserveringDTO {
 
-    private BoekingDetail boekingDetail;
+    private Klant klant;
     private List<VerblijfsKeuze> verblijfsKeuzes;
     private String datumVan;
     private String datumTot;
@@ -15,6 +16,13 @@ public class UpdateReserveringDTO {
     private int aantalPersonen;
     private int boekingID;
 
+    public Klant getKlant() {
+        return klant;
+    }
+
+    public void setKlant(Klant klant) {
+        this.klant = klant;
+    }
     public int getBoekingID() {
         return boekingID;
     }
@@ -53,14 +61,6 @@ public class UpdateReserveringDTO {
 
     public void setAantalPersonen(int aantalPersonen) {
         this.aantalPersonen = aantalPersonen;
-    }
-
-    public BoekingDetail getBoekingDetail() {
-        return boekingDetail;
-    }
-
-    public void setBoekingDetail(BoekingDetail boekingDetail) {
-        this.boekingDetail = boekingDetail;
     }
 
     public List<VerblijfsKeuze> getVerblijfsKeuzes() {

@@ -5,10 +5,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pr4.t1.kempenrust.model.Boeking;
 import pr4.t1.kempenrust.model.BoekingDetail;
 import pr4.t1.kempenrust.model.DTO.UpdateReserveringDTO;
 import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.BoekingRepository;
+import pr4.t1.kempenrust.repository.KlantRepository;
 import pr4.t1.kempenrust.repository.VerblijfsKeuzeRepository;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +26,8 @@ public class BeherenController {
     VerblijfsKeuzeRepository verblijfsKeuzeRepository;
     @Autowired
     BoekingRepository boekingRepository;
+    @Autowired
+    KlantRepository klantRepository;
 
     //    Hier komen alle methodes in die iets te maken hebben met het beheren (CRUD) van het hotel
     @RequestMapping("/kamers")
@@ -36,35 +41,35 @@ public class BeherenController {
     }
 
     @RequestMapping("/reservering")
-    public String Reservering(Model model, HttpServletRequest request) {
-        BoekingDetail detail = boekingDetailRepository.getReservingByID(Integer.parseInt(request.getParameter("Id")));
+    public String Reservering(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        Boeking boeking = boekingRepository.getBoeking(Integer.parseInt(request.getParameter("Id")));
 
         UpdateReserveringDTO updateReserveringDTO = new UpdateReserveringDTO();
-        updateReserveringDTO.setDatumVan(detail.getBoeking().getDatumVan().toString());
-        updateReserveringDTO.setDatumTot(detail.getBoeking().getDatumTot().toString());
-        updateReserveringDTO.setVerblijfskeuzeID(detail.getBoeking().getVerblijfsKeuzeID());
-        updateReserveringDTO.setAantalPersonen(detail.getBoeking().getAantalPersonen());
-        updateReserveringDTO.setBoekingDetail(detail);
-        updateReserveringDTO.setBoekingID(detail.getBoeking().getBoekingID());
+        updateReserveringDTO.setDatumVan(boeking.getDatumVan().toString());
+        updateReserveringDTO.setDatumTot(boeking.getDatumTot().toString());
+        updateReserveringDTO.setVerblijfskeuzeID(boeking.getVerblijfsKeuzeID());
+        updateReserveringDTO.setAantalPersonen(boeking.getAantalPersonen());
+        updateReserveringDTO.setKlant(boeking.getKlant());
+        updateReserveringDTO.setBoekingID(Integer.parseInt(request.getParameter("Id")));
         updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAllVerblijfsKeuzes());
 
+        if(redirectAttributes.containsAttribute("rows")) {
+            model.addAttribute(redirectAttributes.getAttribute("rows"));
+        }
         model.addAttribute("reservering", updateReserveringDTO);
         return "layouts/beheren/reservering";
     }
 
     @RequestMapping("/update/reservering")
-    public String updateReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, Model model) {
+    public String updateReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes) {
         int rows = boekingRepository.updateBoeking(reservering.getDatumVan(),reservering.getDatumTot(),reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
 
-        BoekingDetail detail = boekingDetailRepository.getReservingByID(reservering.getBoekingID());
-        reservering.setBoekingDetail(detail);
+        reservering.setKlant(klantRepository.getKlantVoorBoeking(reservering.getBoekingID()));
         reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAllVerblijfsKeuzes());
 
-        model.addAttribute("reservering", reservering);
-        model.addAttribute("rows", rows);
+        redirectAttributes.addFlashAttribute("rows", rows);
 
-
-        return "layouts/beheren/reservering";
+        return "redirect:/reservering?Id="+reservering.getBoekingID();
     }
 
     @RequestMapping("delete/reservering")
@@ -72,7 +77,7 @@ public class BeherenController {
 
         boekingRepository.deleteBoeking(Integer.parseInt(request.getParameter("boekingID")));
 
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getDetailsInToekomst();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getAllFutureDetails();
 
         String message = "Reservatie verwijderd.";
 
