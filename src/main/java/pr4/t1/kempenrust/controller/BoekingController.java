@@ -75,7 +75,7 @@ public class BoekingController {
     @RequestMapping("/reserveringen")
     public String Reserveringen(Model model) {
 
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAllFutureDetails();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getDetailsInToekomst();
 
         model.addAttribute("details",details);
 
