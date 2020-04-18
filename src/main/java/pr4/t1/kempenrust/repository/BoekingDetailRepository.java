@@ -83,6 +83,7 @@ public class BoekingDetailRepository {
             boeking.setDatumTot(rowSet.getDate("datumTot"));
             boeking.setAantalPersonen(rowSet.getInt("aantalPersonen"));
             boeking.setVerblijfsKeuzeID(rowSet.getInt("verblijfsKeuzeID"));
+            boeking.setBoekingID(rowSet.getInt("boekingID"));
 
             kamer.setKamerNummer(rowSet.getInt("kamerNummer"));
 

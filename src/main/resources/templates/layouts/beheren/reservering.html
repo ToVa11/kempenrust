@@ -12,7 +12,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <!-- Kan je aanpassen = tabblad titel-->
-    <title th:text=" 'Reservatie '+ ${reservering.getReservering().getBoeking().getKlant().getVoornaam()} +' ' + ${reservering.getReservering().getBoeking().getKlant().getNaam()} "> </title>
+    <title th:text=" 'Reservatie '+ ${reservering.getBoekingDetail().getBoeking().getKlant().getVoornaam()} +' ' + ${reservering.getBoekingDetail().getBoeking().getKlant().getNaam()} "> </title>
 </head>
 <body>
 
@@ -22,18 +22,24 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h2 th:text=" 'Reservatie van '+ ${reservering.getReservering().getBoeking().getKlant().getVoornaam()} +' ' + ${reservering.getReservering().getBoeking().getKlant().getNaam()} + ' beheren'"></h2>
-
+    <h2 th:text=" 'Reservatie van '+ ${reservering.getBoekingDetail().getBoeking().getKlant().getVoornaam()} +' ' + ${reservering.getBoekingDetail().getBoeking().getKlant().getNaam()} + ' beheren'"></h2>
+    <div th:if="${rows!=null && rows>0}" class="alert alert-success">
+        Update gelukt
+    </div>
+    <div th:if="${rows!=null && rows==0}" class="alert alert-danger">
+        Update niet gelukt.
+    </div>
     <form action="#" data-th-action="@{update/reservering}" th:object="${reservering}"  method="post">
+        <input type="hidden" th:field="*{boekingID}">
         <div class="row">
             <div class="form-group col-md-4 mt-3">
                 <label for="datumAankomst">Datum aankomst</label>
-                <input type="date" class="form-control" id="datumAankomst" th:value="*{#dates.format(getReservering().boeking.getDatumVan(), 'yyyy-MM-dd')}"  required>
+                <input type="date" class="form-control" id="datumAankomst" th:field="*{datumVan}" required>
             </div>
 
             <div class="form-group col-md-4 mt-md-3">
                 <label for="datumVertrek">Datum vertrek</label>
-                <input type="date" class="form-control" id="datumVertrek" th:value="*{#dates.format(getReservering().boeking.getDatumTot(), 'yyyy-MM-dd')}" >
+                <input type="date" class="form-control" id="datumVertrek" th:field="*{datumTot}" >
             </div>
 
             <!-- Force next columns to break to new line -->
@@ -41,14 +47,14 @@
 
             <div class="form-group col-md-4">
                 <label for="aantalPersonen">Aantal personen</label>
-                <input type="number" class="form-control" id="aantalPersonen" min="1" required th:value="*{getReservering().getBoeking().getAantalPersonen()}">
+                <input type="number" class="form-control" id="aantalPersonen" min="1" required th:field="*{aantalPersonen}" >
             </div>
 
             <div class="form-group col-md-4">
                 <label for="keuzeArrangement">Type Arrangement</label>
-                <select class="form-control" id="keuzeArrangement" required>
+                <select class="form-control" id="keuzeArrangement" th:field="*{verblijfskeuzeID}" required>
                     <option th:each="keuze : *{getVerblijfsKeuzes()}"
-                            th:selected="${keuze.getVerblijfskeuzeID() == reservering.getReservering().getBoeking().getVerblijfsKeuzeID()}"
+                            th:selected="${keuze.getVerblijfskeuzeID() == reservering.getVerblijfskeuzeID()}"
                             th:text="${keuze.getNaam()}"
                             th:value="${keuze.getVerblijfskeuzeID()}"></option>
                 </select>
