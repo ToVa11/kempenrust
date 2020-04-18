@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import pr4.t1.kempenrust.DTO.BoekingDetailDto;
+import pr4.t1.kempenrust.DTO.KamerBeheer;
 import pr4.t1.kempenrust.model.BoekingDetail;
 import pr4.t1.kempenrust.model.DTO.ReserveringDto;
 import pr4.t1.kempenrust.model.Kamer;
@@ -93,7 +95,31 @@ public class BoekingController {
     }
 
     @RequestMapping("/afgelopen_reservaties")
-    public String AfgelopenReserveringen() {
+    public String AfgelopenReserveringen(Model model) {
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties ();
+        BoekingDetailDto boekingDetailDto=new BoekingDetailDto();
+        model.addAttribute("details",details);
+        model.addAttribute("boekingDetailDto",boekingDetailDto);
+
+        return "layouts/boeking/afgelopen_reservaties";
+    }
+
+    @PostMapping("/afgelopen_reservaties")
+    public String AfgelopenReserveringen(Model model,@ModelAttribute("KamerBeheer") BoekingDetailDto boekingDetailDto) {
+        if (boekingDetailDto.getDatumVan() !="" && boekingDetailDto.getDatumTot() !="")
+        {
+            var datumVan = Date.valueOf(boekingDetailDto.getDatumVan());
+            var datumTot = Date.valueOf(boekingDetailDto.getDatumTot());
+
+            ArrayList<BoekingDetailDto> details = boekingDetailRepository
+            .getAlleDetailsMetDatums(datumVan,datumTot);
+            model.addAttribute("details",details);
+            model.addAttribute("boekingDetailDto",boekingDetailDto);
+            return "layouts/boeking/afgelopen_reservaties";
+        }
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties ();
+        model.addAttribute("details",details);
+        model.addAttribute("boekingDetailDto",boekingDetailDto);
         return "layouts/boeking/afgelopen_reservaties";
     }
 }
