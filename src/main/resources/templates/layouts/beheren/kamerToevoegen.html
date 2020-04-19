@@ -31,26 +31,31 @@
                 <input name="kamerNummer" th:field="*{kamerNummer}" id="kamerNummer" type="text" class="form-control" required/>
             </div>
             <div class="form-group col-md-8">
-                <label for="kamerNummer">Omchrijving Kamer</label>
-                <select  class="custom-select" id="omschrijving" th:field="*{kamerTypeID}" name="omschrijving" required>
-                    <option th:each="kamerType : ${kamer.kamerTypes}"
-                            th:value="${kamerType.kamerTypeID}"
-                            th:text="${kamerType.omschrijving}">
-                    </option>
-                </select>
+                <label for="kamerNummer">Omschrijving Kamer</label>
+                <div class="form-row">
+                    <div class="col-10">
+                    <select  class="custom-select" id="omschrijving" th:field="*{kamerTypeID}" name="omschrijving" required>
+                        <option th:each="kamerType : ${kamer.kamerTypes}"
+                                th:value="${kamerType.kamerTypeID}"
+                                th:text="${kamerType.omschrijving}">
+                        </option>
+                    </select>
+                    </div>
+                    <div class="col">
+                    <a role="button" data-toggle="collapse" data-target="#kamerTypeToevoegen"
+                       aria-expanded="true"  class="btn btn-secondary btn-custom-a" >
+                        <i class="fas fa-plus"></i>
+                    </a>
+                    </div>
+                </div>
             </div>
             <div class="form-group col-md-8">
                 <button type="submit" class="btn btn-primary w-100" name="toevoegen">Toevoegen</button>
             </div>
         </form>
-        <div class="form-group col-md-8">
-            <button data-toggle="collapse" data-target="#kamerTypeToevoegen"
-               aria-expanded="true"  class="btn btn-primary w-100">
-                Nieuwe Kamer Type Toevoegen
-            </button>
-        </div>
     </div>
     <div id="kamerTypeToevoegen" class="collapse">
+        <h1>Nieuw Type Kamer Toevoegen</h1>
         <div class="col-md-8">
             <form th:action="@{/KamerTypeToevoegen}" method="post" th:object="${kamer}" >
                 <div class="form-group col-md-8">
