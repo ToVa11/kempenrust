@@ -12,6 +12,11 @@ import pr4.t1.kempenrust.model.DTO.ReserveringBevestigingDto;
 import pr4.t1.kempenrust.DTO.BoekingDetailDto;
 import pr4.t1.kempenrust.model.BoekingDetail;
 import pr4.t1.kempenrust.model.DTO.ReserveringDto;
+import pr4.t1.kempenrust.repository.BoekingDetailRepository;
+import pr4.t1.kempenrust.repository.KamerRepository;
+import pr4.t1.kempenrust.repository.VerblijfsKeuzeRepository;
+
+import javax.servlet.http.HttpServletRequest;
 import pr4.t1.kempenrust.repository.*;
 
 import java.math.BigDecimal;
