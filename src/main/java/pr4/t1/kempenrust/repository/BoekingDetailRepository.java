@@ -156,9 +156,10 @@ public class BoekingDetailRepository {
                             "ON BOEKINGDETAILS.KAMERID =KAMERS .KAMERID  " +
                         "INNER JOIN KLANTEN " +
                             "ON BOEKINGEN.KLANTID =KLANTEN .KLANTID " +
-                        "WHERE BOEKINGEN.DatumTot < ? " +
-                        "AND BOEKINGEN.DatumTot  BETWEEN '"+datumVan+"' AND '"+datumTot+"'" +
-                        "ORDER BY BOEKINGEN.DatumTot", Date.valueOf(LocalDate.now()));
+                        "WHERE ( '"+datumVan+"' >= BOEKINGEN.DatumVan  AND '"+datumTot+"' <= BOEKINGEN.DatumVan )" +
+                        "OR ('"+datumVan+"' >= BOEKINGEN.DatumTot  AND '"+datumTot+"' <= BOEKINGEN.DatumTot ) " +
+                        " OR ('"+datumVan+"' >= BOEKINGEN.DatumVan AND '"+datumTot+"' <= BOEKINGEN.DatumTot )" +
+                        "ORDER BY BOEKINGEN.DatumTot");
 
         while(rowSet.next()) {
             BoekingDetailDto detail = new BoekingDetailDto();
