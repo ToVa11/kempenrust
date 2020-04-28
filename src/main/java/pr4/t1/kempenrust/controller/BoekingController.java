@@ -143,6 +143,8 @@ public class BoekingController {
 
             ArrayList<BoekingDetailDto> details = boekingDetailRepository
             .getAlleDetailsMetDatums(datumVan,datumTot);
+            boekingDetailDto.setDatumVan(null);
+            boekingDetailDto.setDatumTot(null);
             model.addAttribute("details",details);
             model.addAttribute("boekingDetailDto",boekingDetailDto);
             return "layouts/boeking/afgelopen_reservaties";
