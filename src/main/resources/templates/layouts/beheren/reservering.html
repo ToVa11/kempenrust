@@ -23,11 +23,8 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h2 th:text=" 'Reservatie van '+ ${reservering.getKlant().getVoornaam()} +' ' + ${reservering.getKlant().getNaam()} + ' beheren'"></h2>
-    <div th:if="${rows!=null && rows>0}" class="alert alert-primary">
-        Update gelukt
-    </div>
-    <div th:if="${rows!=null && rows==0}" class="alert alert-danger">
-        Update niet gelukt.
+    <div th:if="${rowsUpdated>0}" class="alert alert-primary">
+        Update gelukt.
     </div>
     <form action="#" data-th-action="@{update/reservering}" th:object="${reservering}"  method="post">
         <input type="hidden" th:field="*{boekingID}">

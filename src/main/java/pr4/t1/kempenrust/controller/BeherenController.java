@@ -158,8 +158,8 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
         updateReserveringDTO.setBoekingID(Integer.parseInt(request.getParameter("Id")));
         updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
 
-        if(redirectAttributes.containsAttribute("rows")) {
-            model.addAttribute(redirectAttributes.getAttribute("rows"));
+        if(redirectAttributes.containsAttribute("rowsUpdated")) {
+            model.addAttribute(redirectAttributes.getAttribute("rowsUpdated"));
         }
         model.addAttribute("reservering", updateReserveringDTO);
         return "layouts/beheren/reservering";
@@ -167,28 +167,27 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
 
     @RequestMapping("/update/reservering")
     public String updateReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes) {
-        int rows = boekingRepository.updateBoeking(reservering.getDatumVan(),reservering.getDatumTot(),reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
+        int rowsUpdated = boekingRepository.updateBoeking(reservering.getDatumVan(),reservering.getDatumTot(),reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
 
         reservering.setKlant(klantRepository.getKlantVoorBoeking(reservering.getBoekingID()));
         reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
 
-        redirectAttributes.addFlashAttribute("rows", rows);
+        //add a redirectAttribute so we can give a message if the update succeeded.
+        //This redirectAttribute is catched in BeherenController/reservering
+        redirectAttributes.addFlashAttribute("rowsUpdated", rowsUpdated);
 
         return "redirect:/reservering?Id="+reservering.getBoekingID();
     }
 
     @RequestMapping("delete/reservering")
-    public String deleteReservering(HttpServletRequest request, Model model) {
+    public String deleteReservering(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 
         boekingRepository.deleteBoeking(Integer.parseInt(request.getParameter("boekingID")));
 
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAlleToekomstigeBoekingdetails();
+        //add a redirectAttribute so we can give a message if the delete succeeded.
+        //This redirectAttribute is catched in BoekingController/reserveringen
+        redirectAttributes.addFlashAttribute("message", "Reservatie verwijderd.");
 
-        String message = "Reservatie verwijderd.";
-
-        model.addAttribute("details",details);
-        model.addAttribute("message", message);
-
-        return "layouts/boeking/reserveringen";
+        return "redirect:/reserveringen";
     }
 }

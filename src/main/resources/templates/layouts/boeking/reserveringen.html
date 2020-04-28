@@ -45,8 +45,8 @@
             <td th:text="'Kamer ' + ${detail.getKamer().getKamerNummer()}" class="align-middle"></td>
             <td>
                 <a th:href="@{/reservering(Id=${detail.boekingID})}"><button class="btn btn-secondary"><i class="fas fa-pen"></i></button></a>
-                <button class="btn btn-secondary" data-toggle="modal" data-target="#deleteConfirmation"><i class="fas fa-trash"></i></button>
-                <div class="modal fade" id="deleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <button class="btn btn-secondary" data-toggle="modal" th:data-target="${'#deleteConfirmation'+detail.boekingID}"><i class="fas fa-trash"></i></button>
+                <div class="modal fade" th:id="${'deleteConfirmation'+detail.boekingID}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -56,7 +56,7 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                Ben je zeker dat je deze reservatie wil verwijderen?
+                                Ben je zeker dat je de reservatie <span th:text="${detail.getBoeking().getKlant().getNaam()} + ' ' + ${detail.getBoeking().getKlant().getVoornaam()}"></span> wil verwijderen?
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleer</button>
