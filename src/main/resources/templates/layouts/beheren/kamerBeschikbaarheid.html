@@ -22,7 +22,7 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1>Kamer Beschikbaarheid</h1>
+    <h1 th:text="'Kamer '+ ${kamer.kamerNummer}+ ' Beschikbaarheid'"></h1>
     <table class="table" th:if="${kamer.datumVan}">
         <thead>
         <tr>
@@ -48,10 +48,6 @@
         <form th:action="@{/kamerOnBeschikbaarMaken}" method="post" th:object="${kamer}" >
             <input type="hidden" name="kamerID" th:field="*{kamerID}">
             <div class="form-group col-md-8">
-                <label for="kamerNummer">Kamer Nummer</label>
-                <input name="kamerNummer" th:field="*{kamerNummer}" id="kamerNummer" type="text" class="form-control" required/>
-            </div>
-            <div class="form-group col-md-8">
                 <label for="datumVan">Datum Van</label>
                 <input name="datumVan" th:field="*{datumVan}" id="datumVan" type="date" class="form-control" required/>
             </div>
@@ -62,7 +58,7 @@
             <div class="form-group col-md-8 col-">
                 <div class="form-row">
                     <div class="col-6">
-                        <a th:href="@{/kamers}" class="btn btn-primary btn-custom-a1" >Cance</a>
+                        <a th:href="@{/kamers}" class="btn btn-primary btn-custom-a1" >Cancel</a>
                     </div>
                     <div class="col-4">
                         <button type="submit" class="btn btn-primary m-left"

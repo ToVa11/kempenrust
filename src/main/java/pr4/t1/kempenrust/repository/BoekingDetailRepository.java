@@ -128,10 +128,11 @@ public class BoekingDetailRepository {
             Boeking boeking = new Boeking();
             Kamer kamer = new Kamer();
 
+
             klant.setEmail(rowSet.getString("email"));
             klant.setNaam(rowSet.getString("naam"));
             klant.setVoornaam(rowSet.getString("voornaam"));
-
+            boeking.setBoekingID(rowSet.getInt("BoekingID"));
             boeking.setDatumVan(rowSet.getDate("datumVan"));
             boeking.setDatumTot(rowSet.getDate("datumTot"));
 
@@ -146,7 +147,7 @@ public class BoekingDetailRepository {
 
         return reservaties;
     }
-    public ArrayList<BoekingDetailDto> getAlleDetailsMetDatums(Date datumVan,Date datumTot ){
+    public ArrayList<BoekingDetailDto> getAlleDetailsMetDatums(Date datumVan,Date datumTot){
         ArrayList<BoekingDetailDto> details = new ArrayList<>();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
                 "SELECT * FROM " +
