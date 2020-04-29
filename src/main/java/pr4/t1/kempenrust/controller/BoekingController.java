@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pr4.t1.kempenrust.DTO.KamerBeheer;
 import pr4.t1.kempenrust.model.*;
 import pr4.t1.kempenrust.model.DTO.ReserveringBevestigingDto;
 import pr4.t1.kempenrust.DTO.BoekingDetailDto;
@@ -17,11 +18,12 @@ import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.KamerRepository;
 import pr4.t1.kempenrust.repository.VerblijfsKeuzeRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import pr4.t1.kempenrust.repository.*;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -126,7 +128,21 @@ public class BoekingController {
     }
 
     @RequestMapping("/overzicht")
-    public String Overzicht() {
+    public String Overzicht(Model model, Integer maand, Integer jaar) {
+        if(maand == null || jaar == null) {
+            var vandaag = LocalDate.now();
+            maand = vandaag.getMonth().getValue() +1;
+            jaar = vandaag.getYear();
+        }
+
+        // Moet nog gerefactored worden (Naar een Dto)!!
+        int dagenInMaand = YearMonth.of(jaar, maand).lengthOfMonth();
+        ArrayList<KamerBeheer> kamers = kamerRepository.getAlleKamers();
+        var boekingen = boekingDetailRepository.getAlleBoekingsdetailsByMaand(maand, jaar);
+
+        model.addAttribute("dagenInMaand", dagenInMaand);
+        model.addAttribute("kamers", kamers);
+
         return "layouts/boeking/overzicht";
     }
 
