@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pr4.t1.kempenrust.model.*;
 import pr4.t1.kempenrust.model.DTO.ReserveringBevestigingDto;
 import pr4.t1.kempenrust.DTO.BoekingDetailDto;
@@ -110,7 +111,12 @@ public class BoekingController {
 }
 
     @RequestMapping("/reserveringen")
-    public String Reserveringen(Model model) {
+    public String Reserveringen(Model model, RedirectAttributes redirectAttributes) {
+
+        //If redirectAttribute is set, this has to be added to the model, so we can show it at frontend
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute(redirectAttributes.getAttribute("message"));
+        }
 
         ArrayList<BoekingDetail> details = boekingDetailRepository.getAlleToekomstigeBoekingdetails();
 

@@ -23,11 +23,7 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h2 th:text=" 'Reservatie van '+ ${reservering.getKlant().getVoornaam()} +' ' + ${reservering.getKlant().getNaam()} + ' beheren'"></h2>
-    <div th:if="${rows!=null && rows>0}" class="alert alert-primary">
-        Update gelukt
-    </div>
-    <div th:if="${rows!=null && rows==0}" class="alert alert-danger">
-        Update niet gelukt.
+    <div th:if="${message}" th:text="${message}" class="alert alert-primary">
     </div>
     <form action="#" data-th-action="@{update/reservering}" th:object="${reservering}"  method="post">
         <input type="hidden" th:field="*{boekingID}">
@@ -63,8 +59,11 @@
             <!-- Force next columns to break to new line -->
             <div class="w-100"></div>
 
-            <div class="form-group col-md-8">
+            <div class="form-group col-md-4">
                 <button type="submit" class="btn btn-primary w-100">Update</button>
+            </div>
+            <div class="form-group col-md-4">
+                <a th:href="@{/reserveringen}" class="btn btn-primary w-100">Cancel</a>
             </div>
         </div>
     </form>
