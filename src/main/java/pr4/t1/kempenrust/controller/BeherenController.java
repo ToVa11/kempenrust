@@ -158,8 +158,8 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
         updateReserveringDTO.setBoekingID(Integer.parseInt(request.getParameter("Id")));
         updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
 
-        if(redirectAttributes.containsAttribute("rowsUpdated")) {
-            model.addAttribute(redirectAttributes.getAttribute("rowsUpdated"));
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute(redirectAttributes.getAttribute("message"));
         }
         model.addAttribute("reservering", updateReserveringDTO);
         return "layouts/beheren/reservering";
@@ -174,7 +174,11 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
 
         //add a redirectAttribute so we can give a message if the update succeeded.
         //This redirectAttribute is catched in BeherenController/reservering
-        redirectAttributes.addFlashAttribute("rowsUpdated", rowsUpdated);
+        String message=null;
+        if(rowsUpdated>0){
+            message = "Update geslaagd.";
+        }
+        redirectAttributes.addFlashAttribute("message", message);
 
         return "redirect:/reservering?Id="+reservering.getBoekingID();
     }
