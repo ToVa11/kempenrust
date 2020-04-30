@@ -25,21 +25,82 @@
     <h2 th:text=" 'Reservatie van '+ ${reservering.getKlant().getVoornaam()} +' ' + ${reservering.getKlant().getNaam()} + ' beheren'"></h2>
     <div th:if="${message}" th:text="${message}" class="alert alert-primary">
     </div>
-    <form action="#" data-th-action="@{update/reservering}" th:object="${reservering}"  method="post">
+
+    <form action="#" data-th-action="@{update/datum/reservering}" th:object="${reservering}"  method="post">
         <input type="hidden" th:field="*{boekingID}">
         <div class="row">
+
             <div class="form-group col-md-4 mt-3">
                 <label for="datumAankomst">Datum aankomst</label>
                 <input type="date" class="form-control" id="datumAankomst" th:field="*{datumVan}" required>
             </div>
-
             <div class="form-group col-md-4 mt-md-3">
                 <label for="datumVertrek">Datum vertrek</label>
                 <input type="date" class="form-control" id="datumVertrek" th:field="*{datumTot}" >
             </div>
-
             <!-- Force next columns to break to new line -->
             <div class="w-100"></div>
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+            <div class="form-group col-md-4">
+                <button type="submit" class="btn btn-primary w-100">Pas datum aan.</button>
+            </div>
+        </div>
+    </form>
+    <!-- Force next columns to break to new line -->
+    <div class="w-100"></div>
+    <form action="#" th:object="${reservering}"  method="post">
+        <div class="row">
+        <div class="form-group col-md-8" >
+                <label for="kamers">Kamers</label>
+                <select multiple class="form-control" id="kamers" th:field="*{kamers}" required>
+                    <option th:each="kamer : *{prijsKamers}"
+                            th:value="${kamer.getKamerID()}">
+                        <!--                     Prijs moet hier nog rechts uitgelijnd worden, iemand enig idee?-->
+                        <!--                        <div class="d-inline-flex justify-content-between">-->
+                        <span th:text="'Kamer ' + ${kamer.getKamer().getKamerNummer()} + '  (' + ${kamer.getKamer().getKamerType().getOmschrijving()} + ')'"></span>
+                        <span class="float-right" th:text="'€ ' + ${kamer.getPrijsPerKamer()}"></span>
+                    </option>
+                </select>
+        </div>
+        <!-- Force next columns to break to new line -->
+        <div class="w-100"></div>
+        <div class="form-group col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Voeg kamers Toe</button>
+        </div>
+        </div>
+    </form>
+
+    <!-- Force next columns to break to new line -->
+    <div class="w-100"></div>
+    <form action="#" th:object="${reservering}"  method="post">
+        <div class="row">
+
+        <div class="form-group col-md-8" >
+                <label for="kamers">Geboekte kamers</label>
+                <select multiple class="form-control" id="geboekteKamers" th:field="*{geboekteKamers}" required>
+                    <option th:each="kamer : *{prijsKamersBoeking}"
+                            th:value="${kamer.getKamerID()}">
+                        <!--                     Prijs moet hier nog rechts uitgelijnd worden, iemand enig idee?-->
+                        <!--                        <div class="d-inline-flex justify-content-between">-->
+                        <span th:text="'Kamer ' + ${kamer.getKamer().getKamerNummer()} + '  (' + ${kamer.getKamer().getKamerType().getOmschrijving()} + ')'"></span>
+                        <span class="float-right" th:text="'€ ' + ${kamer.getPrijsPerKamer()}"></span>
+                    </option>
+                </select>
+        </div>
+        <!-- Force next columns to break to new line -->
+        <div class="w-100"></div>
+        <div class="form-group col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Verwijder geboekte kamers</button>
+        </div>
+        </div>
+    </form>
+
+    <form action="#" data-th-action="@{update/reservering}" th:object="${reservering}"  method="post">
+        <div class="row">
+            <input type="hidden" th:field="*{boekingID}">
+            <input type="hidden" th:field="*{datumVan}">
+            <input type="hidden" th:field="*{datumTot}">
 
             <div class="form-group col-md-4">
                 <label for="aantalPersonen">Aantal personen</label>
@@ -55,10 +116,8 @@
                             th:value="${keuze.getVerblijfskeuzeID()}"></option>
                 </select>
             </div>
-
             <!-- Force next columns to break to new line -->
             <div class="w-100"></div>
-
             <div class="form-group col-md-4">
                 <button type="submit" class="btn btn-primary w-100">Update</button>
             </div>
@@ -67,6 +126,8 @@
             </div>
         </div>
     </form>
+
+
 </div>
 
 <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">

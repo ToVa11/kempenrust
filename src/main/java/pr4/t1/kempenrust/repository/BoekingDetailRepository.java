@@ -17,6 +17,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 
 @Repository
@@ -64,30 +65,34 @@ public class BoekingDetailRepository {
         return details;
     }
 
-    public BoekingDetail getReserveringByID(int ID) {
-        BoekingDetail reservering = new BoekingDetail();
+    public List<BoekingDetail> getDetailsVoorBoeking(int boekingID) {
+        List<BoekingDetail> boekingDetails = new ArrayList<>();
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
                 "SELECT * FROM boekingdetails INNER JOIN " +
-                        "(boekingen INNER JOIN klanten ON boekingen.klantId = klanten.klantId) " +
-                        "ON boekingDetails.boekingId = boekingen.boekingID " +
+                        "boekingen ON boekingDetails.boekingId = boekingen.boekingID " +
+                        "INNER JOIN kamers ON boekingDetails.kamerID = kamers.kamerID " +
                         "WHERE " +
                         "boekingdetails.boekingId = ?"
-                , ID);
+                , boekingID);
 
         while (rowSet.next()) {
-            Klant klant = new Klant();
+            BoekingDetail details = new BoekingDetail();
             Boeking boeking = new Boeking();
+
             boeking.setAantalPersonen(rowSet.getInt("aantalPersonen"));
             boeking.setVerblijfsKeuzeID(rowSet.getInt("verblijfsKeuzeID"));
             boeking.setBoekingID(rowSet.getInt("boekingID"));
+            boeking.setDatumVan(rowSet.getDate("datumVan"));
+            boeking.setDatumTot(rowSet.getDate("datumTot"));
 
-            boeking.setKlant(klant);
-            reservering.setBoeking(boeking);
+            details.setKamerID(rowSet.getInt("kamerID"));
+            details.setBoeking(boeking);
 
+            boekingDetails.add(details);
         }
 
-        return reservering;
+        return boekingDetails;
     }
 
     public int toevoegenBoekingsdetails(int boekingID, int kamerID) {
@@ -184,5 +189,46 @@ public class BoekingDetailRepository {
 
         return details;
 
+    }
+
+
+    public List<BoekingDetail> getBoekingenZonderHuidigeBoeking(int boekingId, Date datumVan, Date datumTot){
+        List<BoekingDetail> detailsBoekingen = new ArrayList<>();
+
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
+                "SELECT * FROM Boekingen " +
+                "INNER JOIN BoekingDetails ON Boekingen.BoekingID = BoekingDetails.BoekingID " +
+                "INNER JOIN Kamers ON BoekingDetails.KamerID = Kamers.KamerID " +
+                "WHERE (Boekingen.DatumVan BETWEEN ? AND ? " +
+                "OR Boekingen.DatumTot BETWEEN ? AND ? )" +
+                "AND Boekingen.BoekingID != ? ",
+                datumVan,
+                datumTot,
+                datumVan,
+                datumTot,
+                boekingId
+        );
+
+        while(rowSet.next()) {
+            Boeking boeking = new Boeking();
+            BoekingDetail details = new BoekingDetail();
+            Kamer kamer = new Kamer();
+
+            boeking.setBoekingID(rowSet.getInt("boekingID"));
+            boeking.setVerblijfsKeuzeID(rowSet.getInt("verblijfskeuzeID"));
+            boeking.setDatumTot(rowSet.getDate("datumTot"));
+            boeking.setDatumVan(rowSet.getDate("datumVan"));
+
+            kamer.setKamerID(rowSet.getInt("kamerID"));
+            kamer.setKamerNummer(rowSet.getInt("kamernummer"));
+
+            details.setBoekingDetailID(rowSet.getInt("boekingDetailsID"));
+            details.setKamer(kamer);
+            details.setBoeking(boeking);
+
+            detailsBoekingen.add(details);
+        }
+
+        return detailsBoekingen;
     }
 }

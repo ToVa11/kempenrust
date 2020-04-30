@@ -2,13 +2,13 @@ package pr4.t1.kempenrust.controller;
 
 import javafx.scene.input.DataFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import pr4.t1.kempenrust.model.Boeking;
-import pr4.t1.kempenrust.model.BoekingDetail;
+import pr4.t1.kempenrust.model.*;
 import pr4.t1.kempenrust.model.DTO.UpdateReserveringDTO;
 import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.BoekingRepository;
@@ -19,15 +19,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pr4.t1.kempenrust.DTO.KamerBeheer;
-import pr4.t1.kempenrust.model.Kamer;
-import pr4.t1.kempenrust.model.KamerOnbeschikbaar;
-import pr4.t1.kempenrust.model.KamerType;
 import pr4.t1.kempenrust.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Array;
+import java.sql.Date;
 import java.text.ParseException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class BeherenController {
@@ -157,12 +157,43 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
         updateReserveringDTO.setKlant(boeking.getKlant());
         updateReserveringDTO.setBoekingID(Integer.parseInt(request.getParameter("Id")));
         updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+        updateReserveringDTO.setPrijsKamers(kamerRepository.getAlleVrijeKamers(boeking.getVerblijfsKeuzeID(), boeking.getDatumVan(), boeking.getDatumTot()));
+        updateReserveringDTO.setPrijsKamersBoeking(kamerRepository.getKamerPrijsVoorBoeking(boeking.getBoekingID(), boeking.getVerblijfsKeuzeID()));
 
         if(redirectAttributes.containsAttribute("message")) {
             model.addAttribute(redirectAttributes.getAttribute("message"));
         }
         model.addAttribute("reservering", updateReserveringDTO);
         return "layouts/beheren/reservering";
+    }
+
+    @RequestMapping("update/datum/reservering")
+    public String updateDatumReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+        Date nieuweDatumVan = Date.valueOf(reservering.getDatumVan());
+        Date nieuweDatumTot = Date.valueOf(reservering.getDatumTot());
+
+        List<BoekingDetail> detailsBoekingen = boekingDetailRepository.getBoekingenZonderHuidigeBoeking(reservering.getBoekingID(), nieuweDatumVan, nieuweDatumTot);
+        List<BoekingDetail> selectedBoekingDetails = boekingDetailRepository.getDetailsVoorBoeking(reservering.getBoekingID());
+
+        String message = null;
+        for (BoekingDetail detail: selectedBoekingDetails)
+        {
+            for(BoekingDetail toekomstDetail: detailsBoekingen) {
+
+                if(detail.getKamerID() == toekomstDetail.getKamer().getKamerID()) {
+                message="De huidige kamer is niet beschikbaar in de gekozen periode. Gelieve een ander periode of kamer te kiezen.";
+                redirectAttributes.addFlashAttribute("message", message);
+
+                return "redirect:/reservering?Id="+reservering.getBoekingID();
+                }
+            }
+        }
+
+        message="test";
+
+        redirectAttributes.addFlashAttribute("message", message);
+
+        return "redirect:/reservering?Id="+reservering.getBoekingID();
     }
 
     @RequestMapping("/update/reservering")

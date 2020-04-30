@@ -7,16 +7,15 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
-import pr4.t1.kempenrust.model.Boeking;
-import pr4.t1.kempenrust.model.Klant;
+import pr4.t1.kempenrust.model.*;
 
 import java.sql.Date;
 import java.sql.Types;
-import pr4.t1.kempenrust.model.VerblijfsKeuze;
 
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.List;
 
 import pr4.t1.kempenrust.DTO.KamerBeheer;
@@ -176,4 +175,5 @@ public class BoekingRepository {
         }
         return  kamer;
     }
+
 }
