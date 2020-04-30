@@ -21,6 +21,7 @@ import pr4.t1.kempenrust.repository.*;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
@@ -38,6 +39,8 @@ public class BoekingController {
     KlantRepository klantRepository;
     @Autowired
     PrijsRepository prijsRepository;
+
+    SimpleDateFormat simpleFormatter = new SimpleDateFormat("MM/dd/yyyy");
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     Date datumAankomst;
@@ -129,10 +132,12 @@ public class BoekingController {
         return "layouts/boeking/voorschotten";
     }
 
+
     @RequestMapping("/afgelopen_reservaties")
     public String AfgelopenReserveringen(Model model) {
         ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties ();
         BoekingDetailDto boekingDetailDto=new BoekingDetailDto();
+        boekingDetailDto.setTitel("Afgelopen Reservaties");
         model.addAttribute("details",details);
         model.addAttribute("boekingDetailDto",boekingDetailDto);
 
@@ -141,23 +146,32 @@ public class BoekingController {
 
     @PostMapping("/afgelopen_reservaties")
     public String AfgelopenReserveringen(Model model,@ModelAttribute("KamerBeheer") BoekingDetailDto boekingDetailDto) {
-        if (boekingDetailDto.getDatumVan() !="" && boekingDetailDto.getDatumTot() !="")
+        var datumVan = Date.valueOf(boekingDetailDto.getDatumVan());
+        var datumTot = Date.valueOf(boekingDetailDto.getDatumTot());
+        if (datumVan !=null && datumTot!=null && datumVan.before(datumTot))
         {
-            var datumVan = Date.valueOf(boekingDetailDto.getDatumVan());
-            var datumTot = Date.valueOf(boekingDetailDto.getDatumTot());
-
             ArrayList<BoekingDetailDto> details = boekingDetailRepository
             .getAlleDetailsMetDatums(datumVan,datumTot);
-            boekingDetailDto.setDatumVan(null);
-            boekingDetailDto.setDatumTot(null);
+
+            String startDatum = simpleFormatter.format(datumVan);
+            String endDatum = simpleFormatter.format(datumTot);
+
+            if (details.size()>0){
+                boekingDetailDto.setTitel("Reservaties tussen "+startDatum +" en "+endDatum);
+            }else
+            {
+                boekingDetailDto.setTitel("Geen reservaties gevonden tussen "+startDatum+" en "+endDatum);
+            }
+
             model.addAttribute("details",details);
             model.addAttribute("boekingDetailDto",boekingDetailDto);
             return "layouts/boeking/afgelopen_reservaties";
         }
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties ();
-        model.addAttribute("details",details);
-        model.addAttribute("boekingDetailDto",boekingDetailDto);
-        return "layouts/boeking/afgelopen_reservaties";
+        else
+            boekingDetailDto.setTitel("Gelieve de datums te controlleren");
+            model.addAttribute("boekingDetailDto", boekingDetailDto);
+            return "layouts/boeking/afgelopen_reservaties";
+
     }
 
     private Klant getKlantVoorBevestigingReservering(ReserveringDto reserveringDetails) {

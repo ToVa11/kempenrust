@@ -157,10 +157,9 @@ public class BoekingDetailRepository {
                             "ON BOEKINGDETAILS.KAMERID =KAMERS .KAMERID  " +
                         "INNER JOIN KLANTEN " +
                             "ON BOEKINGEN.KLANTID =KLANTEN .KLANTID " +
-                        "WHERE ( '"+datumVan+"' >= BOEKINGEN.DatumVan  AND '"+datumTot+"' <= BOEKINGEN.DatumVan )" +
-                        "OR ('"+datumVan+"' >= BOEKINGEN.DatumTot  AND '"+datumTot+"' <= BOEKINGEN.DatumTot ) " +
-                        " OR ('"+datumVan+"' >= BOEKINGEN.DatumVan AND '"+datumTot+"' <= BOEKINGEN.DatumTot )" +
-                        "ORDER BY BOEKINGEN.DatumTot");
+                        "WHERE  BOEKINGEN.DatumTot  BETWEEN '"+datumVan+"' AND '"+datumTot+"' " +
+                        "OR  BOEKINGEN.DatumVan BETWEEN '"+datumVan+"' AND '"+datumTot+"'" +
+                        " ORDER BY BOEKINGEN.DatumVan");
 
         while(rowSet.next()) {
             BoekingDetailDto detail = new BoekingDetailDto();
@@ -172,6 +171,7 @@ public class BoekingDetailRepository {
             klant.setNaam(rowSet.getString("naam"));
             klant.setVoornaam(rowSet.getString("voornaam"));
 
+            boeking.setBoekingID(rowSet.getInt("BoekingID"));
             boeking.setDatumVan(rowSet.getDate("datumVan"));
             boeking.setDatumTot(rowSet.getDate("datumTot"));
 
