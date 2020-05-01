@@ -14,7 +14,14 @@ public class BoekingDetailDto {
     private Kamer kamer;
     private String datumVan;
     private String datumTot;
+    private String titel;
 
+    public String getTitel() {
+        return titel;
+    }
+    public void setTitel(String titel) {
+        this.titel = titel;
+    }
     public String getDatumVan() {
         return datumVan;
     }
@@ -34,7 +41,6 @@ public class BoekingDetailDto {
     public int getBoekingDetailID() {
         return boekingDetailID;
     }
-
 
     public int getBoekingDetailsID() {
         return boekingDetailID;
