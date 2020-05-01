@@ -125,10 +125,23 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
 
     @PostMapping("/KamerToevoegen")
     public String KamerTovoegen( Model model,@ModelAttribute("KamerBeheer") KamerBeheer kamer){
-        kamerRepository.KamerToevoegen(kamer.getKamerNummer(),kamer.getKamerTypeID());
-        ArrayList<KamerBeheer> kamers=kamerRepository.getAlleKamers();
-        model.addAttribute("kamers",kamers);
-        return "layouts/beheren/kamers";
+        Kamer gevondenKamer=kamerRepository.getKamerByKamernummer(kamer.getKamerNummer());
+        if (gevondenKamer.getKamerID() == 0) {
+            kamerRepository.KamerToevoegen(kamer.getKamerNummer(), kamer.getKamerTypeID());
+            ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
+            kamer.setKamerNummer(0);
+            kamer.setMelding("Nieuwe kamer is toegevoegd");
+            kamer.setKamerTypes(kamerTypes);
+            model.addAttribute("kamer",kamer);
+            return "layouts/beheren/kamerToevoegen";
+        }else {
+            ArrayList<KamerType> kamerTypes = kamerTypeRepository.getLijstKamerTypes();
+            kamer.setKamerTypes(kamerTypes);
+            kamer.setTitel("Attentie");
+            kamer.setFoutMelding("Deze kamernummer is reeds in gebruik");
+            model.addAttribute("kamer", kamer);
+            return "layouts/beheren/kamerToevoegen";
+        }
     }
     @PostMapping("/KamerTypeToevoegen")
     public String KamerTypeTovoegen( Model model,@ModelAttribute("KamerBeheer") KamerBeheer kamer){

@@ -168,7 +168,7 @@ public class BoekingController {
             return "layouts/boeking/afgelopen_reservaties";
         }
         else
-            boekingDetailDto.setTitel("Gelieve de datums te controlleren");
+            boekingDetailDto.setTitel("Gelieve de datums te controleren");
             model.addAttribute("boekingDetailDto", boekingDetailDto);
             return "layouts/boeking/afgelopen_reservaties";
 
