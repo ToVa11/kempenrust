@@ -13,19 +13,18 @@
     <script src="https://kit.fontawesome.com/064c0b8681.js" crossorigin="anonymous"></script>
 
 </head>
-<body>
+<body class="p-2">
 <table class="table table-bordered overzicht">
     <thead>
     <tr>
         <th style="width:75px">Kamer / Dag</th>
-        <th th:each="kamer: ${kamers}" th:text="${kamer.getKamerNummer()}" class="align-top text-center"></th>
+        <th th:each="dag, i: ${#numbers.sequence(1, dagenInMaand)}" th:text="${dag}" class="align-top text-center"></th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="dag, i: ${#numbers.sequence(1, dagenInMaand)}" class="text-center">
-        <td th:text="${dag}" style="width:75px"></td>
-        <td th:each="item: ${overzicht[i.index]}">
-            <span th:text="${item}" ></span>
+    <tr th:each="kamer, i: ${kamers}" class="text-center">
+        <td th:text="${kamer.getKamerNummer()}" style="width:75px"></td>
+        <td th:each="item: ${overzicht[i.index]}" th:classappend="${item} ? backgroundRed : backgroundGreen">
         </td>
     </tr>
     </tbody>
