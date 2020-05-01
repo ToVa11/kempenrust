@@ -21,6 +21,43 @@ public class KamerBeheer {
     private ArrayList<KamerType> kamerTypes;
     private Boolean IsInPrijs;
     private ArrayList <KamerOnbeschikbaar> lijstkamers;
+    private String titel;
+    private String melding;
+    private String foutMelding;
+
+    public String getFoutMelding() {
+        return foutMelding;
+    }
+
+    public void setFoutMelding(String foutMelding) {
+        this.foutMelding = foutMelding;
+    }
+
+    public String getMeldingWijiging() {
+        return meldingWijiging;
+    }
+
+    public void setMeldingWijiging(String meldingWijiging) {
+        this.meldingWijiging = meldingWijiging;
+    }
+
+    public String getMelding() {
+        return melding;
+    }
+
+    public void setMelding(String melding) {
+        this.melding = melding;
+    }
+
+    private String meldingWijiging;
+    public String getTitel() {
+        return titel;
+    }
+
+    public void setTitel(String titel) {
+        this.titel = titel;
+    }
+
 
 
     public Boolean getInPrijs() {
