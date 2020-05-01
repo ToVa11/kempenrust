@@ -193,6 +193,7 @@ public class BoekingDetailRepository {
             boeking.setDatumVan(rowSet.getDate("datumVan"));
             boeking.setDatumTot(rowSet.getDate("datumTot"));
 
+            kamer.setKamerID(rowSet.getInt("KamerID"));
             kamer.setKamerNummer(rowSet.getInt("kamerNummer"));
 
             boeking.setKlant(klant);
