@@ -45,6 +45,20 @@ public class KamerRepository {
         jdbcTemplate.update("INSERT INTO Kamers ( KamerNummer, KamerTypeID) " +
                 "VALUES ( ?, ? )",kamerNummer,kamerTypeID );
     }
+
+    public Kamer getKamerByKamernummer(int kamerNummer){
+        Kamer kamer=new Kamer();
+        SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT * " +
+                "FROM Kamers " +
+                " WHERE Kamers.KamerNummer = ? ",kamerNummer);
+        while(rowSet.next()){
+
+            kamer.setKamerID(rowSet.getInt("KamerID"));
+            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
+        }
+        return  kamer;
+    }
+
     public void  WijzigKamer(int kamerID,int kamerTypeID,int kamerNummer){
         jdbcTemplate.update("UPDATE Kamers SET KamerNummer = ? , KamerTypeID = ? " +
                 "WHERE KamerID = ?",kamerNummer,kamerTypeID,kamerID);

@@ -133,10 +133,11 @@ public class BoekingDetailRepository {
             Boeking boeking = new Boeking();
             Kamer kamer = new Kamer();
 
+
             klant.setEmail(rowSet.getString("email"));
             klant.setNaam(rowSet.getString("naam"));
             klant.setVoornaam(rowSet.getString("voornaam"));
-
+            boeking.setBoekingID(rowSet.getInt("BoekingID"));
             boeking.setDatumVan(rowSet.getDate("datumVan"));
             boeking.setDatumTot(rowSet.getDate("datumTot"));
 
@@ -151,7 +152,7 @@ public class BoekingDetailRepository {
 
         return reservaties;
     }
-    public ArrayList<BoekingDetailDto> getAlleDetailsMetDatums(Date datumVan,Date datumTot ){
+    public ArrayList<BoekingDetailDto> getAlleDetailsMetDatums(Date datumVan,Date datumTot){
         ArrayList<BoekingDetailDto> details = new ArrayList<>();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
                 "SELECT * FROM " +
@@ -161,9 +162,9 @@ public class BoekingDetailRepository {
                             "ON BOEKINGDETAILS.KAMERID =KAMERS .KAMERID  " +
                         "INNER JOIN KLANTEN " +
                             "ON BOEKINGEN.KLANTID =KLANTEN .KLANTID " +
-                        "WHERE BOEKINGEN.DatumTot < ? " +
-                        "AND BOEKINGEN.DatumTot  BETWEEN '"+datumVan+"' AND '"+datumTot+"'" +
-                        "ORDER BY BOEKINGEN.DatumTot", Date.valueOf(LocalDate.now()));
+                        "WHERE  BOEKINGEN.DatumTot  BETWEEN '"+datumVan+"' AND '"+datumTot+"' " +
+                        "OR  BOEKINGEN.DatumVan BETWEEN '"+datumVan+"' AND '"+datumTot+"'" +
+                        " ORDER BY BOEKINGEN.DatumVan");
 
         while(rowSet.next()) {
             BoekingDetailDto detail = new BoekingDetailDto();
@@ -175,6 +176,7 @@ public class BoekingDetailRepository {
             klant.setNaam(rowSet.getString("naam"));
             klant.setVoornaam(rowSet.getString("voornaam"));
 
+            boeking.setBoekingID(rowSet.getInt("BoekingID"));
             boeking.setDatumVan(rowSet.getDate("datumVan"));
             boeking.setDatumTot(rowSet.getDate("datumTot"));
 

@@ -27,7 +27,8 @@
    <form th:action="@{/wijzigKamer}" method="post" th:object="${kamer}" >
        <input type="hidden" name="kamerID" th:field="*{kamerID}">
        <div class="form-group col-md-8">
-              <input name="kamerNummer" th:field="*{kamerNummer}"
+           <label for="kamerNummer">Kamer Nummer</label>
+           <input name="kamerNummer" disabled th:field="*{kamerNummer}"
               id="kamerNummer" type="text"
               class="form-control" required/>
        </div>
@@ -39,16 +40,17 @@
                    </option>
            </select>
        </div>
-       <div class="form-row">
-           <div class="form-group col-md-4">
-               <button type="submit" class="btn btn-primary"
-               name="wijzig" style="margin-left: 14px;width: 150px">Wijzig</button>
-           </div>
-           <div class="form-group col-md-4">
-               <a th:href="@{/kamerVerwijderen(kamerId=${kamer.kamerID})}"
-                  class="btn btn-primary" style="width: 150px ;margin-left: 28px" name="verwijderen">Verwijderen
-               </a>
-           </div>
+       <div class="form-group col-md-8">
+           <div class="form-row">
+               <div class="col-6">
+                   <a th:href="@{/kamerVerwijderen(kamerId=${kamer.kamerID})}"
+                   class="btn btn-primary btn-custom-a1" name="verwijderen">Verwijderen</a>
+                </div>
+                <div class="col-4">
+                   <button type="submit" class="btn btn-primary m-left"
+                   name="wijzig">Wijzig</button>
+                </div>
+        </div>
        </div>
    </form>
     </div>
@@ -56,6 +58,5 @@
     <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
         Footer
     </div>
-
 </body>
 </html>
