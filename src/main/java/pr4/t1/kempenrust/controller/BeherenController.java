@@ -171,11 +171,18 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
     public String updateDatumReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
         Date nieuweDatumVan = Date.valueOf(reservering.getDatumVan());
         Date nieuweDatumTot = Date.valueOf(reservering.getDatumTot());
+        String message = null;
+
+        if(nieuweDatumVan.after(nieuweDatumTot) ) {
+            message="De aankomst datum mag niet na de vertrek datum liggen.";
+            redirectAttributes.addFlashAttribute("message", message);
+
+            return "redirect:/reservering?Id="+reservering.getBoekingID();
+        }
 
         List<BoekingDetail> detailsBoekingen = boekingDetailRepository.getBoekingenZonderHuidigeBoeking(reservering.getBoekingID(), nieuweDatumVan, nieuweDatumTot);
         List<BoekingDetail> selectedBoekingDetails = boekingDetailRepository.getDetailsVoorBoeking(reservering.getBoekingID());
 
-        String message = null;
         for (BoekingDetail detail: selectedBoekingDetails)
         {
             for(BoekingDetail toekomstDetail: detailsBoekingen) {
@@ -189,8 +196,12 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
             }
         }
 
-        message="test";
-
+        if(boekingRepository.updateBoekingDatums(nieuweDatumVan, nieuweDatumTot, reservering.getBoekingID())>0) {
+            message = "Datums zijn succesvol aangepast.";
+        }
+        else {
+            message = "Er is iets misgegaan tijdens het updaten.";
+        }
         redirectAttributes.addFlashAttribute("message", message);
 
         return "redirect:/reservering?Id="+reservering.getBoekingID();

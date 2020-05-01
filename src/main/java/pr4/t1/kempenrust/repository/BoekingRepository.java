@@ -112,6 +112,17 @@ public class BoekingRepository {
         return rows;
     }
 
+    public int updateBoekingDatums(Date datumVan, Date datumTot, int boekingID) {
+        Object[] params = {datumVan, datumTot, boekingID};
+        int[] types = {Types.DATE, Types.DATE, Types.INTEGER};
+
+        String sql = "UPDATE boekingen SET datumVan=?,datumTot=? WHERE boekingID=?";
+
+        int rows = jdbcTemplate.update(sql, params, types);
+
+        return rows;
+    }
+
     public void deleteBoeking(int boekingID) {
 
         Object[] params = {boekingID};
