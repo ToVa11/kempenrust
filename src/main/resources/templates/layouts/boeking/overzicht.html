@@ -1,32 +1,34 @@
 <!DOCTYPE html>
-<!--  main-fragment (title, nav, mainContent, footer)  -->
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layouts/main-layout :: main-fragment(
-                                                ~{::title},
-                                                ~{:: #nav-kempenrust},
-                                                ~{:: #main-content-kempenrust},
-                                                ~{:: #footer-kempenrust}
-                                               )}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <!-- Required meta tags -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/slate/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-G9YbB4o4U6WS4wCthMOpAeweY4gQJyyx0P3nZbEBHyz+AtNoeasfRChmek1C2iqV" crossorigin="anonymous">
 
-    <!-- Kan je aanpassen = tabblad titel-->
-    <title>Overzicht</title>
+    <!-- Own CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/main.css}" href="../../static/main.css"/>
+    <!-- Fontawesome Icons-->
+    <script src="https://kit.fontawesome.com/064c0b8681.js" crossorigin="anonymous"></script>
+
 </head>
 <body>
-
-<div id="nav-kempenrust" th:replace="~{/fragments/app-fragments :: nav-default}">
-    Nav
-</div>
-
-<div id="main-content-kempenrust">
-    <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1>Overzicht</h1>
-</div>
-
-<div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
-    Footer
-</div>
+<table class="table table-bordered overzicht">
+    <thead>
+    <tr>
+        <th style="width:75px">Kamer / Dag</th>
+        <th th:each="kamer: ${kamers}" th:text="${kamer.getKamerNummer()}" class="align-top text-center"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="dag, i: ${#numbers.sequence(1, dagenInMaand)}" class="text-center">
+        <td th:text="${dag}" style="width:75px"></td>
+        <td th:each="item: ${overzicht[i.index]}">
+            <span th:text="${item}" ></span>
+        </td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>
