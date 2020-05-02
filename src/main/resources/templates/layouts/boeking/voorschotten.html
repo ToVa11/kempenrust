@@ -39,8 +39,6 @@
             <td th:text="${boeking.getBedragVoorschot()}" class="align-middle"></td>
             <td>
                 <a th:href="@{/reservering/bevestig/voorschot(Id=${boeking.boekingID})}"><button class="btn btn-secondary"><i class="fas fa-cash-register"></i></button></a>
-                <a th:href="@{/reservering/bevestig/voorschot(Id=${boeking.boekingID})}"><button class="btn btn-secondary"><i class="far fa-handshake"></i></button></a>
-                <a th:href="@{/reservering/bevestig/voorschot(Id=${boeking.boekingID})}"><button class="btn btn-secondary"><i class="far fa-thumbs-up"></i></button></a>
             </td>
         </tr>
     </table>
