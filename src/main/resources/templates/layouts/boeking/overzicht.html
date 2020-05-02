@@ -17,17 +17,26 @@
 <table class="table table-bordered overzicht">
     <thead>
     <tr>
-        <th style="width:75px">Kamer / Dag</th>
+        <th style="width:75px">Dag / Kamer</th>
         <th th:each="dag, i: ${#numbers.sequence(1, dagenInMaand)}" th:text="${dag}" class="align-top text-center"></th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="kamer, i: ${kamers}" class="text-center">
         <td th:text="${kamer.getKamerNummer()}" style="width:75px"></td>
-        <td th:each="item: ${overzicht[i.index]}" th:classappend="${item} ? backgroundRed : backgroundGreen">
+        <td th:each="item: ${overzicht[i.index]}"
+            th:classappend="${item} ? backgroundRed : backgroundGreen"
+            data-toggle="tooltip"
+            th:title="${item}
+                ? ${item.getBoeking().getKlant().getVoornaam()} + ' ' + ${item.getBoeking().getKlant().getNaam()} +
+                    '&#10;Van: ' + ${#dates.format(item.getBoeking().getDatumVan(), 'd MMMM yyyy')} +
+                    '&#10;Tot: ' + ${#dates.format(item.getBoeking().getDatumTot(), 'd MMMM yyyy')}
+                : 'kamer vrij op deze datum'">
         </td>
     </tr>
     </tbody>
 </table>
+
+<!--<script src="tooltip.js"></script>-->
 </body>
 </html>

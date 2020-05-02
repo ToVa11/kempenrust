@@ -147,15 +147,15 @@ public class BoekingController {
         ArrayList<KamerBeheer> kamers = kamerRepository.getAlleKamers();
         var boekingen = boekingDetailRepository.getAlleBoekingsdetailsByMaand(maand, jaar);
 
-        boolean[][] overzicht = new boolean[kamers.size()][dagenInMaand];
+        BoekingDetail[][] overzicht = new BoekingDetail[kamers.size()][dagenInMaand];
 
         for (var boeking:
              boekingen) {
             LocalDate datumVan = new java.sql.Date(boeking.getBoeking().getDatumVan().getTime()).toLocalDate();
             LocalDate datumTot = new java.sql.Date(boeking.getBoeking().getDatumTot().getTime()).toLocalDate();
-            for (LocalDate date = datumVan; date.isBefore(datumTot); date = date.plusDays(1)) {
+            for (LocalDate date = datumVan; date.isBefore(datumTot.plusDays(1)); date = date.plusDays(1)) {
                 if(date.getMonth().getValue() == maand) {
-                    overzicht[zoekKamerIndex(kamers, boeking.getKamer().getKamerID())][date.getDayOfMonth()-1] = true;
+                    overzicht[zoekKamerIndex(kamers, boeking.getKamer().getKamerID())][date.getDayOfMonth()-1] = boeking;
                 }
             }
         }

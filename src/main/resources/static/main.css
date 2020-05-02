@@ -16,10 +16,12 @@
 
 td.backgroundRed {
     background: red;
+    cursor: pointer;
 }
 
 td.backgroundGreen {
     background: green;
+    cursor: pointer;
 }
 
 .btn-custom-a{
@@ -33,4 +35,3 @@ td.backgroundGreen {
     width: 182px;
     margin-left: 37px;
 }
-
