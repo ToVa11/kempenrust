@@ -80,8 +80,16 @@ public class KamerRepository {
                     "(SELECT BoekingDetails.KamerID " +
                     "FROM BoekingDetails INNER JOIN Boekingen " +
                         "ON BoekingDetails.BoekingID = Boekingen.BoekingID " +
-                    "WHERE DatumVan >= ? AND DatumTot <= ?)",
+                    "WHERE DatumVan >= ? AND DatumTot <= ?)" +
+                    "AND Kamers.KamerID NOT IN " +
+                    "(SELECT KamersOnbeschikbaar.KamerID " +
+                    "FROM KamersOnbeschikbaar " +
+                    "WHERE ? BETWEEN DatumVan AND DatumTot " +
+                        "OR ? BETWEEN DatumVan AND DatumTot " +
+                    ")",
                 verblijfskeuzeID,
+                datumAankomst,
+                datumVertrek,
                 datumAankomst,
                 datumVertrek);
 
@@ -147,46 +155,4 @@ public class KamerRepository {
         return kamerPrijzen;
     }
 
-    public ArrayList<Prijs> getAlleVrijeKamersZonderHuidigeBoeking(int boekingID, int verblijfskeuzeID, Date datumAankomst, Date datumVertrek) {
-        ArrayList<Prijs> prijzenKamers = new ArrayList<>();
-
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
-                        "SELECT * " +
-                        "FROM Prijzen INNER JOIN Kamers " +
-                        "ON Prijzen.KamerID = Kamers.KamerID " +
-                        "INNER JOIN KamerTypes " +
-                        "ON Kamers.KamerTypeID = KamerTypes.KamerTypeID " +
-                        "WHERE VerblijfsKeuzeID = ? AND Kamers.KamerID NOT IN " +
-                        "(SELECT BoekingDetails.KamerID " +
-                        "FROM BoekingDetails INNER JOIN Boekingen " +
-                        "ON BoekingDetails.BoekingID = Boekingen.BoekingID " +
-                        "WHERE DatumVan >= ? AND DatumTot <= ? " +
-                        ")",
-                //AND BoekingDetails.BoekingID != ?
-                verblijfskeuzeID,
-                datumAankomst,
-                datumVertrek);
-//                boekingID);
-
-        while (rowSet.next()) {
-            Kamer kamer = new Kamer();
-            KamerType kamerType = new KamerType();
-            Prijs prijs = new Prijs();
-            kamerType.setKamerTypeID(rowSet.getInt("KamerTypeID"));
-            kamerType.setOmschrijving(rowSet.getString("Omschrijving"));
-            kamer.setKamerID(rowSet.getInt("KamerID"));
-            kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
-            kamer.setKamerType(kamerType);
-            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
-            prijs.setPrijsID(rowSet.getInt("PrijsID"));
-            prijs.setKamerID(rowSet.getInt("KamerID"));
-            prijs.setKamer(kamer);
-            prijs.setVerblijfsKeuzeID(rowSet.getInt("VerblijfsKeuzeID"));
-            prijs.setPrijsPerKamer(rowSet.getBigDecimal("PrijsPerKamer"));
-            prijs.setDatumVanaf(rowSet.getDate("DatumVanaf"));
-
-            prijzenKamers.add(prijs);
-        }
-        return prijzenKamers;
-    }
 }
