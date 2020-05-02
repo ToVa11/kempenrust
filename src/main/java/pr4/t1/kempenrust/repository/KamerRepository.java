@@ -80,7 +80,11 @@ public class KamerRepository {
                     "(SELECT BoekingDetails.KamerID " +
                     "FROM BoekingDetails INNER JOIN Boekingen " +
                         "ON BoekingDetails.BoekingID = Boekingen.BoekingID " +
-                    "WHERE DatumVan >= ? AND DatumTot <= ?)" +
+                    "WHERE ? BETWEEN DatumVan AND DatumTot " +
+                        " OR ? BETWEEN DatumVan AND DatumTot " +
+                        " OR DatumVan BETWEEN  ? AND ? " +
+                        " OR DatumTot BETWEEN ? AND ? " +
+                        ") " +
                     "AND Kamers.KamerID NOT IN " +
                     "(SELECT KamersOnbeschikbaar.KamerID " +
                     "FROM KamersOnbeschikbaar " +
@@ -88,6 +92,10 @@ public class KamerRepository {
                         "OR ? BETWEEN DatumVan AND DatumTot " +
                     ")",
                 verblijfskeuzeID,
+                datumAankomst,
+                datumVertrek,
+                datumAankomst,
+                datumVertrek,
                 datumAankomst,
                 datumVertrek,
                 datumAankomst,
