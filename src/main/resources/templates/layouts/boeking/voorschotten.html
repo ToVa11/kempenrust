@@ -22,7 +22,28 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1>Voorschotten</h1>
+    <h1>Voorschotten Bevestigen</h1>
+    <table class="table">
+        <tr>
+            <th class="align-middle">Aankomst</th>
+            <th class="align-middle">Vertrek</th>
+            <th class="align-middle">Naam</th>
+            <th class="align-middle">Voorschot</th>
+            <th>
+            </th>
+        </tr>
+        <tr th:each="boeking: ${boekingen}">
+            <td th:text="${#dates.format(boeking.getDatumVan(), 'dd/MM/yy')}" class="align-middle"></td>
+            <td th:text="${#dates.format(boeking.getDatumTot(), 'dd/MM/yy')}" class="align-middle"></td>
+            <td th:text="${boeking.getKlant().getNaam()} + ' ' + ${boeking.getKlant().getVoornaam()}" class="align-middle"></td>
+            <td th:text="${boeking.getBedragVoorschot()}" class="align-middle"></td>
+            <td>
+                <a th:href="@{/reservering/bevestig/voorschot(Id=${boeking.boekingID})}"><button class="btn btn-secondary"><i class="fas fa-cash-register"></i></button></a>
+                <a th:href="@{/reservering/bevestig/voorschot(Id=${boeking.boekingID})}"><button class="btn btn-secondary"><i class="far fa-handshake"></i></button></a>
+                <a th:href="@{/reservering/bevestig/voorschot(Id=${boeking.boekingID})}"><button class="btn btn-secondary"><i class="far fa-thumbs-up"></i></button></a>
+            </td>
+        </tr>
+    </table>
 </div>
 
 <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">

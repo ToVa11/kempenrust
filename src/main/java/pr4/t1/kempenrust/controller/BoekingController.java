@@ -25,6 +25,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class BoekingController {
@@ -134,7 +135,11 @@ public class BoekingController {
     }
 
     @RequestMapping("/voorschotten")
-    public String Voorschotten() {
+    public String Voorschotten(Model model) {
+        List<Boeking> boekingenMetOnbetaaldeVoorschotten = boekingRepository.getBoekingenMetOnbetaaldVoorschot();
+
+        model.addAttribute("boekingen", boekingenMetOnbetaaldeVoorschotten);
+
         return "layouts/boeking/voorschotten";
     }
 
