@@ -101,11 +101,11 @@ public class BoekingRepository {
         return boeking;
     }
 
-    public int updateBoeking(String datumVan, String datumTot, int aantalPersonen, int verblijfskeuzeID, int boekingID){
-        Object[] params = {Date.valueOf(datumVan),Date.valueOf(datumTot),aantalPersonen,verblijfskeuzeID,boekingID};
-        int[] types = {Types.DATE,Types.DATE,Types.INTEGER,Types.INTEGER,Types.INTEGER};
+    public int updateBoeking(int aantalPersonen, int verblijfskeuzeID, int boekingID){
+        Object[] params = {aantalPersonen,verblijfskeuzeID,boekingID};
+        int[] types = {Types.INTEGER,Types.INTEGER,Types.INTEGER};
 
-        String sql = "UPDATE boekingen SET datumVan=?,datumTot=?,aantalPersonen=?,verblijfskeuzeID=? WHERE boekingID=?";
+        String sql = "UPDATE boekingen SET aantalPersonen=?,verblijfskeuzeID=? WHERE boekingID=?";
 
         int rows = jdbcTemplate.update(sql,params,types);
 
@@ -119,6 +119,40 @@ public class BoekingRepository {
         String sql = "UPDATE boekingen SET datumVan=?,datumTot=? WHERE boekingID=?";
 
         int rows = jdbcTemplate.update(sql, params, types);
+
+        return rows;
+    }
+
+    public int voegKamerToeAanBoeking(int boekingID, List<Integer> kamerIDs) {
+        int rows=0;
+        for (int kamerID:kamerIDs){
+            Object[] params = {boekingID,kamerID};
+            int[] types = {Types.INTEGER,Types.INTEGER};
+
+            String sql = "INSERT INTO boekingDetails (" +
+                    "boekingID, " +
+                    "kamerID" +
+                    ") VALUES(" +
+                    "? , " +
+                    "?)";
+
+            rows += jdbcTemplate.update(sql,params,types);
+        }
+
+        return rows;
+    }
+
+    public int verwijderKamerVanBoeking(int boekingID, List<Integer> kamerIDs) {
+        int rows=0;
+
+        for (int kamerID: kamerIDs) {
+            Object[] params = {boekingID, kamerID};
+            int[] types = {Types.INTEGER, Types.INTEGER};
+
+            String sql = "DELETE FROM boekingDetails WHERE boekingID=? AND kamerID=?";
+
+            rows += jdbcTemplate.update(sql,params,types);
+        }
 
         return rows;
     }

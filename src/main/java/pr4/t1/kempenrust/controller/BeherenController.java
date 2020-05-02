@@ -180,7 +180,7 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
         return "layouts/beheren/reservering";
     }
 
-    @RequestMapping("update/datum/reservering")
+    @RequestMapping("/update/datum/reservering")
     public String updateDatumReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
         Date nieuweDatumVan = Date.valueOf(reservering.getDatumVan());
         Date nieuweDatumTot = Date.valueOf(reservering.getDatumTot());
@@ -220,9 +220,27 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
         return "redirect:/reservering?Id="+reservering.getBoekingID();
     }
 
+    @RequestMapping("/update/kamerToevoegen/reservering")
+    public String voegKamerToeReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+        List<Integer> kamers = reservering.getKamers();
+        int rowsAdded = boekingRepository.voegKamerToeAanBoeking(reservering.getBoekingID(),kamers);
+
+        String message=null;
+
+        if(rowsAdded>0) {
+            message= "Kamer is succesvol toegevoegd aan de boeking.";
+        }
+        else {
+            message="Er ging iets mis tijdens het toevoegen van de kamer.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/reservering?Id="+reservering.getBoekingID();
+    }
+
     @RequestMapping("/update/reservering")
     public String updateReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes) {
-        int rowsUpdated = boekingRepository.updateBoeking(reservering.getDatumVan(),reservering.getDatumTot(),reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
+        int rowsUpdated = boekingRepository.updateBoeking(reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
 
         reservering.setKlant(klantRepository.getKlantVoorBoeking(reservering.getBoekingID()));
         reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
@@ -238,7 +256,23 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
         return "redirect:/reservering?Id="+reservering.getBoekingID();
     }
 
-    @RequestMapping("delete/reservering")
+    @RequestMapping("/delete/kamer/reservering")
+    public String deleteKamerVanReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+        int rows = boekingRepository.verwijderKamerVanBoeking(reservering.getBoekingID(),reservering.getGeboekteKamers());
+        String message=null;
+
+        if (rows>0) {
+            message="Kamer is succesvol verwijderd.";
+        }
+        else {
+            message="Er ging iets mis tijdens het verwijderen.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/reservering?Id="+reservering.getBoekingID();
+    }
+
+    @RequestMapping("/delete/reservering")
     public String deleteReservering(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 
         boekingRepository.deleteBoeking(Integer.parseInt(request.getParameter("boekingID")));
@@ -249,4 +283,6 @@ public String KamerBeschikabaarheid(Model model, HttpServletRequest request) thr
 
         return "redirect:/reserveringen";
     }
+
+
 }

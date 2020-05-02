@@ -49,7 +49,8 @@
     </form>
     <!-- Force next columns to break to new line -->
     <div class="w-100"></div>
-    <form action="#" th:object="${reservering}"  method="post">
+    <form action="#" data-th-action="@{update/kamerToevoegen/reservering}" th:object="${reservering}"  method="post">
+        <input type="hidden" th:field="*{boekingID}">
         <div class="row">
         <div class="form-group col-md-8" >
                 <label for="kamers">Kamers</label>
@@ -73,9 +74,9 @@
 
     <!-- Force next columns to break to new line -->
     <div class="w-100"></div>
-    <form action="#" th:object="${reservering}"  method="post">
+    <form action="#" data-th-action="@{delete/kamer/reservering}" th:object="${reservering}"  method="post">
+        <input type="hidden" th:field="*{boekingID}">
         <div class="row">
-
         <div class="form-group col-md-8" >
                 <label for="kamers">Geboekte kamers</label>
                 <select multiple class="form-control" id="geboekteKamers" th:field="*{geboekteKamers}" required>
