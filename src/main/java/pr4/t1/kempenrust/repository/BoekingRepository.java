@@ -20,6 +20,8 @@ import java.util.List;
 
 import pr4.t1.kempenrust.DTO.KamerBeheer;
 
+import static java.lang.Boolean.TRUE;
+
 @Repository
 public class BoekingRepository {
     @Autowired
@@ -221,4 +223,46 @@ public class BoekingRepository {
         return  kamer;
     }
 
+    public List<Boeking> getBoekingenMetOnbetaaldVoorschot() {
+        List<Boeking> boekingen = new ArrayList<>();
+
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
+                "SELECT * FROM " +
+                "Boekingen INNER JOIN Klanten " +
+                "ON Boekingen.KlantID = Klanten.KlantID " +
+                "WHERE " +
+                "BedragVoorschot > 0 AND " +
+                "IsBetaald=FALSE " +
+                "ORDER BY DatumVan"
+        );
+
+        while (rowSet.next()) {
+            Boeking boeking = new Boeking();
+            Klant klant = new Klant();
+
+            klant.setNaam(rowSet.getString("naam"));
+            klant.setVoornaam(rowSet.getString("voornaam"));
+
+            boeking.setBoekingID(rowSet.getInt("boekingID"));
+            boeking.setDatumVan(rowSet.getDate("datumVan"));
+            boeking.setDatumTot(rowSet.getDate("datumTot"));
+            boeking.setBedragVoorschot(rowSet.getBigDecimal("bedragVoorschot"));
+
+            boeking.setKlant(klant);
+
+            boekingen.add(boeking);
+        }
+        return boekingen;
+    }
+
+    public int bevestigVoorschot(String boekingID) {
+        Object[] params = {TRUE, boekingID};
+        int[] types = {Types.BOOLEAN, Types.INTEGER};
+
+        String sql = "UPDATE Boekingen SET isBetaald = ? WHERE boekingID = ?";
+
+        int rowsUpdated = jdbcTemplate.update(sql,params,types);
+
+        return rowsUpdated;
+    }
 }

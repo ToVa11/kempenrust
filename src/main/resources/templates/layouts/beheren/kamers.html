@@ -26,10 +26,10 @@
     <table class="table" th:if="${kamers.size()!=0}">
         <thead>
         <tr>
-            <th>Kamer Nummer</th>
-            <th>Omschrijving</th>
-            <th>Onbeschikbaar Van</th>
-            <th>Onbeschikbaar Tot</th>
+            <th class="align-middle">Kamer Nummer</th>
+            <th class="align-middle">Omschrijving</th>
+            <th class="align-middle">Onbeschikbaar Van</th>
+            <th class="align-middle">Onbeschikbaar Tot</th>
             <th>
                 <a th:href="@{/nieweKamerToeveogen}"
                    class="btn btn-secondary">
@@ -39,10 +39,10 @@
         </thead>
         <tbody>
         <tr  th:each="kamer :${kamers}">
-            <td th:text="${kamer.kamerNummer}"></td>
-            <td th:text="${kamer.omschrijving}"></td>
-            <td th:text="${#dates.format(kamer.datumVan,'dd/MM/yyyy')}">Beschikbaar</td>
-            <td th:text="${#dates.format(kamer.datumTot,'dd/MM/yyyy')}">Beschikbaar</td>
+            <td th:text="${kamer.kamerNummer}" class="align-middle"></td>
+            <td th:text="${kamer.omschrijving}" class="align-middle"></td>
+            <td th:text="${#dates.format(kamer.datumVan,'dd/MM/yyyy')}" class="align-middle"></td>
+            <td th:text="${#dates.format(kamer.datumTot,'dd/MM/yyyy')}" class="align-middle"></td>
             <td>
                 <a class="btn btn-secondary"
                     th:href="@{/kamerAanpassen(kamerId=${kamer.kamerID})}">

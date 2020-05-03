@@ -56,9 +56,9 @@ public class BeherenController {
         ArrayList<KamerBeheer> kamers=kamerRepository.getAlleKamers();
         model.addAttribute("kamers",kamers);
         return "layouts/beheren/kamers";
-}
-@RequestMapping("/kamerAanpassen")
-public String kamerAanpassen(Model model, HttpServletRequest request){
+    }
+    @RequestMapping("/kamerAanpassen")
+    public String kamerAanpassen(Model model, HttpServletRequest request){
     int kamerId= Integer.parseInt((request.getParameter("kamerId")));
     KamerBeheer kamer=kamerTypeRepository.getKamerByID(kamerId);
     ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
@@ -66,8 +66,8 @@ public String kamerAanpassen(Model model, HttpServletRequest request){
     model.addAttribute("kamer",kamer);
     return "layouts/beheren/kamerAanpassen";
 }
-@PostMapping("/wijzigKamer")
-public String WijzigKamer( Model model,@ModelAttribute("kamer") Kamer kamer){
+    @PostMapping("/wijzigKamer")
+    public String WijzigKamer( Model model,@ModelAttribute("kamer") Kamer kamer){
         kamerRepository.WijzigKamer(kamer.getKamerID(),kamer.getKamerTypeID(),kamer.getKamerNummer());
         ArrayList<KamerBeheer> kamers=kamerRepository.getAlleKamers();
         model.addAttribute("kamers",kamers);
@@ -92,8 +92,8 @@ public String WijzigKamer( Model model,@ModelAttribute("kamer") Kamer kamer){
         model.addAttribute("kamers",kamers);
         return "layouts/beheren/kamers";
     }
-@RequestMapping("/kamerBeschikbaarheid")
-public String KamerBeschikabaarheid(Model model, HttpServletRequest request) throws ParseException {
+    @RequestMapping("/kamerBeschikbaarheid")
+    public String KamerBeschikabaarheid(Model model, HttpServletRequest request) throws ParseException {
     int kamerId= Integer.parseInt((request.getParameter("kamerId")));
     KamerBeheer kamer=kamerOnbeschikbaarRepository.getOnbeschikbaarKamerByID(kamerId);
     model.addAttribute("kamer",kamer);

@@ -42,14 +42,15 @@ FOREIGN KEY (KlantID) REFERENCES Klanten(KlantID),
 FOREIGN KEY (VerblijfsKeuzeID) REFERENCES VerblijfsKeuzes(VerblijfsKeuzeID)
 );
 
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2020-03-17',0,5,'2020-04-12','2020-04-14',false);
+
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2020-03-17',65,5,'2020-04-12','2020-04-14',false);
 INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2020-02-07',0,2,'2020-04-15','2020-04-17',false);
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,2,'2020-01-28',0,1,'2020-05-10','2020-05-11',false);
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (4,2,'2020-03-18',0,4,'2020-05-18','2020-06-05',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,2,'2020-01-28',70,1,'2020-05-10','2020-05-11',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (4,2,'2020-03-18',58,4,'2020-05-18','2020-06-05',false);
 INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (5,1,'2020-01-02',0,1,'2021-05-05','2021-05-09',false);
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2020-01-06',0,5,'2020-05-28','2020-06-02',false);
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2020-02-29',0,3,'2020-04-15','2020-04-18',false);
-INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,1,'2020-03-17',0,4,'2020-04-01','2020-04-03',false);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2020-01-06',45,5,'2020-05-28','2020-06-02',true);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2020-02-29',45,3,'2020-04-15','2020-04-18',true);
+INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,1,'2020-03-17',45,4,'2020-04-01','2020-04-03',true);
 INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2020-03-17',0,5,'2020-04-05','2020-04-08',false);
 INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2020-02-07',0,2,'2020-06-13','2020-06-17',false);
 INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,2,'2020-01-28',0,1,'2020-07-10','2020-07-11',false);
@@ -58,7 +59,6 @@ INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPers
 INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (1,1,'2020-01-06',0,5,'2020-05-28','2020-06-02',false);
 INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (2,2,'2020-02-28',0,3,'2020-06-15','2020-06-18',false);
 INSERT INTO Boekingen (KlantID,VerblijfsKeuzeID,Datum,BedragVoorschot,AantalPersonen,DatumVan,DatumTot, IsBetaald) VALUES (3,1,'2020-03-17',0,4,'2020-06-03','2020-06-07',false);
-
 
 CREATE TABLE KamerTypes
 (
