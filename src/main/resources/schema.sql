@@ -113,7 +113,7 @@ DatumTot DATE,
 FOREIGN KEY (KamerID) REFERENCES Kamers(KamerID)
 );
 
-INSERT INTO KamersOnbeschikbaar (KamerID,DatumVan,DatumTot) VALUES (2,'2020-01-01','2020-12-31');
+INSERT INTO KamersOnbeschikbaar (KamerID,DatumVan,DatumTot) VALUES (4,'2020-01-01','2020-12-31');
 
 CREATE TABLE BoekingDetails
 (
@@ -128,7 +128,7 @@ INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (1,1);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (2,2);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (3,2);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (4,3);
-INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (5,4);
+INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (5,2);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (6,1);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (7,3);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (8,2);
@@ -136,7 +136,7 @@ INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (8,2);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (9,1);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (10,2);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (11,3);
-INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (12,4);
+INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (12,2);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (13,1);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (14,2);
 INSERT INTO BoekingDetails (BoekingID,KamerID) VALUES (15,3);
