@@ -18,14 +18,14 @@
     <thead>
     <tr>
         <th style="width:75px">Dag / Kamer</th>
-        <th th:each="dag, i: ${#numbers.sequence(1, dagenInMaand)}" th:text="${dag}" class="align-top text-center"></th>
+        <th th:each="dag: ${#numbers.sequence(1, dagenInMaand)}" th:text="${#numbers.formatInteger(dag, 2)}" class="align-top text-center"></th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="kamer, i: ${kamers}" class="text-center">
         <td th:text="${kamer.getKamerNummer()}" style="width:75px"></td>
         <td th:each="item: ${overzicht[i.index]}"
-            th:classappend="${item} ? backgroundRed : backgroundGreen"
+            th:classappend="${item} == null ? backgroundGreen : (${item.getBoeking()} == null ? backgroundStriped : backgroundRed)"
             data-toggle="tooltip"
             th:title="${item} == null
                 ? 'Kamer vrij op deze datum'
@@ -34,7 +34,6 @@
                     : ${item.getBoeking().getKlant().getVoornaam()} + ' ' + ${item.getBoeking().getKlant().getNaam()} +
                     '&#10;Van: ' + ${#dates.format(item.getBoeking().getDatumVan(), 'd MMMM yyyy')} +
                     '&#10;Tot: ' + ${#dates.format(item.getBoeking().getDatumTot(), 'd MMMM yyyy')})">
-
         </td>
     </tr>
     </tbody>

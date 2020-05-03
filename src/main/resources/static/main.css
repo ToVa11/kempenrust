@@ -24,6 +24,12 @@ td.backgroundGreen {
     cursor: pointer;
 }
 
+td.backgroundStriped {
+    /*background: repeating-linear-gradient(45deg, red, #272B30);*/
+    background-image: linear-gradient(-45deg, #ff0000 25%, #272b30 25%, #272b30 50%, #ff0000 50%, #ff0000 75%, #272b30 75%, #272b30 100%);
+    cursor: pointer;
+}
+
 .btn-custom-a{
     height:50px;
     width:65px;
