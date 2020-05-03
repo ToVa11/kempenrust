@@ -22,6 +22,8 @@ import java.util.List;
 
 import pr4.t1.kempenrust.DTO.KamerBeheer;
 
+import static java.lang.Boolean.TRUE;
+
 @Repository
 public class BoekingRepository {
     @Autowired
@@ -198,6 +200,7 @@ public class BoekingRepository {
             klant.setNaam(rowSet.getString("naam"));
             klant.setVoornaam(rowSet.getString("voornaam"));
 
+            boeking.setBoekingID(rowSet.getInt("boekingID"));
             boeking.setDatumVan(rowSet.getDate("datumVan"));
             boeking.setDatumTot(rowSet.getDate("datumTot"));
             boeking.setBedragVoorschot(rowSet.getBigDecimal("bedragVoorschot"));
@@ -207,5 +210,16 @@ public class BoekingRepository {
             boekingen.add(boeking);
         }
         return boekingen;
+    }
+
+    public int bevestigVoorschot(String boekingID) {
+        Object[] params = {TRUE, boekingID};
+        int[] types = {Types.BOOLEAN, Types.INTEGER};
+
+        String sql = "UPDATE Boekingen SET isBetaald = ? WHERE boekingID = ?";
+
+        int rowsUpdated = jdbcTemplate.update(sql,params,types);
+
+        return rowsUpdated;
     }
 }
