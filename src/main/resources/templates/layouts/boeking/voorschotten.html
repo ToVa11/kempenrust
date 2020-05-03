@@ -39,9 +39,6 @@
             <td th:text="${boeking.getKlant().getNaam()} + ' ' + ${boeking.getKlant().getVoornaam()}" class="align-middle"></td>
             <td th:text="${boeking.getBedragVoorschot()}" class="align-middle"></td>
             <td>
-<!--                <button th:href="@{/reservering/bevestig/voorschot(boekingID=${boeking.boekingID})}">-->
-<!--                    <button class="btn btn-secondary"><i class="fas fa-cash-register"></i></button>-->
-<!--                </button>-->
                 <button class="btn btn-secondary" data-toggle="modal" th:data-target="${'#confirm'+boeking.boekingID}"><i class="fas fa-cash-register"></i></button>
                 <div class="modal fade" th:id="${'confirm'+boeking.boekingID}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
