@@ -7,12 +7,10 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
-import pr4.t1.kempenrust.model.Boeking;
-import pr4.t1.kempenrust.model.Klant;
+import pr4.t1.kempenrust.model.*;
 
 import java.sql.Date;
 import java.sql.Types;
-import pr4.t1.kempenrust.model.VerblijfsKeuze;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -105,13 +103,58 @@ public class BoekingRepository {
         return boeking;
     }
 
-    public int updateBoeking(String datumVan, String datumTot, int aantalPersonen, int verblijfskeuzeID, int boekingID){
-        Object[] params = {Date.valueOf(datumVan),Date.valueOf(datumTot),aantalPersonen,verblijfskeuzeID,boekingID};
-        int[] types = {Types.DATE,Types.DATE,Types.INTEGER,Types.INTEGER,Types.INTEGER};
+    public int updateBoeking(int aantalPersonen, int verblijfskeuzeID, int boekingID){
+        Object[] params = {aantalPersonen,verblijfskeuzeID,boekingID};
+        int[] types = {Types.INTEGER,Types.INTEGER,Types.INTEGER};
 
-        String sql = "UPDATE boekingen SET datumVan=?,datumTot=?,aantalPersonen=?,verblijfskeuzeID=? WHERE boekingID=?";
+        String sql = "UPDATE boekingen SET aantalPersonen=?,verblijfskeuzeID=? WHERE boekingID=?";
 
         int rows = jdbcTemplate.update(sql,params,types);
+
+        return rows;
+    }
+
+    public int updateBoekingDatums(Date datumVan, Date datumTot, int boekingID) {
+        Object[] params = {datumVan, datumTot, boekingID};
+        int[] types = {Types.DATE, Types.DATE, Types.INTEGER};
+
+        String sql = "UPDATE boekingen SET datumVan=?,datumTot=? WHERE boekingID=?";
+
+        int rows = jdbcTemplate.update(sql, params, types);
+
+        return rows;
+    }
+
+    public int voegKamerToeAanBoeking(int boekingID, List<Integer> kamerIDs) {
+        int rows=0;
+        for (int kamerID:kamerIDs){
+            Object[] params = {boekingID,kamerID};
+            int[] types = {Types.INTEGER,Types.INTEGER};
+
+            String sql = "INSERT INTO boekingDetails (" +
+                    "boekingID, " +
+                    "kamerID" +
+                    ") VALUES(" +
+                    "? , " +
+                    "?)";
+
+            rows += jdbcTemplate.update(sql,params,types);
+        }
+
+        return rows;
+    }
+
+    public int verwijderKamerVanBoeking(int boekingID, List<Integer> kamerIDs) {
+        int rows=0;
+
+        for (int kamerID: kamerIDs) {
+            Object[] params = {boekingID, kamerID};
+            int[] types = {Types.INTEGER, Types.INTEGER};
+
+            String sql = "DELETE FROM boekingDetails WHERE boekingID=? AND kamerID=?";
+
+            rows += jdbcTemplate.update(sql,params,types);
+        }
 
         return rows;
     }

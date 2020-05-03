@@ -2,13 +2,13 @@ package pr4.t1.kempenrust.controller;
 
 import javafx.scene.input.DataFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import pr4.t1.kempenrust.model.Boeking;
-import pr4.t1.kempenrust.model.BoekingDetail;
+import pr4.t1.kempenrust.model.*;
 import pr4.t1.kempenrust.model.DTO.UpdateReserveringDTO;
 import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.BoekingRepository;
@@ -19,15 +19,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pr4.t1.kempenrust.DTO.KamerBeheer;
-import pr4.t1.kempenrust.model.Kamer;
-import pr4.t1.kempenrust.model.KamerOnbeschikbaar;
-import pr4.t1.kempenrust.model.KamerType;
 import pr4.t1.kempenrust.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Array;
+import java.sql.Date;
 import java.text.ParseException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class BeherenController {
@@ -170,6 +170,8 @@ public class BeherenController {
         updateReserveringDTO.setKlant(boeking.getKlant());
         updateReserveringDTO.setBoekingID(Integer.parseInt(request.getParameter("Id")));
         updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+        updateReserveringDTO.setPrijsKamers(kamerRepository.getAlleVrijeKamers(boeking.getVerblijfsKeuzeID(), boeking.getDatumVan(), boeking.getDatumTot()));
+        updateReserveringDTO.setPrijsKamersBoeking(kamerRepository.getKamerPrijsVoorBoeking(boeking.getBoekingID(), boeking.getVerblijfsKeuzeID()));
 
         if(redirectAttributes.containsAttribute("message")) {
             model.addAttribute(redirectAttributes.getAttribute("message"));
@@ -178,9 +180,67 @@ public class BeherenController {
         return "layouts/beheren/reservering";
     }
 
+    @RequestMapping("/update/datum/reservering")
+    public String updateDatumReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+        Date nieuweDatumVan = Date.valueOf(reservering.getDatumVan());
+        Date nieuweDatumTot = Date.valueOf(reservering.getDatumTot());
+        String message = null;
+
+        if(nieuweDatumVan.after(nieuweDatumTot) ) {
+            message="De aankomst datum mag niet na de vertrek datum liggen.";
+            redirectAttributes.addFlashAttribute("message", message);
+
+            return "redirect:/reservering?Id="+reservering.getBoekingID();
+        }
+
+        List<BoekingDetail> detailsBoekingen = boekingDetailRepository.getBoekingenZonderHuidigeBoeking(reservering.getBoekingID(), nieuweDatumVan, nieuweDatumTot);
+        List<BoekingDetail> selectedBoekingDetails = boekingDetailRepository.getDetailsVoorBoeking(reservering.getBoekingID());
+
+        for (BoekingDetail detail: selectedBoekingDetails)
+        {
+            for(BoekingDetail toekomstDetail: detailsBoekingen) {
+
+                if(detail.getKamerID() == toekomstDetail.getKamer().getKamerID()) {
+                message="De huidige kamer is niet beschikbaar in de gekozen periode. Gelieve een ander periode of kamer te kiezen.";
+                redirectAttributes.addFlashAttribute("message", message);
+
+                return "redirect:/reservering?Id="+reservering.getBoekingID();
+                }
+            }
+        }
+
+        if(boekingRepository.updateBoekingDatums(nieuweDatumVan, nieuweDatumTot, reservering.getBoekingID())>0) {
+            message = "Datums zijn succesvol aangepast.";
+        }
+        else {
+            message = "Er is iets misgegaan tijdens het updaten.";
+        }
+        redirectAttributes.addFlashAttribute("message", message);
+
+        return "redirect:/reservering?Id="+reservering.getBoekingID();
+    }
+
+    @RequestMapping("/update/kamerToevoegen/reservering")
+    public String voegKamerToeReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+        List<Integer> kamers = reservering.getKamers();
+        int rowsAdded = boekingRepository.voegKamerToeAanBoeking(reservering.getBoekingID(),kamers);
+
+        String message=null;
+
+        if(rowsAdded>0) {
+            message= "Kamer is succesvol toegevoegd aan de boeking.";
+        }
+        else {
+            message="Er ging iets mis tijdens het toevoegen van de kamer.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/reservering?Id="+reservering.getBoekingID();
+    }
+
     @RequestMapping("/update/reservering")
     public String updateReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes) {
-        int rowsUpdated = boekingRepository.updateBoeking(reservering.getDatumVan(),reservering.getDatumTot(),reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
+        int rowsUpdated = boekingRepository.updateBoeking(reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
 
         reservering.setKlant(klantRepository.getKlantVoorBoeking(reservering.getBoekingID()));
         reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
@@ -196,7 +256,23 @@ public class BeherenController {
         return "redirect:/reservering?Id="+reservering.getBoekingID();
     }
 
-    @RequestMapping("delete/reservering")
+    @RequestMapping("/delete/kamer/reservering")
+    public String deleteKamerVanReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+        int rows = boekingRepository.verwijderKamerVanBoeking(reservering.getBoekingID(),reservering.getGeboekteKamers());
+        String message=null;
+
+        if (rows>0) {
+            message="Kamer is succesvol verwijderd.";
+        }
+        else {
+            message="Er ging iets mis tijdens het verwijderen.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/reservering?Id="+reservering.getBoekingID();
+    }
+
+    @RequestMapping("/delete/reservering")
     public String deleteReservering(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 
         boekingRepository.deleteBoeking(Integer.parseInt(request.getParameter("boekingID")));
@@ -207,4 +283,6 @@ public class BeherenController {
 
         return "redirect:/reserveringen";
     }
+
+
 }
