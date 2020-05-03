@@ -25,6 +25,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class BoekingController {
@@ -134,8 +135,33 @@ public class BoekingController {
     }
 
     @RequestMapping("/voorschotten")
-    public String Voorschotten() {
+    public String Voorschotten(Model model, RedirectAttributes redirectAttributes) {
+        List<Boeking> boekingenMetOnbetaaldeVoorschotten = boekingRepository.getBoekingenMetOnbetaaldVoorschot();
+
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute(redirectAttributes.getAttribute("message"));
+        }
+        model.addAttribute("boekingen", boekingenMetOnbetaaldeVoorschotten);
+
         return "layouts/boeking/voorschotten";
+    }
+
+    @RequestMapping("/reservering/bevestig/voorschot")
+    public String bevestigVoorschot(HttpServletRequest request, RedirectAttributes redirectAttributes){
+        int rowsUpdated = boekingRepository.bevestigVoorschot(request.getParameter("boekingID"));
+        String message=null;
+
+        if(rowsUpdated> 0 ) {
+            message="De betaling van het voorschot is bevestigd.";
+        }
+        else {
+            message="Er is iets misgegaan bij het bevestigen van het voorschot.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/voorschotten";
+
+
     }
 
 
