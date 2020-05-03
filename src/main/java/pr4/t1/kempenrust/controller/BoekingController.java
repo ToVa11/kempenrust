@@ -40,7 +40,7 @@ public class BoekingController {
     @Autowired
     PrijsRepository prijsRepository;
 
-    SimpleDateFormat simpleFormatter = new SimpleDateFormat("MM/dd/yyyy");
+    SimpleDateFormat simpleFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     Date datumAankomst;
