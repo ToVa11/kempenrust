@@ -16,6 +16,7 @@ import pr4.t1.kempenrust.model.Klant;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,12 @@ public class BoekingDetailRepository {
         return opvullenBoekingsdetails(details, rowSet);
     }
 
-    public ArrayList<BoekingDetail> getAlleBoekingsdetailsByMaand(int maand, int jaar) {
+    public ArrayList<BoekingDetail> getBoekingsdetailsTussenTweeDatums(Date van, Date tot) {
+        // Dit is dezelfde methode als de methode getAlleDetailsMetDatums van Atif
+        // Bij deze krijg ik al mijn boekingdetails
+        // (ook als de reservatie Van < ingeefDatum Van && reservatie Tot > ingeefDatum Tot)
+        // 1 van de 2 methodes moet dus nog aangepast worden & de andere verwijderd
+        // Atif wil jij dit nog even bevestigen?
         ArrayList<BoekingDetail> details = new ArrayList<>();
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
@@ -50,11 +56,14 @@ public class BoekingDetailRepository {
                         "(boekingen INNER JOIN klanten ON boekingen.klantId = klanten.klantId) " +
                             "ON boekingDetails.boekingId = boekingen.boekingID " +
                         "INNER JOIN kamers ON boekingDetails.kamerId = kamers.kamerId " +
-                        "WHERE (MONTH(boekingen.datumVan) = ? AND YEAR(boekingen.datumVan) = ?) " +
-                            "OR (MONTH(boekingen.datumTot) = ? AND YEAR(boekingen.datumTot) = ?) " +
+                        "WHERE ? BETWEEN DatumVan AND DatumTot " +
+                            "OR ? BETWEEN DatumVan AND DatumTot " +
+                            "OR DatumVan BETWEEN ? AND ? " +
+                            "OR DatumTot BETWEEN ? AND ? " +
                         "ORDER BY boekingen.datumVan, boekingen.datumTot",
-                maand, jaar,
-                maand, jaar);
+                van, tot,
+                van, tot,
+                van, tot);
 
         return opvullenBoekingsdetails(details, rowSet);
     }
@@ -174,6 +183,7 @@ public class BoekingDetailRepository {
             boeking.setDatumVan(rowSet.getDate("datumVan"));
             boeking.setDatumTot(rowSet.getDate("datumTot"));
 
+            kamer.setKamerID(rowSet.getInt("KamerID"));
             kamer.setKamerNummer(rowSet.getInt("kamerNummer"));
 
             boeking.setKlant(klant);

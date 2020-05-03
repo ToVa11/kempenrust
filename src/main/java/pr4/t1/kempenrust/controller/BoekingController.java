@@ -25,7 +25,6 @@ import java.sql.Date;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.ZoneId;
 
 import java.text.SimpleDateFormat;
 
@@ -46,6 +45,8 @@ public class BoekingController {
     KlantRepository klantRepository;
     @Autowired
     PrijsRepository prijsRepository;
+    @Autowired
+    KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
 
     SimpleDateFormat simpleFormatter = new SimpleDateFormat("MM/dd/yyyy");
 
@@ -141,21 +142,41 @@ public class BoekingController {
             maand = vandaag.getMonth().getValue();
             jaar = vandaag.getYear();
         }
-
+        // Moet nog rekening gehouden worden met kamers onbeschikbaar!!!!
         // Moet nog gerefactored worden (Naar een Dto)!!
-        int dagenInMaand = YearMonth.of(jaar, maand).lengthOfMonth();
         ArrayList<KamerBeheer> kamers = kamerRepository.getAlleKamers();
-        var boekingen = boekingDetailRepository.getAlleBoekingsdetailsByMaand(maand, jaar);
+
+        int dagenInMaand = YearMonth.of(jaar, maand).lengthOfMonth();
+        Date van = Date.valueOf(LocalDate.of(jaar, maand, 1));
+        Date tot = Date.valueOf(LocalDate.of(jaar, maand, dagenInMaand));
 
         BoekingDetail[][] overzicht = new BoekingDetail[kamers.size()][dagenInMaand];
 
+        var lijstKamersOnbeschikbaar = kamerOnbeschikbaarRepository.getOnbeschikbaarKamerTussenTweeDatums(van, tot);
+        for (var kamerOnbeschikbaar:
+                lijstKamersOnbeschikbaar) {
+            LocalDate datumVan = new java.sql.Date(kamerOnbeschikbaar.getDatumVan().getTime()).toLocalDate();
+            LocalDate datumTot = new java.sql.Date(kamerOnbeschikbaar.getDatumTot().getTime()).toLocalDate();
+            for (LocalDate date = datumVan; date.isBefore(datumTot.plusDays(1)); date = date.plusDays(1)) {
+                if (date.getMonth().getValue() == maand && date.getYear() == jaar) {
+                    int row = zoekKamerIndex(kamers, kamerOnbeschikbaar.getKamerID());
+                    int column = date.getDayOfMonth()-1;
+                    overzicht[row][column] =  new BoekingDetail(); //Lege boekingdetail = kamer onbeschikbaar
+                }
+            }
+        }
+
+        var boekingen = boekingDetailRepository.getBoekingsdetailsTussenTweeDatums(van, tot);
         for (var boeking:
              boekingen) {
             LocalDate datumVan = new java.sql.Date(boeking.getBoeking().getDatumVan().getTime()).toLocalDate();
             LocalDate datumTot = new java.sql.Date(boeking.getBoeking().getDatumTot().getTime()).toLocalDate();
             for (LocalDate date = datumVan; date.isBefore(datumTot.plusDays(1)); date = date.plusDays(1)) {
-                if(date.getMonth().getValue() == maand) {
-                    overzicht[zoekKamerIndex(kamers, boeking.getKamer().getKamerID())][date.getDayOfMonth()-1] = boeking;
+                if(date.getMonth().getValue() == maand && date.getYear() == jaar) {
+                    int row = zoekKamerIndex(kamers, boeking.getKamer().getKamerID());
+                    int column = date.getDayOfMonth()-1;
+                    overzicht[row][column] = boeking;
+
                 }
             }
         }
@@ -266,7 +287,9 @@ public class BoekingController {
 
     private int zoekKamerIndex(ArrayList<KamerBeheer> kamers, int kamerId) {
         for (int i = 0; i < kamers.size(); i++) {
-            if(kamers.get(i).getKamerID() == kamerId) {return i;}
+            if(kamers.get(i).getKamerID() == kamerId) {
+                return i;
+            }
         }
         return -1;
     }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import pr4.t1.kempenrust.DTO.KamerBeheer;
 import pr4.t1.kempenrust.model.KamerOnbeschikbaar;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 @Repository
@@ -32,6 +33,36 @@ public class KamerOnbeschikbaarRepository {
     }
     return  kamer;
     }
+
+    public ArrayList<KamerOnbeschikbaar> getOnbeschikbaarKamerTussenTweeDatums(java.sql.Date van, java.sql.Date tot) {
+        ArrayList<KamerOnbeschikbaar> lijstKamerOnbeschikbaar = new ArrayList<>();
+
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
+                "SELECT * " +
+                "FROM Kamers INNER JOIN KamersOnbeschikbaar " +
+                    "ON Kamers.KamerID = KamersOnbeschikbaar.KamerID " +
+                "WHERE ? BETWEEN DatumVan AND DatumTot " +
+                    "OR ? BETWEEN DatumVan AND DatumTot " +
+                    "OR DatumVan BETWEEN ? AND ? " +
+                    "OR DatumTot BETWEEN ? AND ?",
+                van, tot,
+                van, tot,
+                van, tot);
+
+        while(rowSet.next()) {
+            KamerOnbeschikbaar kamerOnbeschikbaar = new KamerOnbeschikbaar();
+
+            kamerOnbeschikbaar.setKamerOnbeschikbaarID(rowSet.getInt("KamersOnbeschikbaarID"));
+            kamerOnbeschikbaar.setKamerID(rowSet.getInt("KamerID"));
+            kamerOnbeschikbaar.setDatumVan(rowSet.getDate("DatumVan"));
+            kamerOnbeschikbaar.setDatumTot(rowSet.getDate("DatumTot"));
+
+            lijstKamerOnbeschikbaar.add(kamerOnbeschikbaar);
+        }
+
+        return lijstKamerOnbeschikbaar;
+    }
+
     public KamerBeheer maakKamerBeschikbaarByID(int kamerID){
         KamerBeheer kamer=new KamerBeheer();
         SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT *" +

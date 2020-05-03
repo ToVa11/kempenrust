@@ -27,11 +27,14 @@
         <td th:each="item: ${overzicht[i.index]}"
             th:classappend="${item} ? backgroundRed : backgroundGreen"
             data-toggle="tooltip"
-            th:title="${item}
-                ? ${item.getBoeking().getKlant().getVoornaam()} + ' ' + ${item.getBoeking().getKlant().getNaam()} +
+            th:title="${item} == null
+                ? 'Kamer vrij op deze datum'
+                : (${item.getBoeking()} == null
+                    ? 'Kamer onbeschikbaar'
+                    : ${item.getBoeking().getKlant().getVoornaam()} + ' ' + ${item.getBoeking().getKlant().getNaam()} +
                     '&#10;Van: ' + ${#dates.format(item.getBoeking().getDatumVan(), 'd MMMM yyyy')} +
-                    '&#10;Tot: ' + ${#dates.format(item.getBoeking().getDatumTot(), 'd MMMM yyyy')}
-                : 'kamer vrij op deze datum'">
+                    '&#10;Tot: ' + ${#dates.format(item.getBoeking().getDatumTot(), 'd MMMM yyyy')})">
+
         </td>
     </tr>
     </tbody>
