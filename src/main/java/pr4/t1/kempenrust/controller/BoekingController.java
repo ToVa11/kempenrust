@@ -23,6 +23,7 @@ import pr4.t1.kempenrust.repository.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,10 @@ public class BoekingController {
 
     //    Hier komen alle methodes die iets te maken hebben met boekingen
     @RequestMapping("/reserveren")
-    public String Reserveren(Model model) {
+    public String Reserveren(Model model, RedirectAttributes redirectAttributes) {
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute(redirectAttributes.getAttribute("message"));
+        }
 
         ReserveringDto reserveringDto = new ReserveringDto();
         reserveringDto.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
@@ -62,10 +66,26 @@ public class BoekingController {
 
     // via params kan ik meerdere submits in mijn form gebruiken
     @RequestMapping(value = "/reserveren", method = RequestMethod.POST, params = "action=zoek-kamers")
-    public String ZoekKamers(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model) {
+    public String ZoekKamers(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model, RedirectAttributes redirectAttributes) {
+        String message = null;
+        message = checkDatums(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
+
+        if(message!=null) {
+            redirectAttributes.addFlashAttribute("message",message);
+            return "redirect:/reserveren";
+        }
+
         vulDatumsOp(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
         reserveringDetails.setPrijsVrijeKamers(kamerRepository.getAlleVrijeKamers(reserveringDetails.getKeuzeArrangement(), datumAankomst, datumVertrek));
+
+        if(reserveringDetails.getPrijsVrijeKamers().isEmpty())
+        {
+            message="Er is voor deze periode geen kamer meer beschikbaar.";
+            redirectAttributes.addFlashAttribute("message",message);
+
+            return "redirect:/reserveren";
+        }
 
         //Hier ga ik nog eens verblijfskeuzes ophalen, hebben jullie een betere oplossing?
         //object Dto kan geen complexe objecten doorsturen (enkel int, double, String & List (van de afgelopen 3)
@@ -79,6 +99,7 @@ public class BoekingController {
     // via params kan ik meerdere submits in mijn form gebruiken
     @PostMapping(value = "/reserveren", params = "action=bevestigen")
     public String ReserveringBevestigen(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails,  Model model) {
+
         // Is enkel nodig als de page word gerefreshed, omdat ik hier met classvariables werk
         vulDatumsOp(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
@@ -113,6 +134,7 @@ public class BoekingController {
 
         return "layouts/boeking/bevestiging";
 }
+
 
     @RequestMapping("/reserveringen")
     public String Reserveringen(Model model, RedirectAttributes redirectAttributes) {
@@ -251,5 +273,19 @@ public class BoekingController {
 
     private long getVerschilDatums(Date datumVan, Date datumTot) {
         return (datumTot.getTime() - datumVan.getTime()) / (24 * 60 * 60 * 1000);
+    }
+    private String checkDatums(String datumAankomst, String datumVertrek) {
+        LocalDate aankomst = LocalDate.parse(datumAankomst,formatter);
+        LocalDate vertrek = LocalDate.parse(datumVertrek, formatter);
+        String message=null;
+
+        if(aankomst.isBefore(LocalDate.now()) || vertrek.isBefore(LocalDate.now()) ) {
+            message = "Gelieve een datum in de toekomst te kiezen.";
+        }
+        else if(vertrek.isBefore(aankomst)) {
+            message = "De vertrekdatum kan niet voor de aankomstdatum liggen.";
+        }
+
+        return message;
     }
 }
