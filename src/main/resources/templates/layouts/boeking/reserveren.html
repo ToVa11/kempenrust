@@ -21,6 +21,7 @@
 
 <div id="main-content-kempenrust">
     <h2>Reserveratie boeken</h2>
+    <div th:if="${message}" th:text="${message}" class="alert alert-primary"></div>
 
     <form action="#" data-th-action="@{/reserveren}" th:object="${reserveringDetails}" method="post">
         <div class="row">
