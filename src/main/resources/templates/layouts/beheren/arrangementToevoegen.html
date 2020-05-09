@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--  main-fragment (title, nav, mainContent, footer)  -->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #nav-kempenrust},
+                                                ~{:: #main-content-kempenrust},
+                                                ~{:: #footer-kempenrust}
+                                               )}">
+<head>
+    <!-- Required meta tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- Kan je aanpassen = tabblad titel-->
+    <title>Arrangement</title>
+</head>
+<body>
+
+<div id="nav-kempenrust" th:replace="~{/fragments/app-fragments :: nav-default}">
+    Nav
+</div>
+
+<div id="main-content-kempenrust">
+    <!-- Enkel hier en title aanpassen!! Rest laten staan-->
+    <h1>Arrangement Toevoegen</h1>
+    <form action="#" data-th-action="@{update/datum/reservering}" th:object="${reservering}"  method="post">
+        <input type="hidden" th:field="*{boekingID}">
+        <div class="row">
+
+            <div class="form-group col-md-4 mt-3">
+                <label for="datumAankomst">Datum aankomst</label>
+                <input type="date" class="form-control" id="datumAankomst" th:field="*{datumVan}" required>
+            </div>
+            <div class="form-group col-md-4 mt-md-3">
+                <label for="datumVertrek">Datum vertrek</label>
+                <input type="date" class="form-control" id="datumVertrek" th:field="*{datumTot}" >
+            </div>
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+            <div class="form-group col-md-4">
+                <button type="submit" class="btn btn-primary w-100">Pas datum aan.</button>
+            </div>
+        </div>
+    </form>
+</div>
+    <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
+    Footer
+</div>
+</body>
+</html>

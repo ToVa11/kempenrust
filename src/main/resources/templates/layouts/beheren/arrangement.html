@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!--  main-fragment (title, nav, mainContent, footer)  -->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #nav-kempenrust},
+                                                ~{:: #main-content-kempenrust},
+                                                ~{:: #footer-kempenrust}
+                                               )}">
+<head>
+    <!-- Required meta tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- Kan je aanpassen = tabblad titel-->
+    <title>Arrangement</title>
+</head>
+<body>
+
+<div id="nav-kempenrust" th:replace="~{/fragments/app-fragments :: nav-default}">
+    Nav
+</div>
+
+<div id="main-content-kempenrust">
+    <!-- Enkel hier en title aanpassen!! Rest laten staan-->
+    <h1>Arrangementen</h1>
+</div>
+<table class="table">
+    <tr>
+        <th class="align-middle">Naam</th>
+        <th class="align-middle">Omschrijving</th>
+        <th class="align-middle">
+            <a th:href="@{/toevoegen/arrangement}"><button class="btn btn-secondary"><i class="fas fa-plus"></i></button></a>
+        </th>
+    </tr>
+    <tr th:each="verblijfskeuze: ${verblijfskeuzes}">
+        <td th:text="${verblijfskeuze.getNaam()}" class="align-middle"></td>
+        <td th:text="${verblijfskeuze.getOmschrijving()}" class="align-middle"></td>
+        <td>
+            <a th:href="@{/arrangement(Id=${verblijfskeuze.getVerblijfskeuzeID()})}"><button class="btn btn-secondary"><i class="fas fa-pen"></i></button></a>
+            <button class="btn btn-secondary" data-toggle="modal" th:data-target="${'#deleteConfirmation'+verblijfskeuze.getVerblijfskeuzeID()}"><i class="fas fa-trash"></i></button>
+            <div class="modal fade" th:id="${'deleteConfirmation'+verblijfskeuze.getVerblijfskeuzeID()}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Verwijder Arrangement?</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Ben je zeker dat je het arrangement <span th:text="${verblijfskeuze.getNaam()}"></span> wil verwijderen?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleer</button>
+                            <form th:action="@{/delete/arrangement}" method="post">
+                                <input type="hidden" name="verblijfskeuzeID" th:value="${verblijfskeuze.getVerblijfskeuzeID()}">
+                                <button type="submit" class="btn btn-primary">Verwijder</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+
+    <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
+    Footer
+</div>
+</body>
+</html>

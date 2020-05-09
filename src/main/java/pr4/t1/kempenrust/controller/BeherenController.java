@@ -1,6 +1,7 @@
 package pr4.t1.kempenrust.controller;
 
 import javafx.scene.input.DataFormat;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.stereotype.Controller;
@@ -154,9 +155,54 @@ public class BeherenController {
 
 
     @RequestMapping("/arrangementen")
-    public String Arrangementen() {
+    public String Arrangementen(Model model, RedirectAttributes redirectAttributes) {
+        ArrayList<VerblijfsKeuze> verblijfskeuzes = verblijfsKeuzeRepository.getAlleVerblijfsKeuzes();
+
+        model.addAttribute("verblijfskeuzes", verblijfskeuzes);
+
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute("message", redirectAttributes.getAttribute("message"));
+        }
+
         return "layouts/beheren/arrangementen";
     }
+
+    @RequestMapping("/toevoegen/arrangement")
+    public String VoegVerblijfskeuzeToe() {
+        return "layouts/beheren/arrangementToevoegen";
+    }
+
+    @RequestMapping("/arrangement")
+    public String Arrangement(Model model, HttpServletRequest request) {
+        VerblijfsKeuze verblijfskeuze = verblijfsKeuzeRepository.getVerblijfkeuze(Integer.parseInt(request.getParameter("verblijfskeuzeID")));
+
+        model.addAttribute("verblijfskeuze", verblijfskeuze);
+
+        return "layouts/beheren/arrangement";
+    }
+
+    @RequestMapping("/delete/arrangement")
+    public String VerwijderArrangement(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        String message=null;
+        int verblijfskeuzeID = Integer.parseInt(request.getParameter("verblijfskeuzeID"));
+
+        VerblijfsKeuze verblijfsKeuze = verblijfsKeuzeRepository.getVerblijfkeuze(verblijfskeuzeID);
+        int aantalBoekingenVoorVerblijfskeuze = boekingRepository.getAantalBoekingenVoorVerblijfskeuze(verblijfskeuzeID);
+
+        if(aantalBoekingenVoorVerblijfskeuze>0) {
+            message = "Er zijn nog reservaties voor dit arrangement.";
+        }
+        else if(verblijfsKeuze != null) {
+            verblijfsKeuzeRepository.deleteVerblijfskeuze(Integer.parseInt(request.getParameter("verblijfskeuzeID")));
+            message ="Reservatie verwijderd.";
+        }
+        else {
+            message ="Reservatie niet gevonden.";
+        }
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/arrangementen";
+    }
+
 
     @RequestMapping("/reservering")
     public String Reservering(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
