@@ -1,32 +1,49 @@
 <!DOCTYPE html>
-<!--  main-fragment (title, nav, mainContent, footer)  -->
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layouts/main-layout :: main-fragment(
-                                                ~{::title},
-                                                ~{:: #nav-kempenrust},
-                                                ~{:: #main-content-kempenrust},
-                                                ~{:: #footer-kempenrust}
-                                               )}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <!-- Required meta tags -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/slate/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-G9YbB4o4U6WS4wCthMOpAeweY4gQJyyx0P3nZbEBHyz+AtNoeasfRChmek1C2iqV" crossorigin="anonymous">
 
-    <!-- Kan je aanpassen = tabblad titel-->
-    <title>Overzicht</title>
+    <!-- Own CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/main.css}" href="../../static/main.css"/>
+    <!-- Fontawesome Icons-->
+    <script src="https://kit.fontawesome.com/064c0b8681.js" crossorigin="anonymous"></script>
+
 </head>
-<body>
+<body class="p-2">
+<table class="table table-bordered overzicht">
+    <thead>
+    <tr>
+        <th style="width:75px">Dag / Kamer</th>
+        <th th:each="dag: ${#numbers.sequence(1, overzichtDto.getDagenInMaand())}" th:text="${#numbers.formatInteger(dag, 2)}" class="align-top text-center"></th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr th:each="kamer, i: ${overzichtDto.getKamers()}" class="text-center">
+            <td th:text="${kamer.getKamerNummer()}" style="width:75px"></td>
+            <td style="padding: 0"
+                    th:each="item: ${overzichtDto.getOverzicht()[i.index]}"
+                th:classappend="${item} == null ? backgroundGreen : (${item.getBoeking()} == null ? backgroundStriped : backgroundRed)"
+                data-toggle="tooltip"
+                th:title="${item} == null
+                    ? 'Kamer vrij op deze datum'
+                    : (${item.getBoeking()} == null
+                        ? 'Kamer onbeschikbaar'
+                        : ${item.getBoeking().getKlant().getVoornaam()} + ' ' + ${item.getBoeking().getKlant().getNaam()} +
+                        '&#10;Van: ' + ${#dates.format(item.getBoeking().getDatumVan(), 'd MMMM yyyy')} +
+                        '&#10;Tot: ' + ${#dates.format(item.getBoeking().getDatumTot(), 'd MMMM yyyy')})">
+    <!--            Nu nog aanpassen zodat er data wordt meegestuurd + inline css moet nog weg-->
+                <a style="display: block;width: 100%;height: 50px;" th:if="${item} and ${item.getBoeking()}" th:href="@{/reservering(Id=${item.getBoekingID()})}"></a>
+                <a style="display: block;width: 100%;height: 50px;" th:if="${item} == null" th:href="@{/reserveren}"></a>
+            </td>
+            </a>
+        </tr>
+    </tbody>
+</table>
 
-<div id="nav-kempenrust" th:replace="~{/fragments/app-fragments :: nav-default}">
-    Nav
-</div>
-
-<div id="main-content-kempenrust">
-    <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1>Overzicht</h1>
-</div>
-
-<div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
-    Footer
-</div>
+<!--<script src="tooltip.js"></script>-->
 </body>
 </html>

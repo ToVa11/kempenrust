@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pr4.t1.kempenrust.DTO.KamerBeheer;
 import pr4.t1.kempenrust.model.*;
+import pr4.t1.kempenrust.model.DTO.OverzichtDto;
 import pr4.t1.kempenrust.model.DTO.ReserveringBevestigingDto;
 import pr4.t1.kempenrust.DTO.BoekingDetailDto;
 import pr4.t1.kempenrust.model.BoekingDetail;
@@ -17,13 +19,17 @@ import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.KamerRepository;
 import pr4.t1.kempenrust.repository.VerblijfsKeuzeRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import pr4.t1.kempenrust.repository.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.text.SimpleDateFormat;
+
 import java.time.LocalDate;
+import java.time.YearMonth;
+
+import java.text.SimpleDateFormat;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,12 +48,16 @@ public class BoekingController {
     KlantRepository klantRepository;
     @Autowired
     PrijsRepository prijsRepository;
+    @Autowired
+    KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
 
     SimpleDateFormat simpleFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     Date datumAankomst;
     Date datumVertrek;
+
+    BoekingDetail[][] overzicht;
 
     //    Hier komen alle methodes die iets te maken hebben met boekingen
     @RequestMapping("/reserveren")
@@ -152,7 +162,35 @@ public class BoekingController {
     }
 
     @RequestMapping("/overzicht")
-    public String Overzicht() {
+    public String Overzicht(Model model, Integer maand, Integer jaar) {
+        OverzichtDto overzichtDto = new OverzichtDto();
+
+        if(maand == null || jaar == null) {
+            var vandaag = LocalDate.now();
+            maand = vandaag.getMonth().getValue();
+            jaar = vandaag.getYear();
+        }
+
+        ArrayList<Kamer> kamers = kamerRepository.getAlleKamersMetModel();
+        overzichtDto.setKamers(kamers);
+
+        int dagenInMaand = YearMonth.of(jaar, maand).lengthOfMonth();
+        overzichtDto.setDagenInMaand(dagenInMaand);
+
+        Date van = Date.valueOf(LocalDate.of(jaar, maand, 1));
+        Date tot = Date.valueOf(LocalDate.of(jaar, maand, dagenInMaand));
+
+        overzicht = new BoekingDetail[kamers.size()][dagenInMaand];
+
+        var lijstKamersOnbeschikbaar = kamerOnbeschikbaarRepository.getOnbeschikbaarKamerTussenTweeDatums(van, tot);
+        VulOverzichtOp(lijstKamersOnbeschikbaar, kamers, maand, jaar);
+
+        var boekingen = boekingDetailRepository.getBoekingsdetailsTussenTweeDatums(van, tot);
+        VulOverzichtOp(boekingen, kamers, maand, jaar);
+
+        overzichtDto.setOverzicht(overzicht);
+        model.addAttribute("overzichtDto", overzichtDto);
+
         return "layouts/boeking/overzicht";
     }
 
@@ -274,6 +312,31 @@ public class BoekingController {
     private long getVerschilDatums(Date datumVan, Date datumTot) {
         return (datumTot.getTime() - datumVan.getTime()) / (24 * 60 * 60 * 1000);
     }
+
+    private <T> void VulOverzichtOp(ArrayList<T> lijst, ArrayList<Kamer> kamers, int maand, int jaar) {
+        LocalDate datumVan;
+        LocalDate datumTot;
+        for (var item: lijst) {
+            if (item instanceof KamerOnbeschikbaar) {
+                datumVan = new java.sql.Date(((KamerOnbeschikbaar) item).getDatumVan().getTime()).toLocalDate();
+                datumTot = new java.sql.Date(((KamerOnbeschikbaar) item).getDatumTot().getTime()).toLocalDate();
+            } else {
+                datumVan = new java.sql.Date(((BoekingDetail) item).getBoeking().getDatumVan().getTime()).toLocalDate();
+                datumTot = new java.sql.Date(((BoekingDetail) item).getBoeking().getDatumTot().getTime()).toLocalDate();
+            }
+            for (LocalDate date = datumVan; date.isBefore(datumTot.plusDays(1)); date = date.plusDays(1)) {
+                if(date.getMonth().getValue() == maand && date.getYear() == jaar) {
+                    int column = date.getDayOfMonth() - 1;
+                    if (item instanceof KamerOnbeschikbaar) {
+                        overzicht[kamers.indexOf(((KamerOnbeschikbaar) item).getKamer())][column] = new BoekingDetail();
+                    } else {
+                        overzicht[kamers.indexOf(((BoekingDetail) item).getKamer())][column] = ((BoekingDetail) item);
+                    }
+                }
+            }
+        }
+    }
+
     private String checkDatums(String datumAankomst, String datumVertrek) {
         LocalDate aankomst = LocalDate.parse(datumAankomst,formatter);
         LocalDate vertrek = LocalDate.parse(datumVertrek, formatter);
