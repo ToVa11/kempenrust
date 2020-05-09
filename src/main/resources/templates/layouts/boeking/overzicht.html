@@ -22,24 +22,24 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="kamer, i: ${overzichtDto.getKamers()}" class="text-center">
-        <td th:text="${kamer.getKamerNummer()}" style="width:75px"></td>
-        <td style="padding: 0"
-                th:each="item: ${overzichtDto.getOverzicht()[i.index]}"
-            th:classappend="${item} == null ? backgroundGreen : (${item.getBoeking()} == null ? backgroundStriped : backgroundRed)"
-            data-toggle="tooltip"
-            th:title="${item} == null
-                ? 'Kamer vrij op deze datum'
-                : (${item.getBoeking()} == null
-                    ? 'Kamer onbeschikbaar'
-                    : ${item.getBoeking().getKlant().getVoornaam()} + ' ' + ${item.getBoeking().getKlant().getNaam()} +
-                    '&#10;Van: ' + ${#dates.format(item.getBoeking().getDatumVan(), 'd MMMM yyyy')} +
-                    '&#10;Tot: ' + ${#dates.format(item.getBoeking().getDatumTot(), 'd MMMM yyyy')})">
-<!--            Nu nog aanpassen zodat er data wordt meegestuurd + inline css moet nog weg-->
-            <a style="display: block;width: 100%;height: 50px;" href="http://www.google.com/"></a>
-        </td>
-        </a>
-    </tr>
+        <tr th:each="kamer, i: ${overzichtDto.getKamers()}" class="text-center">
+            <td th:text="${kamer.getKamerNummer()}" style="width:75px"></td>
+            <td style="padding: 0"
+                    th:each="item: ${overzichtDto.getOverzicht()[i.index]}"
+                th:classappend="${item} == null ? backgroundGreen : (${item.getBoeking()} == null ? backgroundStriped : backgroundRed)"
+                data-toggle="tooltip"
+                th:title="${item} == null
+                    ? 'Kamer vrij op deze datum'
+                    : (${item.getBoeking()} == null
+                        ? 'Kamer onbeschikbaar'
+                        : ${item.getBoeking().getKlant().getVoornaam()} + ' ' + ${item.getBoeking().getKlant().getNaam()} +
+                        '&#10;Van: ' + ${#dates.format(item.getBoeking().getDatumVan(), 'd MMMM yyyy')} +
+                        '&#10;Tot: ' + ${#dates.format(item.getBoeking().getDatumTot(), 'd MMMM yyyy')})">
+    <!--            Nu nog aanpassen zodat er data wordt meegestuurd + inline css moet nog weg-->
+                <a style="display: block;width: 100%;height: 50px;" th:if="${item} and ${item.getBoeking()}" th:href="@{/reservering(Id=${item.getBoekingID()})}"></a>
+            </td>
+            </a>
+        </tr>
     </tbody>
 </table>
 
