@@ -37,6 +37,7 @@
                         '&#10;Tot: ' + ${#dates.format(item.getBoeking().getDatumTot(), 'd MMMM yyyy')})">
     <!--            Nu nog aanpassen zodat er data wordt meegestuurd + inline css moet nog weg-->
                 <a style="display: block;width: 100%;height: 50px;" th:if="${item} and ${item.getBoeking()}" th:href="@{/reservering(Id=${item.getBoekingID()})}"></a>
+                <a style="display: block;width: 100%;height: 50px;" th:if="${item} == null" th:href="@{/reserveren}"></a>
             </td>
             </a>
         </tr>
