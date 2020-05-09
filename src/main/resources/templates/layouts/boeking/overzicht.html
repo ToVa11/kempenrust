@@ -18,14 +18,14 @@
     <thead>
     <tr>
         <th style="width:75px">Dag / Kamer</th>
-        <th th:each="dag: ${#numbers.sequence(1, dagenInMaand)}" th:text="${#numbers.formatInteger(dag, 2)}" class="align-top text-center"></th>
+        <th th:each="dag: ${#numbers.sequence(1, overzichtDto.getDagenInMaand())}" th:text="${#numbers.formatInteger(dag, 2)}" class="align-top text-center"></th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="kamer, i: ${kamers}" class="text-center">
+    <tr th:each="kamer, i: ${overzichtDto.getKamers()}" class="text-center">
         <td th:text="${kamer.getKamerNummer()}" style="width:75px"></td>
         <td style="padding: 0"
-                th:each="item: ${overzicht[i.index]}"
+                th:each="item: ${overzichtDto.getOverzicht()[i.index]}"
             th:classappend="${item} == null ? backgroundGreen : (${item.getBoeking()} == null ? backgroundStriped : backgroundRed)"
             data-toggle="tooltip"
             th:title="${item} == null

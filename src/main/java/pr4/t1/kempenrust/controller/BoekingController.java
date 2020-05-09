@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pr4.t1.kempenrust.DTO.KamerBeheer;
 import pr4.t1.kempenrust.model.*;
+import pr4.t1.kempenrust.model.DTO.OverzichtDto;
 import pr4.t1.kempenrust.model.DTO.ReserveringBevestigingDto;
 import pr4.t1.kempenrust.DTO.BoekingDetailDto;
 import pr4.t1.kempenrust.model.BoekingDetail;
@@ -55,6 +56,8 @@ public class BoekingController {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     Date datumAankomst;
     Date datumVertrek;
+
+    BoekingDetail[][] overzicht;
 
     //    Hier komen alle methodes die iets te maken hebben met boekingen
     @RequestMapping("/reserveren")
@@ -139,55 +142,33 @@ public class BoekingController {
 
     @RequestMapping("/overzicht")
     public String Overzicht(Model model, Integer maand, Integer jaar) {
+        OverzichtDto overzichtDto = new OverzichtDto();
+
         if(maand == null || jaar == null) {
             var vandaag = LocalDate.now();
             maand = vandaag.getMonth().getValue();
             jaar = vandaag.getYear();
         }
-        // Moet nog gerefactored worden (Naar een Dto)!!
-        ArrayList<KamerBeheer> kamers = kamerRepository.getAlleKamers();
+
+        ArrayList<Kamer> kamers = kamerRepository.getAlleKamersMetModel();
+        overzichtDto.setKamers(kamers);
 
         int dagenInMaand = YearMonth.of(jaar, maand).lengthOfMonth();
+        overzichtDto.setDagenInMaand(dagenInMaand);
+
         Date van = Date.valueOf(LocalDate.of(jaar, maand, 1));
         Date tot = Date.valueOf(LocalDate.of(jaar, maand, dagenInMaand));
 
-        BoekingDetail[][] overzicht = new BoekingDetail[kamers.size()][dagenInMaand];
+        overzicht = new BoekingDetail[kamers.size()][dagenInMaand];
 
         var lijstKamersOnbeschikbaar = kamerOnbeschikbaarRepository.getOnbeschikbaarKamerTussenTweeDatums(van, tot);
-        for (var kamerOnbeschikbaar:
-                lijstKamersOnbeschikbaar) {
-            LocalDate datumVan = new java.sql.Date(kamerOnbeschikbaar.getDatumVan().getTime()).toLocalDate();
-            LocalDate datumTot = new java.sql.Date(kamerOnbeschikbaar.getDatumTot().getTime()).toLocalDate();
-            for (LocalDate date = datumVan; date.isBefore(datumTot.plusDays(1)); date = date.plusDays(1)) {
-                if (date.getMonth().getValue() == maand && date.getYear() == jaar) {
-                    int row = zoekKamerIndex(kamers, kamerOnbeschikbaar.getKamerID());
-                    int column = date.getDayOfMonth()-1;
-                    overzicht[row][column] =  new BoekingDetail(); //Lege boekingdetail = kamer onbeschikbaar
-                }
-            }
-        }
+        VulOverzichtOp(lijstKamersOnbeschikbaar, kamers, maand, jaar);
 
         var boekingen = boekingDetailRepository.getBoekingsdetailsTussenTweeDatums(van, tot);
-        for (var boeking:
-             boekingen) {
-            LocalDate datumVan = new java.sql.Date(boeking.getBoeking().getDatumVan().getTime()).toLocalDate();
-            LocalDate datumTot = new java.sql.Date(boeking.getBoeking().getDatumTot().getTime()).toLocalDate();
-            for (LocalDate date = datumVan; date.isBefore(datumTot.plusDays(1)); date = date.plusDays(1)) {
-                if(date.getMonth().getValue() == maand && date.getYear() == jaar) {
-                    int row = zoekKamerIndex(kamers, boeking.getKamer().getKamerID());
-                    int column = date.getDayOfMonth()-1;
-                    overzicht[row][column] = boeking;
+        VulOverzichtOp(boekingen, kamers, maand, jaar);
 
-                }
-            }
-        }
-
-        model.addAttribute("maand", maand);
-        model.addAttribute("jaar", jaar);
-        model.addAttribute("dagenInMaand", dagenInMaand);
-        model.addAttribute("kamers", kamers);
-        model.addAttribute("boekingen", boekingen);
-        model.addAttribute("overzicht", overzicht);
+        overzichtDto.setOverzicht(overzicht);
+        model.addAttribute("overzichtDto", overzichtDto);
 
         return "layouts/boeking/overzicht";
     }
@@ -311,12 +292,28 @@ public class BoekingController {
         return (datumTot.getTime() - datumVan.getTime()) / (24 * 60 * 60 * 1000);
     }
 
-    private int zoekKamerIndex(ArrayList<KamerBeheer> kamers, int kamerId) {
-        for (int i = 0; i < kamers.size(); i++) {
-            if(kamers.get(i).getKamerID() == kamerId) {
-                return i;
+    private <T> void VulOverzichtOp(ArrayList<T> lijst, ArrayList<Kamer> kamers, int maand, int jaar) {
+        LocalDate datumVan;
+        LocalDate datumTot;
+        for (var item: lijst) {
+            if (item instanceof KamerOnbeschikbaar) {
+                datumVan = new java.sql.Date(((KamerOnbeschikbaar) item).getDatumVan().getTime()).toLocalDate();
+                datumTot = new java.sql.Date(((KamerOnbeschikbaar) item).getDatumTot().getTime()).toLocalDate();
+            } else {
+                datumVan = new java.sql.Date(((BoekingDetail) item).getBoeking().getDatumVan().getTime()).toLocalDate();
+                datumTot = new java.sql.Date(((BoekingDetail) item).getBoeking().getDatumTot().getTime()).toLocalDate();
+            }
+            for (LocalDate date = datumVan; date.isBefore(datumTot.plusDays(1)); date = date.plusDays(1)) {
+                if(date.getMonth().getValue() == maand && date.getYear() == jaar) {
+                    int column = date.getDayOfMonth() - 1;
+                    if (item instanceof KamerOnbeschikbaar) {
+                        overzicht[kamers.indexOf(((KamerOnbeschikbaar) item).getKamer())][column] = new BoekingDetail();
+                    } else {
+                        overzicht[kamers.indexOf(((BoekingDetail) item).getKamer())][column] = ((BoekingDetail) item);
+                    }
+                }
             }
         }
-        return -1;
     }
+
 }

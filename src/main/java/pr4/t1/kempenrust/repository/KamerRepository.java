@@ -41,6 +41,24 @@ public class KamerRepository {
         return alleKamers;
     }
 
+    // Hier ga ik enkel alle kamers ophalen zonder Dto & zonder joins
+    public ArrayList<Kamer> getAlleKamersMetModel(){
+        ArrayList<Kamer> alleKamers=new ArrayList<>();
+        SqlRowSet rowSet=jdbcTemplate.queryForRowSet("" +
+                "SELECT * " +
+                "FROM Kamers " +
+                "ORDER BY Kamers.KamerNummer");
+        while (rowSet.next()){
+            var kamer=new Kamer();
+            kamer.setKamerID(rowSet.getInt("KamerID"));
+            kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
+            kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
+            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
+            alleKamers.add(kamer);
+        }
+        return alleKamers;
+    }
+
     public void KamerToevoegen(int kamerNummer,int kamerTypeID){
         jdbcTemplate.update("INSERT INTO Kamers ( KamerNummer, KamerTypeID) " +
                 "VALUES ( ?, ? )",kamerNummer,kamerTypeID );

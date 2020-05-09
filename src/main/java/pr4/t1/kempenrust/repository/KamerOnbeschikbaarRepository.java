@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import pr4.t1.kempenrust.DTO.KamerBeheer;
+import pr4.t1.kempenrust.model.Kamer;
 import pr4.t1.kempenrust.model.KamerOnbeschikbaar;
 
 import java.util.ArrayList;
@@ -51,11 +52,16 @@ public class KamerOnbeschikbaarRepository {
 
         while(rowSet.next()) {
             KamerOnbeschikbaar kamerOnbeschikbaar = new KamerOnbeschikbaar();
+            Kamer kamer = new Kamer();
 
             kamerOnbeschikbaar.setKamerOnbeschikbaarID(rowSet.getInt("KamersOnbeschikbaarID"));
             kamerOnbeschikbaar.setKamerID(rowSet.getInt("KamerID"));
             kamerOnbeschikbaar.setDatumVan(rowSet.getDate("DatumVan"));
             kamerOnbeschikbaar.setDatumTot(rowSet.getDate("DatumTot"));
+
+            kamer.setKamerID(rowSet.getInt("KamerID"));
+            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
+            kamerOnbeschikbaar.setKamer(kamer);
 
             lijstKamerOnbeschikbaar.add(kamerOnbeschikbaar);
         }
