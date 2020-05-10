@@ -3,12 +3,15 @@ package pr4.t1.kempenrust.model.DTO;
 import pr4.t1.kempenrust.model.BoekingDetail;
 import pr4.t1.kempenrust.model.Kamer;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class OverzichtDto {
     private int dagenInMaand;
     private int maand;
     private int jaar;
+    private LocalDate datum;
     private ArrayList<Kamer> kamers;
     private BoekingDetail[][] overzicht;
 
@@ -34,6 +37,14 @@ public class OverzichtDto {
 
     public void setJaar(int jaar) {
         this.jaar = jaar;
+    }
+
+    public LocalDate getDatum() {
+        return datum;
+    }
+
+    public void setDatum(LocalDate datum) {
+        this.datum = datum;
     }
 
     public ArrayList<Kamer> getKamers() {

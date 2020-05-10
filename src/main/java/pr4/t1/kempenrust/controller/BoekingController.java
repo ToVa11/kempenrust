@@ -184,6 +184,7 @@ public class BoekingController {
 
         overzichtDto.setMaand(maand);
         overzichtDto.setJaar(jaar);
+        overzichtDto.setDatum(LocalDate.of(jaar, maand, 1));
 
         ArrayList<Kamer> kamers = kamerRepository.getAlleKamersMetModel();
         overzichtDto.setKamers(kamers);
