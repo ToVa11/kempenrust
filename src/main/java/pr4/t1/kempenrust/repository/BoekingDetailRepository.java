@@ -147,22 +147,24 @@ public class BoekingDetailRepository {
 
         return reservaties;
     }
-    public ArrayList<BoekingDetailDto> getAlleDetailsMetDatums(Date datumVan,Date datumTot){
-        ArrayList<BoekingDetailDto> details = new ArrayList<>();
+    public ArrayList<BoekingDetail> getAlleDetailsMetDatums(Date datumVan,Date datumTot){
+        ArrayList<BoekingDetail> details = new ArrayList<>();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
-                "SELECT * FROM " +
-                        " BOEKINGDETAILS INNER JOIN BOEKINGEN " +
-                            "ON BOEKINGDETAILS.BOEKINGID =BOEKINGEN.BOEKINGID " +
-                        "INNER JOIN KAMERS " +
-                            "ON BOEKINGDETAILS.KAMERID =KAMERS .KAMERID  " +
-                        "INNER JOIN KLANTEN " +
-                            "ON BOEKINGEN.KLANTID =KLANTEN .KLANTID " +
-                        "WHERE  BOEKINGEN.DatumTot  BETWEEN '"+datumVan+"' AND '"+datumTot+"' " +
-                        "OR  BOEKINGEN.DatumVan BETWEEN '"+datumVan+"' AND '"+datumTot+"'" +
-                        " ORDER BY BOEKINGEN.DatumVan");
+                        "SELECT * FROM boekingDetails INNER JOIN " +
+                                "(boekingen INNER JOIN klanten ON boekingen.klantId = klanten.klantId) " +
+                                "ON boekingDetails.boekingId = boekingen.boekingID " +
+                                "INNER JOIN kamers ON boekingDetails.kamerId = kamers.kamerId " +
+                                "WHERE ? BETWEEN DatumVan AND DatumTot " +
+                                "OR ? BETWEEN DatumVan AND DatumTot " +
+                                "OR DatumVan BETWEEN ? AND ? " +
+                                "OR DatumTot BETWEEN ? AND ? " +
+                                "ORDER BY boekingen.datumVan, boekingen.datumTot",
+                        datumVan, datumTot,
+                        datumVan, datumTot,
+                        datumVan, datumTot);
 
         while(rowSet.next()) {
-            BoekingDetailDto detail = new BoekingDetailDto();
+            BoekingDetail detail = new BoekingDetail();
             Klant klant = new Klant();
             Boeking boeking = new Boeking();
             Kamer kamer = new Kamer();

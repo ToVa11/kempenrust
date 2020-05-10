@@ -22,30 +22,30 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1>Kamers</h1>
-    <table class="table" th:if="${kamers.size()!=0}">
+    <h1>Klanten</h1>
+    <table class="table" th:if="${klanten.size()!=0}">
         <thead>
         <tr>
-            <th class="align-middle">Kamer Nummer</th>
-            <th class="align-middle">Omschrijving</th>
-            <th class="align-middle">Onbeschikbaar Van</th>
-            <th class="align-middle">Onbeschikbaar Tot</th>
+            <th class="align-middle">Klant Naam</th>
+            <th class="align-middle">Telefoon</th>
+            <th class="align-middle">Email</th>
+            <th class="align-middle">Adres</th>
             <th>
-                <a th:href="@{/nieweKamerToeveogen}"
+                <a th:href="@{/nieweKlantToeveogen}"
                    class="btn btn-secondary">
                     <i class="fas fa-plus"></i></a>
             </th>
         </tr>
         </thead>
         <tbody>
-        <tr  th:each="kamer :${kamers}">
-            <td th:text="${kamer.kamerNummer}" class="align-middle"></td>
-            <td th:text="${kamer.omschrijving}" class="align-middle"></td>
-            <td th:text="${#dates.format(kamer.datumVan,'dd/MM/yyyy')}" class="align-middle"></td>
-            <td th:text="${#dates.format(kamer.datumTot,'dd/MM/yyyy')}" class="align-middle"></td>
+        <tr  th:each="klant :${klanten}">
+            <td th:text="${klant.voornaam}+ ' '+ ${klant.naam}" class="align-middle"></td>
+            <td th:text="${klant.telefoonnummer}" class="align-middle"></td>
+            <td th:text="${klant.email}" class="align-middle"></td>
+            <td th:text="${klant.straat} +' '+ ${klant.huisnummer} +', '+ ${klant.postcode} +' '+ ${klant.gemeente}" class="align-middle"></td>
             <td>
                 <a class="btn btn-secondary"
-                    th:href="@{/kamerAanpassen(kamerId=${kamer.kamerID})}">
+                    th:href="@{/KlantgegevensAanpassen(klantId=${klant.klantID})}">
                     <li class="fas fa-pen"></li></a>
                 <button class="btn btn-secondary" data-toggle="modal"
                         data-target="#deleteConfirmation">
@@ -54,27 +54,21 @@
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalCenterTitle">Verwijder kamer?</h5>
+                                <h5 class="modal-title" id="exampleModalCenterTitle">Verwijder klant?</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
                             <div class="modal-body">
-                                Ben je zeker dat je deze kamer wil verwijderen?
+                                Ben je zeker dat je deze klant wil verwijderen?
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleer</button>
-                                <a class="btn btn-secondary" th:href="@{/kamerVerwijderen(kamerId=${kamer.kamerID})}">Verwijder</li></a>
+                                <a class="btn btn-secondary" th:href="@{/klantVerwijderen(klantId=${klant.klantID})}">Verwijder</li></a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </td>
-            </td>
-            <td>
-                <a class="btn btn-secondary"
-                th:href="@{/kamerBeschikbaarheid(kamerId=${kamer.kamerID})}">
-                Beschikbaarheid</a>
             </td>
         </tr>
         </tbody>

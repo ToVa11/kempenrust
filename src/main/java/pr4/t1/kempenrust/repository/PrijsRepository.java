@@ -12,7 +12,7 @@ import pr4.t1.kempenrust.model.Prijs;
 import java.util.ArrayList;
 import java.util.List;
 
-import pr4.t1.kempenrust.DTO.KamerBeheer;
+import pr4.t1.kempenrust.DTO.KamerDto;
 
 
 @Repository
@@ -22,8 +22,8 @@ public class PrijsRepository {
     public void prijsVerwijderen(int kamerID){
         jdbcTemplate.update("DELETE FROM Prijzen WHERE KamerID =? ",kamerID);
     }
-    public KamerBeheer kamerTeVerwijderen(int kamerID){
-        KamerBeheer kamer=new KamerBeheer();
+    public KamerDto kamerTeVerwijderen(int kamerID){
+        KamerDto kamer=new KamerDto();
         SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT * " +
                 "FROM " +
                 "kamers  INNER JOIN Prijzen " +

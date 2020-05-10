@@ -15,34 +15,33 @@
     <title>Kamers</title>
 </head>
 <body>
-
 <div id="nav-kempenrust" th:replace="~{/fragments/app-fragments :: nav-default}">
     Nav
 </div>
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1>Attentie</h1>
-
-    <div class="col-md-8">
-        <table class="table" th:if="${kamer.datumVan}">
+    <div th:if="${melding != null}" class="alert alert-danger">
+        <h3 th:text="${melding.foutmelding} ? ${melding.foutmelding}"></h3>
+    </div>        <table class="table">
             <thead>
-            <h2 th:text="${kamer.omschrijving}"></h2>
-            <tr>
-                <th>Datum Van</th>
-                <th>Datum Tot</th>
-            </tr>
+                <tr>
+                    <th>Datum Van</th>
+                    <th>Datum Tot</th>
+                </tr>
             </thead>
             <tbody>
-            <tr>
-                <td th:text="${#dates.format(kamer.datumVan,'dd/MM/yyyy')}"></td>
-                <td th:text="${#dates.format(kamer.datumTot,'dd/MM/yyyy')}"></td>
-            </tr>
+                <tr th:if="${melding.boekingDatumVan != null}">
+                    <td th:text="${#dates.format(melding.boekingDatumVan,'dd/MM/yyyy')}"></td>
+                    <td th:text="${#dates.format(melding.boekingDatumTot,'dd/MM/yyyy')}"></td>
+                </tr>
             </tbody>
         </table>
-        <a th:href="@{/kamers}" class="btn btn-primary w-90" >Terug naar de lijst</a>
+    <a th:if="${melding.isKlant()}"
+       th:href="@{/klanten}" class="btn btn-primary w-90" >Terug naar de lijst</a>
+    <a th:if="${melding.isKamer()}"
+       th:href="@{/kamers}" class="btn btn-primary w-90" >Terug naar de lijst</a>
     </div>
-</div>
 <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
     Footer
 </div>

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
-import pr4.t1.kempenrust.DTO.KamerBeheer;
+import pr4.t1.kempenrust.DTO.KamerDto;
 import pr4.t1.kempenrust.model.KamerType;
 
 import java.util.ArrayList;
@@ -27,8 +27,8 @@ public class KamerTypeRepository {
         }
         return KamerTypes;
     }
-    public KamerBeheer getKamerByID(int kamerID){
-        KamerBeheer kamer=new KamerBeheer();
+    public KamerDto getKamerByID(int kamerID){
+        KamerDto kamer=new KamerDto();
         SqlRowSet rowSet =jdbcTemplate.queryForRowSet("SELECT * FROM " +
                 "Kamers INNER JOIN Kamertypes " +
                     "ON Kamers.KamerTypeID = Kamertypes.kamertypeID " +

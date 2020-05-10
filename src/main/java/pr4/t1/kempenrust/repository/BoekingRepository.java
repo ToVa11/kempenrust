@@ -15,11 +15,9 @@ import java.sql.Types;
 import pr4.t1.kempenrust.model.VerblijfsKeuze;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.time.LocalDate;
 import java.util.List;
-
-import pr4.t1.kempenrust.DTO.KamerBeheer;
 
 @Repository
 public class BoekingRepository {
@@ -156,24 +154,45 @@ public class BoekingRepository {
         return boekingID;
     }
 
-    public KamerBeheer getGeboekteKamer(int kamerID){
-        KamerBeheer kamer=new KamerBeheer();
+    public Boeking getBoekingVoorKamer(int kamerID){
+        Boeking boeking=new Boeking();
         SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT *" +
                 "from " +
-                        "(((kamers  INNER JOIN BoekingDetails " +
+                        "((kamers  INNER JOIN BoekingDetails " +
                                 "ON kamers.KAMERID = BoekingDetails.KamerID) " +
                         "INNER JOIN Boekingen " +
-                            "ON Boekingen.BoekingID = BoekingDetails.BoekingID )" +
-                        "INNER JOIN Prijzen " +
-                            "ON Prijzen.KamerID=Kamers.kamerID )" +
+                            "ON Boekingen.BoekingID = BoekingDetails.BoekingID ) " +
                 "WHERE Kamers.kamerID = ? ",kamerID);
         while(rowSet.next()){
-            kamer.setKamerID(rowSet.getInt("KamerID"));
-            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
-            kamer.setDatumVan(rowSet.getDate("DatumVan"));
-            kamer.setDatumTot(rowSet.getDate("DatumTot"));
-            kamer.setGeboekt(true);
+            boeking.setDatumVan(rowSet.getDate("DatumVan"));
+            boeking.setDatumTot(rowSet.getDate("DatumTot"));
         }
-        return  kamer;
+        return  boeking;
+    }
+
+
+    public Boeking getBoekingVoorKlant(int klantId) {
+        Boeking boeking = new Boeking();
+        Klant klan=new Klant();
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
+
+                "SELECT * FROM  " +
+                        "boekingen INNER JOIN klanten ON boekingen.klantId = klanten.klantId " +
+                        "WHERE " +
+                        "boekingen.KlantID = '"+klantId+"'" +
+                        "AND Boekingen.DatumTot > '"+Date.valueOf(LocalDate.now())+"' ");
+
+
+        while (rowSet.next()) {
+            klan.setNaam(rowSet.getString("naam"));
+            klan.setVoornaam(rowSet.getString("voornaam"));
+
+            boeking.setKlant(klan);
+            boeking.setDatumVan(rowSet.getDate("DatumVan"));
+            boeking.setDatumTot(rowSet.getDate("DatumTot"));
+
+
+        }
+        return boeking;
     }
 }
