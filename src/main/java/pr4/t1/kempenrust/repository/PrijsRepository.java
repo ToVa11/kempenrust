@@ -2,6 +2,8 @@ package pr4.t1.kempenrust.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +11,8 @@ import pr4.t1.kempenrust.model.Kamer;
 import pr4.t1.kempenrust.model.KamerType;
 import pr4.t1.kempenrust.model.Prijs;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,5 +90,32 @@ public class PrijsRepository {
         queryBuilder.append(")");
 
         return queryBuilder.toString();
+    }
+
+    public int voegPrijsToeVoorVerblijfskeuze(List<Prijs> kamerPrijzen, int verblijfskeuzeID) {
+        int rowsInserted=0;
+        for (Prijs kamerPrijs: kamerPrijzen) {
+            String sqlInsertStatement = "" +
+                    "INSERT INTO prijzen " +
+                    "(kamerID, verblijfskeuzeID, prijsPerKamer, datumVanaf) " +
+                    "VALUES " +
+                    "( ? , ?, ?, ? )";
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(
+                        sqlInsertStatement, new String[]{"verblijfskeuzeID"});
+                ps.setInt(1, kamerPrijs.getKamerID());
+                ps.setInt(2, verblijfskeuzeID);
+                ps.setBigDecimal(3,kamerPrijs.getPrijsPerKamer());
+                ps.setDate(4, new Date(kamerPrijs.getDatumVanaf().getTime()));
+                return ps;
+            }, keyHolder);
+
+            if(keyHolder.getKey().intValue() >0) {
+                rowsInserted++;
+            }
+        }
+        return rowsInserted;
     }
 }

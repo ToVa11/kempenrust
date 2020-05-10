@@ -155,7 +155,7 @@ public class BeherenController {
         return "layouts/beheren/kamerToevoegen";
     }
 
-
+    //region Arrangementen
     @RequestMapping("/arrangementen")
     public String Arrangementen(Model model, RedirectAttributes redirectAttributes) {
         ArrayList<VerblijfsKeuze> verblijfskeuzes = verblijfsKeuzeRepository.getAlleVerblijfsKeuzes();
@@ -173,12 +173,13 @@ public class BeherenController {
     public String VoegVerblijfskeuzeToe(Model model) {
         ArrangementDTO arrangementDTO = new ArrangementDTO();
 
-        arrangementDTO.setKamers(kamerRepository.getAlleKamersMetModel());
+        List<Kamer> kamers = kamerRepository.getAlleKamersMetModel();
 
         ArrayList<Prijs> prijzenKamers = new ArrayList<>();
-        for (Kamer kamer:arrangementDTO.getKamers()) {
+        for (Kamer kamer:kamers) {
             Prijs prijs = new Prijs();
             prijs.setKamer(kamer);
+            prijs.setKamerID(kamer.getKamerID());
             prijs.setPrijsPerKamer(new BigDecimal(0));
 
             prijzenKamers.add(prijs);
@@ -194,7 +195,14 @@ public class BeherenController {
     public String addArrangement(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
         String message= null;
 
+        for(int i=0;i<arrangementDTO.getKamerPrijzen().size();i++) {
+            java.util.Date datum = Date.valueOf(arrangementDTO.getDatums().get(i));
+            arrangementDTO.getKamerPrijzen().get(i).setDatumVanaf(datum);
+        }
+
+
         int verblijfskeuzeID = verblijfsKeuzeRepository.addVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
+        int prijsKamersToegevoegd = prijsRepository.voegPrijsToeVoorVerblijfskeuze(arrangementDTO.getKamerPrijzen(), verblijfskeuzeID);
 
         if(verblijfskeuzeID > 0) {
             message= verblijfskeuzeID + " aangemaakt.";
@@ -255,6 +263,7 @@ public class BeherenController {
         return "redirect:/arrangementen";
     }
 
+    //endregion
 
     @RequestMapping("/reservering")
     public String Reservering(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
