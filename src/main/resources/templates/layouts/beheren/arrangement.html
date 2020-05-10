@@ -22,48 +22,30 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1>Arrangementen</h1>
-</div>
-<table class="table">
-    <tr>
-        <th class="align-middle">Naam</th>
-        <th class="align-middle">Omschrijving</th>
-        <th class="align-middle">
-            <a th:href="@{/toevoegen/arrangement}"><button class="btn btn-secondary"><i class="fas fa-plus"></i></button></a>
-        </th>
-    </tr>
-    <tr th:each="verblijfskeuze: ${verblijfskeuzes}">
-        <td th:text="${verblijfskeuze.getNaam()}" class="align-middle"></td>
-        <td th:text="${verblijfskeuze.getOmschrijving()}" class="align-middle"></td>
-        <td>
-            <a th:href="@{/arrangement(Id=${verblijfskeuze.getVerblijfskeuzeID()})}"><button class="btn btn-secondary"><i class="fas fa-pen"></i></button></a>
-            <button class="btn btn-secondary" data-toggle="modal" th:data-target="${'#deleteConfirmation'+verblijfskeuze.getVerblijfskeuzeID()}"><i class="fas fa-trash"></i></button>
-            <div class="modal fade" th:id="${'deleteConfirmation'+verblijfskeuze.getVerblijfskeuzeID()}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle">Verwijder Arrangement?</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            Ben je zeker dat je het arrangement <span th:text="${verblijfskeuze.getNaam()}"></span> wil verwijderen?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleer</button>
-                            <form th:action="@{/delete/arrangement}" method="post">
-                                <input type="hidden" name="verblijfskeuzeID" th:value="${verblijfskeuze.getVerblijfskeuzeID()}">
-                                <button type="submit" class="btn btn-primary">Verwijder</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+    <h1>Arrangement Toevoegen</h1>
+    <form action="#" data-th-action="@{/update/arrangement}" th:object="${arrangement}"  method="post">
+        <input type="hidden" th:field="*{verblijfsKeuze.verblijfskeuzeID}">
+        <div class="row">
+            <div class="form-group col-md-4 mt-3">
+                <label for="naam">Naam</label>
+                <input type="text" class="form-control" id="naam" th:field="*{verblijfsKeuze.naam}" required>
             </div>
-        </td>
-    </tr>
-
-    <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
+            <div class="form-group col-md-4 mt-md-3">
+                <label for="omschrijving">Omschrijving</label>
+                <input type="text" class="form-control" id="omschrijving" th:field="*{verblijfsKeuze.omschrijving}" >
+            </div>
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+            <div class="form-group col-md-4">
+                <a th:href="@{/arrangementen}" class="btn btn-primary w-100">Cancel</a>
+            </div>
+            <div class="form-group col-md-4">
+                <button type="submit" class="btn btn-primary w-100">Update</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
     Footer
 </div>
 </body>

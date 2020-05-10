@@ -7,7 +7,7 @@ import pr4.t1.kempenrust.model.VerblijfsKeuze;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class arrangementDTO {
+public class ArrangementDTO {
     private VerblijfsKeuze verblijfsKeuze;
     private List<Kamer> kamers;
     private List<Prijs> kamerPrijzen;

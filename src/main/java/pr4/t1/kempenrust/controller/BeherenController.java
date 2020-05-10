@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pr4.t1.kempenrust.model.*;
+import pr4.t1.kempenrust.model.DTO.ArrangementDTO;
 import pr4.t1.kempenrust.model.DTO.UpdateReserveringDTO;
 import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.BoekingRepository;
@@ -24,6 +25,7 @@ import pr4.t1.kempenrust.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.ParseException;
 
@@ -168,21 +170,71 @@ public class BeherenController {
     }
 
     @RequestMapping("/toevoegen/arrangement")
-    public String VoegVerblijfskeuzeToe() {
+    public String VoegVerblijfskeuzeToe(Model model) {
+        ArrangementDTO arrangementDTO = new ArrangementDTO();
+
+        arrangementDTO.setKamers(kamerRepository.getAlleKamersMetModel());
+
+        ArrayList<Prijs> prijzenKamers = new ArrayList<>();
+        for (Kamer kamer:arrangementDTO.getKamers()) {
+            Prijs prijs = new Prijs();
+            prijs.setKamer(kamer);
+            prijs.setPrijsPerKamer(new BigDecimal(0));
+
+            prijzenKamers.add(prijs);
+        }
+        arrangementDTO.setKamerPrijzen(prijzenKamers);
+
+        model.addAttribute("arrangement", arrangementDTO);
+
         return "layouts/beheren/arrangementToevoegen";
+    }
+
+    @RequestMapping("/add/arrangement")
+    public String addArrangement(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
+        String message= null;
+
+        int verblijfskeuzeID = verblijfsKeuzeRepository.addVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
+
+        if(verblijfskeuzeID > 0) {
+            message= verblijfskeuzeID + " aangemaakt.";
+        }
+        else {
+            message = "Er ging iets mis bij het aanmaken van het arrangement.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+
+        return "redirect:/arrangementen";
     }
 
     @RequestMapping("/arrangement")
     public String Arrangement(Model model, HttpServletRequest request) {
         VerblijfsKeuze verblijfskeuze = verblijfsKeuzeRepository.getVerblijfkeuze(Integer.parseInt(request.getParameter("verblijfskeuzeID")));
-
-        model.addAttribute("verblijfskeuze", verblijfskeuze);
+        ArrangementDTO arrangementDTO = new ArrangementDTO();
+        arrangementDTO.setVerblijfsKeuze(verblijfskeuze);
+        model.addAttribute("arrangement", arrangementDTO );
 
         return "layouts/beheren/arrangement";
     }
 
+    @RequestMapping("/update/arrangement")
+    public String UpdateArrangement(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
+        String message=null;
+        int rowsUpdated = verblijfsKeuzeRepository.updateVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
+
+        if(rowsUpdated>0) {
+            message= "Verblijfskeuze is succesvol aangepast.";
+        }
+        else {
+            message = "Er is iets misgegaan tijdens het updaten.";
+        }
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/arrangementen";
+    }
+
     @RequestMapping("/delete/arrangement")
-    public String VerwijderArrangement(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public String VerwijderArrangement(HttpServletRequest request, RedirectAttributes redirectAttributes) {
         String message=null;
         int verblijfskeuzeID = Integer.parseInt(request.getParameter("verblijfskeuzeID"));
 

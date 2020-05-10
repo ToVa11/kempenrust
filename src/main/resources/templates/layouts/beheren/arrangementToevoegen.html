@@ -23,24 +23,23 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Arrangement Toevoegen</h1>
-    <form action="#" data-th-action="@{update/datum/reservering}" th:object="${reservering}"  method="post">
-        <input type="hidden" th:field="*{boekingID}">
+    <form action="#" data-th-action="@{/add/arrangement}" th:object="${arrangement}"  method="post">
         <div class="row">
-
             <div class="form-group col-md-4 mt-3">
-                <label for="datumAankomst">Datum aankomst</label>
-                <input type="date" class="form-control" id="datumAankomst" th:field="*{datumVan}" required>
+                <label for="naam">Naam</label>
+                <input type="text" class="form-control" id="naam" th:field="*{verblijfsKeuze.naam}" required>
             </div>
             <div class="form-group col-md-4 mt-md-3">
-                <label for="datumVertrek">Datum vertrek</label>
-                <input type="date" class="form-control" id="datumVertrek" th:field="*{datumTot}" >
+                <label for="omschrijving">Omschrijving</label>
+                <input type="text" class="form-control" id="omschrijving" th:field="*{verblijfsKeuze.omschrijving}" >
             </div>
-            <!-- Force next columns to break to new line -->
-            <div class="w-100"></div>
             <!-- Force next columns to break to new line -->
             <div class="w-100"></div>
             <div class="form-group col-md-4">
-                <button type="submit" class="btn btn-primary w-100">Pas datum aan.</button>
+                <a th:href="@{/arrangementen}" class="btn btn-primary w-100">Cancel</a>
+            </div>
+            <div class="form-group col-md-4">
+                <button type="submit" class="btn btn-primary w-100">Voeg Toe</button>
             </div>
         </div>
     </form>

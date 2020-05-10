@@ -38,7 +38,7 @@
             <td th:text="${verblijfskeuze.getNaam()}" class="align-middle"></td>
             <td th:text="${verblijfskeuze.getOmschrijving()}" class="align-middle"></td>
             <td>
-                <a th:href="@{/arrangement(Id=${verblijfskeuze.getVerblijfskeuzeID()})}"><button class="btn btn-secondary"><i class="fas fa-pen"></i></button></a>
+                <a th:href="@{/arrangement(verblijfskeuzeID=${verblijfskeuze.getVerblijfskeuzeID()})}"><button class="btn btn-secondary"><i class="fas fa-pen"></i></button></a>
                 <button class="btn btn-secondary" data-toggle="modal" th:data-target="${'#deleteConfirmation'+verblijfskeuze.getVerblijfskeuzeID()}"><i class="fas fa-trash"></i></button>
                 <div class="modal fade" th:id="${'deleteConfirmation'+verblijfskeuze.getVerblijfskeuzeID()}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
