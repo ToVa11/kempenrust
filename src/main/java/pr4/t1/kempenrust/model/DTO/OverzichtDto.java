@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 public class OverzichtDto {
     private int dagenInMaand;
+    private int maand;
+    private int jaar;
     private ArrayList<Kamer> kamers;
     private BoekingDetail[][] overzicht;
 
@@ -16,6 +18,22 @@ public class OverzichtDto {
 
     public void setDagenInMaand(int dagenInMaand) {
         this.dagenInMaand = dagenInMaand;
+    }
+
+    public int getMaand() {
+        return maand;
+    }
+
+    public void setMaand(int maand) {
+        this.maand = maand;
+    }
+
+    public int getJaar() {
+        return jaar;
+    }
+
+    public void setJaar(int jaar) {
+        this.jaar = jaar;
     }
 
     public ArrayList<Kamer> getKamers() {
