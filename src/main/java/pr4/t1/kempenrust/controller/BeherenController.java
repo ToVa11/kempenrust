@@ -204,8 +204,11 @@ public class BeherenController {
         int verblijfskeuzeID = verblijfsKeuzeRepository.addVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
         int prijsKamersToegevoegd = prijsRepository.voegPrijsToeVoorVerblijfskeuze(arrangementDTO.getKamerPrijzen(), verblijfskeuzeID);
 
-        if(verblijfskeuzeID > 0) {
-            message= verblijfskeuzeID + " aangemaakt.";
+        if(prijsKamersToegevoegd==0 && verblijfskeuzeID > 0) {
+            message = "Het arrangement is succesvol aangemaakt maar er ging iets mis bij het toevoegen van de prijzen voor het arrangement. Gelieve deze na te kijken.";
+        }
+        else if(verblijfskeuzeID >0 && prijsKamersToegevoegd>0) {
+            message = "Arrangement is succesvol aangemaakt.";
         }
         else {
             message = "Er ging iets mis bij het aanmaken van het arrangement.";
