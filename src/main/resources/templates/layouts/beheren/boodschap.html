@@ -35,12 +35,17 @@
                     <td th:text="${#dates.format(melding.boekingDatumVan,'dd/MM/yyyy')}"></td>
                     <td th:text="${#dates.format(melding.boekingDatumTot,'dd/MM/yyyy')}"></td>
                 </tr>
+                <tr>
+                    <td>
+                        <a th:if="${melding.isKlant()}"
+                           th:href="@{/klanten}" class="btn btn-primary " ><i class="fas fa-backspace"></i></a>
+                        <a th:if="${melding.isKamer()}"
+                           th:href="@{/kamers}" class="btn btn-primary" ><i class="fas fa-backspace"></i></a>
+                    </td>
+                </tr>
             </tbody>
         </table>
-    <a th:if="${melding.isKlant()}"
-       th:href="@{/klanten}" class="btn btn-primary w-90" >Terug naar de lijst</a>
-    <a th:if="${melding.isKamer()}"
-       th:href="@{/kamers}" class="btn btn-primary w-90" >Terug naar de lijst</a>
+
     </div>
 <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
     Footer

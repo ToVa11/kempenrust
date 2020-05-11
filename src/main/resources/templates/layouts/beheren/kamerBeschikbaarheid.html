@@ -36,7 +36,7 @@
             <td th:text="${kamer.kamer.kamerNummer}"></td>
             <td th:text="${kamer.datumVan}"></td>
             <td th:text="${kamer.datumTot}"></td>
-            <td><a th:href="@{/kamerBeschikbaarMaken(kamerId=${kamer.kamer.kamerID})}"
+            <td><a th:href="@{/kamerBeschikbaarMaken(kamerId=${kamer.kamerID})}"
                    class="btn btn-primary">
                    Beschikbaar Maken
                 </a>

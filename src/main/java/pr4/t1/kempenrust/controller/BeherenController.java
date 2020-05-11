@@ -164,6 +164,7 @@ public class BeherenController {
             model.addAttribute("melding",melding);
             return "layouts/beheren/boodschap";
         }
+        kamerOnbeschikbaarRepository.KamerBeschikbaarMaken(kamerId);
         prijsRepository.kamerTeVerwijderen(kamerId);
         kamerRepository.KamerVerwijderen(kamerId);
         ArrayList<KamerDto> kamers=kamerRepository.getKamers();
