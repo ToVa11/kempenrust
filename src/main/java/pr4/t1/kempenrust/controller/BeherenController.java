@@ -195,10 +195,8 @@ public class BeherenController {
     public String addArrangement(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
         String message= null;
 
-        for(int i=0;i<arrangementDTO.getKamerPrijzen().size();i++) {
-            java.util.Date datum = Date.valueOf(arrangementDTO.getDatums().get(i));
-            arrangementDTO.getKamerPrijzen().get(i).setDatumVanaf(datum);
-        }
+        arrangementDTO.setKamerPrijzen(getKamerPrijzenMetDatums(arrangementDTO.getKamerPrijzen(),arrangementDTO.getDatums()));
+
 
 
         int verblijfskeuzeID = verblijfsKeuzeRepository.addVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
@@ -219,11 +217,26 @@ public class BeherenController {
         return "redirect:/arrangementen";
     }
 
+    private List<Prijs> getKamerPrijzenMetDatums(List<Prijs> kamerPrijzen, List<String> datums) {
+
+        for(int i=0;i<kamerPrijzen.size();i++) {
+            java.util.Date datum = Date.valueOf(datums.get(i));
+            kamerPrijzen.get(i).setDatumVanaf(datum);
+        }
+        return kamerPrijzen;
+    }
+
     @RequestMapping("/arrangement")
     public String Arrangement(Model model, HttpServletRequest request) {
         VerblijfsKeuze verblijfskeuze = verblijfsKeuzeRepository.getVerblijfkeuze(Integer.parseInt(request.getParameter("verblijfskeuzeID")));
+
         ArrangementDTO arrangementDTO = new ArrangementDTO();
+
         arrangementDTO.setVerblijfsKeuze(verblijfskeuze);
+        arrangementDTO.setKamerPrijzen(prijsRepository.getPrijzenVoorVerblijfskeuze(verblijfskeuze.getVerblijfskeuzeID()));
+
+        arrangementDTO.setDatums(vulDatumsOp(arrangementDTO.getKamerPrijzen()));
+
         model.addAttribute("arrangement", arrangementDTO );
 
         return "layouts/beheren/arrangement";
@@ -232,10 +245,15 @@ public class BeherenController {
     @RequestMapping("/update/arrangement")
     public String UpdateArrangement(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
         String message=null;
-        int rowsUpdated = verblijfsKeuzeRepository.updateVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
 
-        if(rowsUpdated>0) {
+        int rowsUpdatedVerblijfskeuze = verblijfsKeuzeRepository.updateVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
+        int rowsUpdatedPrijzen = prijsRepository.updatePrijzenVoorVerblijfskeuze(getKamerPrijzenMetDatums(arrangementDTO.getKamerPrijzen(), arrangementDTO.getDatums()));
+
+        if(rowsUpdatedVerblijfskeuze>0 && rowsUpdatedPrijzen>0) {
             message= "Verblijfskeuze is succesvol aangepast.";
+        }
+        else if(rowsUpdatedPrijzen==0) {
+            message="Er ging iets mis bij het aanpassen van de prijzen.";
         }
         else {
             message = "Er is iets misgegaan tijdens het updaten.";
@@ -395,5 +413,15 @@ public class BeherenController {
         return "redirect:/reserveringen";
     }
 
+    //datums moeten naar String omgezet worden om te tonen in frontend
+    private List<String> vulDatumsOp(List<Prijs> kamerPrijzen) {
+        ArrayList<String> datums = new ArrayList<>();
 
+        for (Prijs prijs: kamerPrijzen) {
+            String datum = prijs.getDatumVanaf().toString();
+            datums.add(datum);
+        }
+
+        return datums;
+    }
 }

@@ -127,4 +127,50 @@ public class PrijsRepository {
 
         jdbcTemplate.update(sqlVerwijderPrijzen, params, types);
     }
+
+    public List<Prijs> getPrijzenVoorVerblijfskeuze(int verblijfskeuzeID) {
+        ArrayList<Prijs> prijzen = new ArrayList<>();
+        String query = "" +
+                "SELECT * " +
+                "FROM Prijzen INNER JOIN Kamers " +
+                "ON Prijzen.KamerID = Kamers.KamerID " +
+                "WHERE Prijzen.verblijfskeuzeID = ? ";
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(query, verblijfskeuzeID);
+
+        while (rowSet.next()) {
+            Prijs prijs = new Prijs();
+            Kamer kamer = new Kamer();
+
+            kamer.setKamerID(rowSet.getInt("kamerID"));
+            kamer.setKamerNummer(rowSet.getInt("kamerNummer"));
+
+            prijs.setPrijsID(rowSet.getInt("prijsID"));
+            prijs.setVerblijfsKeuzeID(verblijfskeuzeID);
+            prijs.setKamer(kamer);
+            prijs.setDatumVanaf(rowSet.getDate("datumVanaf"));
+            prijs.setPrijsPerKamer(rowSet.getBigDecimal("prijsPerKamer"));
+
+            prijzen.add(prijs);
+        }
+
+        return prijzen;
+    }
+
+    public int updatePrijzenVoorVerblijfskeuze(List<Prijs> kamerPrijzenMetDatums) {
+        int rowsUpdated = 0;
+        for (Prijs prijs: kamerPrijzenMetDatums) {
+            Object[] params = {prijs.getDatumVanaf(), prijs.getPrijsPerKamer(), prijs.getPrijsID()};
+            int[] types = {Types.DATE,Types.DECIMAL, Types.INTEGER};
+
+            String sql = "" +
+                    "UPDATE prijzen " +
+                    "SET datumVanaf = ?, " +
+                    "prijsPerKamer = ? " +
+                    "WHERE " +
+                    "prijsID = ? ";
+
+            rowsUpdated += jdbcTemplate.update(sql, params, types);
+        }
+        return rowsUpdated;
+    }
 }

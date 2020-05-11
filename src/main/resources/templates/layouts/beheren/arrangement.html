@@ -36,7 +36,23 @@
             </div>
             <!-- Force next columns to break to new line -->
             <div class="w-100"></div>
-
+        </div>
+        <div class="row" th:each="prijsKamer, i: *{kamerPrijzen}">
+            <h5 class="form-group col-md-4" th:text="'Kamer ' + *{kamerPrijzen[__${i.index}__].kamer.getKamerNummer()}"></h5>
+            <input type="hidden" th:field="*{kamerPrijzen[__${i.index}__].kamerID}">
+            <input type="hidden" th:field="*{kamerPrijzen[__${i.index}__].prijsID}">
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+            <div class="form-group col-md-4">
+                <label for="datumVan">Datum vanaf?</label>
+                <input type="date" id="datumVan" th:field="*{datums[__${i.index}__]}">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="prijs">Prijs</label>
+                <input type="number" id="prijs" th:field="*{kamerPrijzen[__${i.index}__].prijsPerKamer}">
+            </div>
+        </div>
+        <div class="row">
             <div class="form-group col-md-4">
                 <a th:href="@{/arrangementen}" class="btn btn-primary w-100">Cancel</a>
             </div>
