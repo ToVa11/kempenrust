@@ -22,8 +22,8 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1 th:text="${boekingDetailDto.titel}"></h1>
-    <form class="form-inline" th:action="@{/afgelopen_reservaties}" method="post" th:object="${boekingDetailDto}">
+    <h1 th:text="${melding.titel}"></h1>
+    <form class="form-inline" th:action="@{/afgelopen_reservaties}" method="post" th:object="${boeking}">
         <div class="form-group mb-2">
             <label for="datumVan" style="margin-right: 10px">Datum Van: </label>
             <input type="date" th:field="*{datumVan}" class="form-control" id="datumVan" style="margin-right: 30px" required>

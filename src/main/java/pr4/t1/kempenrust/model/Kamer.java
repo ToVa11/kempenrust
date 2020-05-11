@@ -1,5 +1,7 @@
 package pr4.t1.kempenrust.model;
 
+import java.util.Objects;
+
 public class Kamer {
     private int kamerID;
     private int kamerNummer;
@@ -39,6 +41,19 @@ public class Kamer {
 
     public void setKamerType(KamerType kamerType) {
         this.kamerType = kamerType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Kamer kamer = (Kamer) o;
+        return getKamerID() == kamer.getKamerID();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getKamerID());
     }
 }
 

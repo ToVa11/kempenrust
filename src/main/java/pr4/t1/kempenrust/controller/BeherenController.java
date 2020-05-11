@@ -1,5 +1,4 @@
 package pr4.t1.kempenrust.controller;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,19 +12,14 @@ import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.BoekingRepository;
 import pr4.t1.kempenrust.repository.KlantRepository;
 import pr4.t1.kempenrust.repository.VerblijfsKeuzeRepository;
-
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import pr4.t1.kempenrust.DTO.KamerDto;
 import pr4.t1.kempenrust.repository.*;
-
 import java.sql.Date;
 import java.text.ParseException;
-
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class BeherenController {
@@ -185,6 +179,7 @@ public class BeherenController {
         return "layouts/beheren/kamerBeschikbaarheid";
     }
 
+
     @RequestMapping("/kamerBeschikbaarMaken")
     public String KamerBeschikabaarMaken(Model model, HttpServletRequest request){
         int kamerId= Integer.parseInt((request.getParameter("kamerId")));
@@ -271,38 +266,119 @@ public class BeherenController {
         updateReserveringDTO.setKlant(boeking.getKlant());
         updateReserveringDTO.setBoekingID(Integer.parseInt(request.getParameter("Id")));
         updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+        updateReserveringDTO.setPrijsKamers(kamerRepository.getAlleVrijeKamers(boeking.getVerblijfsKeuzeID(), boeking.getDatumVan(), boeking.getDatumTot()));
+        updateReserveringDTO.setPrijsKamersBoeking(kamerRepository.getKamerPrijsVoorBoeking(boeking.getBoekingID(), boeking.getVerblijfsKeuzeID()));
 
-        if(redirectAttributes.containsAttribute("rows")) {
-            model.addAttribute(redirectAttributes.getAttribute("rows"));
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute(redirectAttributes.getAttribute("message"));
         }
         model.addAttribute("reservering", updateReserveringDTO);
         return "layouts/beheren/reservering";
     }
 
-    @RequestMapping("/update/reservering")
-    public String updateReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes) {
-        int rows = boekingRepository.updateBoeking(reservering.getDatumVan(),reservering.getDatumTot(),reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
+    @RequestMapping("/update/datum/reservering")
+    public String updateDatumReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+        Date nieuweDatumVan = Date.valueOf(reservering.getDatumVan());
+        Date nieuweDatumTot = Date.valueOf(reservering.getDatumTot());
+        String message = null;
 
-        reservering.setKlant(klantRepository.getKlantVoorBoeking(reservering.getBoekingID()));
-        reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+        if(nieuweDatumVan.after(nieuweDatumTot) ) {
+            message="De aankomst datum mag niet na de vertrek datum liggen.";
+            redirectAttributes.addFlashAttribute("message", message);
 
-        redirectAttributes.addFlashAttribute("rows", rows);
+            return "redirect:/reservering?Id="+reservering.getBoekingID();
+        }
+
+        List<BoekingDetail> detailsBoekingen = boekingDetailRepository.getBoekingenZonderHuidigeBoeking(reservering.getBoekingID(), nieuweDatumVan, nieuweDatumTot);
+        List<BoekingDetail> selectedBoekingDetails = boekingDetailRepository.getDetailsVoorBoeking(reservering.getBoekingID());
+
+        for (BoekingDetail detail: selectedBoekingDetails)
+        {
+            for(BoekingDetail toekomstDetail: detailsBoekingen) {
+
+                if(detail.getKamerID() == toekomstDetail.getKamer().getKamerID()) {
+                message="De huidige kamer is niet beschikbaar in de gekozen periode. Gelieve een ander periode of kamer te kiezen.";
+                redirectAttributes.addFlashAttribute("message", message);
+
+                return "redirect:/reservering?Id="+reservering.getBoekingID();
+                }
+            }
+        }
+
+        if(boekingRepository.updateBoekingDatums(nieuweDatumVan, nieuweDatumTot, reservering.getBoekingID())>0) {
+            message = "Datums zijn succesvol aangepast.";
+        }
+        else {
+            message = "Er is iets misgegaan tijdens het updaten.";
+        }
+        redirectAttributes.addFlashAttribute("message", message);
 
         return "redirect:/reservering?Id="+reservering.getBoekingID();
     }
 
-    @RequestMapping("delete/reservering")
-    public String deleteReservering(HttpServletRequest request, Model model) {
+    @RequestMapping("/update/kamerToevoegen/reservering")
+    public String voegKamerToeReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+        List<Integer> kamers = reservering.getKamers();
+        int rowsAdded = boekingRepository.voegKamerToeAanBoeking(reservering.getBoekingID(),kamers);
+
+        String message=null;
+
+        if(rowsAdded>0) {
+            message= "Kamer is succesvol toegevoegd aan de boeking.";
+        }
+        else {
+            message="Er ging iets mis tijdens het toevoegen van de kamer.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/reservering?Id="+reservering.getBoekingID();
+    }
+
+    @RequestMapping("/update/reservering")
+    public String updateReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes) {
+        int rowsUpdated = boekingRepository.updateBoeking(reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
+
+        reservering.setKlant(klantRepository.getKlantVoorBoeking(reservering.getBoekingID()));
+        reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+
+        //add a redirectAttribute so we can give a message if the update succeeded.
+        //This redirectAttribute is catched in BeherenController/reservering
+        String message=null;
+        if(rowsUpdated>0){
+            message = "Update geslaagd.";
+        }
+        redirectAttributes.addFlashAttribute("message", message);
+
+        return "redirect:/reservering?Id="+reservering.getBoekingID();
+    }
+
+    @RequestMapping("/delete/kamer/reservering")
+    public String deleteKamerVanReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+        int rows = boekingRepository.verwijderKamerVanBoeking(reservering.getBoekingID(),reservering.getGeboekteKamers());
+        String message=null;
+
+        if (rows>0) {
+            message="Kamer is succesvol verwijderd.";
+        }
+        else {
+            message="Er ging iets mis tijdens het verwijderen.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/reservering?Id="+reservering.getBoekingID();
+    }
+
+    @RequestMapping("/delete/reservering")
+    public String deleteReservering(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 
         boekingRepository.deleteBoeking(Integer.parseInt(request.getParameter("boekingID")));
 
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAlleToekomstigeBoekingdetails();
+        //add a redirectAttribute so we can give a message if the delete succeeded.
+        //This redirectAttribute is catched in BoekingController/reserveringen
+        redirectAttributes.addFlashAttribute("message", "Reservatie verwijderd.");
 
-        String message = "Reservatie verwijderd.";
-
-        model.addAttribute("details",details);
-        model.addAttribute("message", message);
-
-        return "layouts/boeking/reserveringen";
+        return "redirect:/reserveringen";
     }
+
+
 }

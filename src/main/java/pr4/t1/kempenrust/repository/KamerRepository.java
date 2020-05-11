@@ -41,6 +41,24 @@ public class KamerRepository {
         return lijstKamers;
     }
 
+    // Hier ga ik enkel alle kamers ophalen zonder Dto & zonder joins
+    public ArrayList<Kamer> getAlleKamersMetModel(){
+        ArrayList<Kamer> alleKamers=new ArrayList<>();
+        SqlRowSet rowSet=jdbcTemplate.queryForRowSet("" +
+                "SELECT * " +
+                "FROM Kamers " +
+                "ORDER BY Kamers.KamerNummer");
+        while (rowSet.next()){
+            var kamer=new Kamer();
+            kamer.setKamerID(rowSet.getInt("KamerID"));
+            kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
+            kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
+            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
+            alleKamers.add(kamer);
+        }
+        return alleKamers;
+    }
+
     public void KamerToevoegen(int kamerNummer,int kamerTypeID){
         jdbcTemplate.update("INSERT INTO Kamers ( KamerNummer, KamerTypeID) " +
                 "VALUES ( ?, ? )",kamerNummer,kamerTypeID );
@@ -81,8 +99,24 @@ public class KamerRepository {
                     "(SELECT BoekingDetails.KamerID " +
                     "FROM BoekingDetails INNER JOIN Boekingen " +
                         "ON BoekingDetails.BoekingID = Boekingen.BoekingID " +
-                    "WHERE DatumVan >= ? AND DatumTot <= ?)",
+                    "WHERE ? BETWEEN DatumVan AND DatumTot " +
+                        " OR ? BETWEEN DatumVan AND DatumTot " +
+                        " OR DatumVan BETWEEN  ? AND ? " +
+                        " OR DatumTot BETWEEN ? AND ? " +
+                        ") " +
+                    "AND Kamers.KamerID NOT IN " +
+                    "(SELECT KamersOnbeschikbaar.KamerID " +
+                    "FROM KamersOnbeschikbaar " +
+                    "WHERE ? BETWEEN DatumVan AND DatumTot " +
+                        "OR ? BETWEEN DatumVan AND DatumTot " +
+                    ")",
                 verblijfskeuzeID,
+                datumAankomst,
+                datumVertrek,
+                datumAankomst,
+                datumVertrek,
+                datumAankomst,
+                datumVertrek,
                 datumAankomst,
                 datumVertrek);
 
@@ -107,4 +141,45 @@ public class KamerRepository {
         }
         return prijzenKamers;
     }
+
+    public ArrayList<Prijs> getKamerPrijsVoorBoeking(int boekingID, int verblijfskeuzeID) {
+        ArrayList<Prijs> kamerPrijzen = new ArrayList<Prijs>();
+
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(""+
+                "SELECT * " +
+                "FROM Prijzen INNER JOIN Kamers " +
+                "ON Prijzen.KamerID = Kamers.KamerID " +
+                "INNER JOIN KamerTypes " +
+                "ON Kamers.KamerTypeID = KamerTypes.KamerTypeID " +
+                "WHERE VerblijfsKeuzeID = ? AND Kamers.KamerID IN " +
+                "(SELECT BoekingDetails.KamerID " +
+                "FROM BoekingDetails " +
+                "WHERE BoekingDetails.BoekingID = ?) ",
+                verblijfskeuzeID,
+                boekingID
+        );
+
+        while (rowSet.next()) {
+            Kamer kamer = new Kamer();
+            KamerType kamerType = new KamerType();
+            Prijs prijs = new Prijs();
+            kamerType.setKamerTypeID(rowSet.getInt("KamerTypeID"));
+            kamerType.setOmschrijving(rowSet.getString("Omschrijving"));
+            kamer.setKamerID(rowSet.getInt("KamerID"));
+            kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
+            kamer.setKamerType(kamerType);
+            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
+            prijs.setPrijsID(rowSet.getInt("PrijsID"));
+            prijs.setKamerID(rowSet.getInt("KamerID"));
+            prijs.setKamer(kamer);
+            prijs.setVerblijfsKeuzeID(rowSet.getInt("VerblijfsKeuzeID"));
+            prijs.setPrijsPerKamer(rowSet.getBigDecimal("PrijsPerKamer"));
+            prijs.setDatumVanaf(rowSet.getDate("DatumVanaf"));
+
+            kamerPrijzen.add(prijs);
+        }
+
+        return kamerPrijzen;
+    }
+
 }

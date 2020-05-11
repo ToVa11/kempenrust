@@ -2,6 +2,7 @@ package pr4.t1.kempenrust.model.DTO;
 
 import pr4.t1.kempenrust.model.BoekingDetail;
 import pr4.t1.kempenrust.model.Klant;
+import pr4.t1.kempenrust.model.Prijs;
 import pr4.t1.kempenrust.model.VerblijfsKeuze;
 
 import java.util.List;
@@ -9,12 +10,16 @@ import java.util.List;
 public class UpdateReserveringDTO {
 
     private Klant klant;
-    private List<VerblijfsKeuze> verblijfsKeuzes;
     private String datumVan;
     private String datumTot;
     private int verblijfskeuzeID;
     private int aantalPersonen;
     private int boekingID;
+    private List<VerblijfsKeuze> verblijfsKeuzes;
+    private List<Prijs> prijsKamers;
+    private List<Prijs> prijsKamersBoeking;
+    private List<Integer> kamers;
+    private List<Integer> geboekteKamers;
 
     public Klant getKlant() {
         return klant;
@@ -69,5 +74,37 @@ public class UpdateReserveringDTO {
 
     public void setVerblijfsKeuzes(List<VerblijfsKeuze> verblijfsKeuzes) {
         this.verblijfsKeuzes = verblijfsKeuzes;
+    }
+
+    public List<Prijs> getPrijsKamers() {
+        return prijsKamers;
+    }
+
+    public void setPrijsKamers(List<Prijs> prijsKamers) {
+        this.prijsKamers = prijsKamers;
+    }
+
+    public List<Prijs> getPrijsKamersBoeking() {
+        return prijsKamersBoeking;
+    }
+
+    public void setPrijsKamersBoeking(List<Prijs> prijsKamersBoeking) {
+        this.prijsKamersBoeking = prijsKamersBoeking;
+    }
+
+    public List<Integer> getKamers() {
+        return kamers;
+    }
+
+    public void setKamers(List<Integer> kamers) {
+        this.kamers = kamers;
+    }
+
+    public List<Integer> getGeboekteKamers() {
+        return geboekteKamers;
+    }
+
+    public void setGeboekteKamers(List<Integer> geboekteKamers) {
+        this.geboekteKamers = geboekteKamers;
     }
 }

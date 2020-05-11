@@ -1,5 +1,4 @@
 package pr4.t1.kempenrust.controller;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,7 +6,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pr4.t1.kempenrust.DTO.MeldingDto;
 import pr4.t1.kempenrust.model.*;
+import pr4.t1.kempenrust.model.DTO.OverzichtDto;
 import pr4.t1.kempenrust.model.DTO.ReserveringBevestigingDto;
 import pr4.t1.kempenrust.DTO.BoekingDetailDto;
 import pr4.t1.kempenrust.model.BoekingDetail;
@@ -16,14 +18,20 @@ import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.KamerRepository;
 import pr4.t1.kempenrust.repository.VerblijfsKeuzeRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import pr4.t1.kempenrust.repository.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.sql.Date;
+
+import java.time.LocalDate;
+import java.time.YearMonth;
+
 import java.text.SimpleDateFormat;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class BoekingController {
@@ -39,6 +47,8 @@ public class BoekingController {
     KlantRepository klantRepository;
     @Autowired
     PrijsRepository prijsRepository;
+    @Autowired
+    KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
 
     SimpleDateFormat simpleFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -46,9 +56,14 @@ public class BoekingController {
     Date datumAankomst;
     Date datumVertrek;
 
+    BoekingDetail[][] overzicht;
+
     //    Hier komen alle methodes die iets te maken hebben met boekingen
     @RequestMapping("/reserveren")
-    public String Reserveren(Model model) {
+    public String Reserveren(Model model, RedirectAttributes redirectAttributes) {
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute(redirectAttributes.getAttribute("message"));
+        }
 
         ReserveringDto reserveringDto = new ReserveringDto();
         reserveringDto.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
@@ -60,10 +75,26 @@ public class BoekingController {
 
     // via params kan ik meerdere submits in mijn form gebruiken
     @RequestMapping(value = "/reserveren", method = RequestMethod.POST, params = "action=zoek-kamers")
-    public String ZoekKamers(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model) {
+    public String ZoekKamers(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model, RedirectAttributes redirectAttributes) {
+        String message = null;
+        message = checkDatums(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
+
+        if(message!=null) {
+            redirectAttributes.addFlashAttribute("message",message);
+            return "redirect:/reserveren";
+        }
+
         vulDatumsOp(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
         reserveringDetails.setPrijsVrijeKamers(kamerRepository.getAlleVrijeKamers(reserveringDetails.getKeuzeArrangement(), datumAankomst, datumVertrek));
+
+        if(reserveringDetails.getPrijsVrijeKamers().isEmpty())
+        {
+            message="Er is voor deze periode geen kamer meer beschikbaar.";
+            redirectAttributes.addFlashAttribute("message",message);
+
+            return "redirect:/reserveren";
+        }
 
         //Hier ga ik nog eens verblijfskeuzes ophalen, hebben jullie een betere oplossing?
         //object Dto kan geen complexe objecten doorsturen (enkel int, double, String & List (van de afgelopen 3)
@@ -77,6 +108,7 @@ public class BoekingController {
     // via params kan ik meerdere submits in mijn form gebruiken
     @PostMapping(value = "/reserveren", params = "action=bevestigen")
     public String ReserveringBevestigen(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails,  Model model) {
+
         // Is enkel nodig als de page word gerefreshed, omdat ik hier met classvariables werk
         vulDatumsOp(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
@@ -112,8 +144,14 @@ public class BoekingController {
         return "layouts/boeking/bevestiging";
 }
 
+
     @RequestMapping("/reserveringen")
-    public String Reserveringen(Model model) {
+    public String Reserveringen(Model model, RedirectAttributes redirectAttributes) {
+
+        //If redirectAttribute is set, this has to be added to the model, so we can show it at frontend
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute(redirectAttributes.getAttribute("message"));
+        }
 
         ArrayList<BoekingDetail> details = boekingDetailRepository.getAlleToekomstigeBoekingdetails();
 
@@ -123,30 +161,85 @@ public class BoekingController {
     }
 
     @RequestMapping("/overzicht")
-    public String Overzicht() {
+    public String Overzicht(Model model, Integer maand, Integer jaar) {
+        OverzichtDto overzichtDto = new OverzichtDto();
+
+        if(maand == null || jaar == null) {
+            var vandaag = LocalDate.now();
+            maand = vandaag.getMonth().getValue();
+            jaar = vandaag.getYear();
+        }
+
+        ArrayList<Kamer> kamers = kamerRepository.getAlleKamersMetModel();
+        overzichtDto.setKamers(kamers);
+
+        int dagenInMaand = YearMonth.of(jaar, maand).lengthOfMonth();
+        overzichtDto.setDagenInMaand(dagenInMaand);
+
+        Date van = Date.valueOf(LocalDate.of(jaar, maand, 1));
+        Date tot = Date.valueOf(LocalDate.of(jaar, maand, dagenInMaand));
+
+        overzicht = new BoekingDetail[kamers.size()][dagenInMaand];
+
+        var lijstKamersOnbeschikbaar = kamerOnbeschikbaarRepository.getOnbeschikbaarKamerTussenTweeDatums(van, tot);
+        VulOverzichtOp(lijstKamersOnbeschikbaar, kamers, maand, jaar);
+
+        var boekingen = boekingDetailRepository.getBoekingsdetailsTussenTweeDatums(van, tot);
+        VulOverzichtOp(boekingen, kamers, maand, jaar);
+
+        overzichtDto.setOverzicht(overzicht);
+        model.addAttribute("overzichtDto", overzichtDto);
+
         return "layouts/boeking/overzicht";
     }
 
     @RequestMapping("/voorschotten")
-    public String Voorschotten() {
+    public String Voorschotten(Model model, RedirectAttributes redirectAttributes) {
+        List<Boeking> boekingenMetOnbetaaldeVoorschotten = boekingRepository.getBoekingenMetOnbetaaldVoorschot();
+
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute(redirectAttributes.getAttribute("message"));
+        }
+        model.addAttribute("boekingen", boekingenMetOnbetaaldeVoorschotten);
+
         return "layouts/boeking/voorschotten";
     }
 
+    @RequestMapping("/reservering/bevestig/voorschot")
+    public String bevestigVoorschot(HttpServletRequest request, RedirectAttributes redirectAttributes){
+        int rowsUpdated = boekingRepository.bevestigVoorschot(request.getParameter("boekingID"));
+        String message=null;
+
+        if(rowsUpdated> 0 ) {
+            message="De betaling van het voorschot is bevestigd.";
+        }
+        else {
+            message="Er is iets misgegaan bij het bevestigen van het voorschot.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/voorschotten";
+
+
+    }
 
     @RequestMapping("/afgelopen_reservaties")
     public String AfgelopenReserveringen(Model model) {
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties ();
-        BoekingDetailDto boekingDetailDto=new BoekingDetailDto();
-        boekingDetailDto.setTitel("Afgelopen Reservaties");
+        BoekingDetailDto boeking=new BoekingDetailDto();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties();
+        MeldingDto melding=new MeldingDto();
+        melding.setTitel("Afgelopen Reservaties");
         model.addAttribute("details",details);
-        model.addAttribute("boekingDetailDto",boekingDetailDto);
+        model.addAttribute("boeking",boeking);
+        model.addAttribute("melding",melding);
         return "layouts/boeking/afgelopen_reservaties";
     }
 
     @PostMapping("/afgelopen_reservaties")
-    public String AfgelopenReserveringen(Model model,@ModelAttribute("KamerBeheer") BoekingDetailDto boekingDetailDto) {
-        var datumVan = Date.valueOf(boekingDetailDto.getDatumVan());
-        var datumTot = Date.valueOf(boekingDetailDto.getDatumTot());
+    public String AfgelopenReserveringen(Model model,@ModelAttribute("Boeking") BoekingDetailDto boeking) {
+        MeldingDto melding=new MeldingDto();
+        var datumVan = Date.valueOf(boeking.getDatumVan());
+        var datumTot = Date.valueOf(boeking.getDatumTot());
         if (datumVan !=null && datumTot!=null && datumVan.before(datumTot))
         {
             ArrayList<BoekingDetail> details = boekingDetailRepository
@@ -156,19 +249,19 @@ public class BoekingController {
             String endDatum = simpleFormatter.format(datumTot);
 
             if (details.size()>0){
-                boekingDetailDto.setTitel("Reservaties tussen "+startDatum +" en "+endDatum);
+                melding.setTitel("Reservaties tussen "+startDatum +" en "+endDatum);
             }else
             {
-                boekingDetailDto.setTitel("Geen reservaties gevonden tussen "+startDatum+" en "+endDatum);
+                melding.setTitel("Geen reservaties gevonden tussen "+startDatum+" en "+endDatum);
             }
 
             model.addAttribute("details",details);
-            model.addAttribute("boekingDetailDto",boekingDetailDto);
+            model.addAttribute("melding",melding);
             return "layouts/boeking/afgelopen_reservaties";
         }
         else
-            boekingDetailDto.setTitel("Gelieve de datums te controleren");
-            model.addAttribute("boekingDetailDto", boekingDetailDto);
+            melding.setTitel("Gelieve de datums te controleren");
+            model.addAttribute("melding", melding);
             return "layouts/boeking/afgelopen_reservaties";
 
     }
@@ -218,5 +311,44 @@ public class BoekingController {
 
     private long getVerschilDatums(Date datumVan, Date datumTot) {
         return (datumTot.getTime() - datumVan.getTime()) / (24 * 60 * 60 * 1000);
+    }
+
+    private <T> void VulOverzichtOp(ArrayList<T> lijst, ArrayList<Kamer> kamers, int maand, int jaar) {
+        LocalDate datumVan;
+        LocalDate datumTot;
+        for (var item: lijst) {
+            if (item instanceof KamerOnbeschikbaar) {
+                datumVan = new java.sql.Date(((KamerOnbeschikbaar) item).getDatumVan().getTime()).toLocalDate();
+                datumTot = new java.sql.Date(((KamerOnbeschikbaar) item).getDatumTot().getTime()).toLocalDate();
+            } else {
+                datumVan = new java.sql.Date(((BoekingDetail) item).getBoeking().getDatumVan().getTime()).toLocalDate();
+                datumTot = new java.sql.Date(((BoekingDetail) item).getBoeking().getDatumTot().getTime()).toLocalDate();
+            }
+            for (LocalDate date = datumVan; date.isBefore(datumTot.plusDays(1)); date = date.plusDays(1)) {
+                if(date.getMonth().getValue() == maand && date.getYear() == jaar) {
+                    int column = date.getDayOfMonth() - 1;
+                    if (item instanceof KamerOnbeschikbaar) {
+                        overzicht[kamers.indexOf(((KamerOnbeschikbaar) item).getKamer())][column] = new BoekingDetail();
+                    } else {
+                        overzicht[kamers.indexOf(((BoekingDetail) item).getKamer())][column] = ((BoekingDetail) item);
+                    }
+                }
+            }
+        }
+    }
+
+    private String checkDatums(String datumAankomst, String datumVertrek) {
+        LocalDate aankomst = LocalDate.parse(datumAankomst,formatter);
+        LocalDate vertrek = LocalDate.parse(datumVertrek, formatter);
+        String message=null;
+
+        if(aankomst.isBefore(LocalDate.now()) || vertrek.isBefore(LocalDate.now()) ) {
+            message = "Gelieve een datum in de toekomst te kiezen.";
+        }
+        else if(vertrek.isBefore(aankomst)) {
+            message = "De vertrekdatum kan niet voor de aankomstdatum liggen.";
+        }
+
+        return message;
     }
 }
