@@ -257,12 +257,14 @@ public class BoekingController {
 
             model.addAttribute("details",details);
             model.addAttribute("melding",melding);
+            model.addAttribute("boeking",boeking);
             return "layouts/boeking/afgelopen_reservaties";
         }
         else
             melding.setTitel("Gelieve de datums te controleren");
             model.addAttribute("melding", melding);
-            return "layouts/boeking/afgelopen_reservaties";
+            model.addAttribute("boeking",boeking);
+        return "layouts/boeking/afgelopen_reservaties";
 
     }
 
