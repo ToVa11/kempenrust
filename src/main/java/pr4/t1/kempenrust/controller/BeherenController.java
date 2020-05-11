@@ -256,7 +256,8 @@ public class BeherenController {
             message = "Er zijn nog reservaties voor dit arrangement.";
         }
         else if(verblijfsKeuze != null) {
-            verblijfsKeuzeRepository.deleteVerblijfskeuze(Integer.parseInt(request.getParameter("verblijfskeuzeID")));
+            prijsRepository.deletePrijsVoorVerblijfskeuze(verblijfskeuzeID);
+            verblijfsKeuzeRepository.deleteVerblijfskeuze(verblijfskeuzeID);
             message ="Reservatie verwijderd.";
         }
         else {

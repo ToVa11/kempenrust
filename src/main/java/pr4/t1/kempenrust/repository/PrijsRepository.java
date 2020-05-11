@@ -13,6 +13,7 @@ import pr4.t1.kempenrust.model.Prijs;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,5 +118,13 @@ public class PrijsRepository {
             }
         }
         return rowsInserted;
+    }
+
+    public void deletePrijsVoorVerblijfskeuze(int verblijfskeuzeID) {
+        Object[] params = {verblijfskeuzeID};
+        int[] types = {Types.INTEGER};
+        String sqlVerwijderPrijzen = "DELETE FROM prijzen WHERE verblijfskeuzeID = ?";
+
+        jdbcTemplate.update(sqlVerwijderPrijzen, params, types);
     }
 }
