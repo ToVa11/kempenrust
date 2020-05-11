@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.ParseException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -173,19 +174,8 @@ public class BeherenController {
     public String VoegVerblijfskeuzeToe(Model model) {
         ArrangementDTO arrangementDTO = new ArrangementDTO();
 
-        List<Kamer> kamers = kamerRepository.getAlleKamersMetModel();
-
-        ArrayList<Prijs> prijzenKamers = new ArrayList<>();
-        for (Kamer kamer:kamers) {
-            Prijs prijs = new Prijs();
-            prijs.setKamer(kamer);
-            prijs.setKamerID(kamer.getKamerID());
-            prijs.setPrijsPerKamer(new BigDecimal(0));
-
-            prijzenKamers.add(prijs);
-        }
-        arrangementDTO.setKamerPrijzen(prijzenKamers);
-
+        arrangementDTO.setKamerPrijzen(vulPrijzenOp(kamerRepository.getAlleKamersMetModel()));
+        arrangementDTO.setDatums(setDefaultDatums(arrangementDTO.getKamerPrijzen().size()));
         model.addAttribute("arrangement", arrangementDTO);
 
         return "layouts/beheren/arrangementToevoegen";
@@ -196,8 +186,6 @@ public class BeherenController {
         String message= null;
 
         arrangementDTO.setKamerPrijzen(getKamerPrijzenMetDatums(arrangementDTO.getKamerPrijzen(),arrangementDTO.getDatums()));
-
-
 
         int verblijfskeuzeID = verblijfsKeuzeRepository.addVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
         int prijsKamersToegevoegd = prijsRepository.voegPrijsToeVoorVerblijfskeuze(arrangementDTO.getKamerPrijzen(), verblijfskeuzeID);
@@ -215,15 +203,6 @@ public class BeherenController {
         redirectAttributes.addFlashAttribute("message", message);
 
         return "redirect:/arrangementen";
-    }
-
-    private List<Prijs> getKamerPrijzenMetDatums(List<Prijs> kamerPrijzen, List<String> datums) {
-
-        for(int i=0;i<kamerPrijzen.size();i++) {
-            java.util.Date datum = Date.valueOf(datums.get(i));
-            kamerPrijzen.get(i).setDatumVanaf(datum);
-        }
-        return kamerPrijzen;
     }
 
     @RequestMapping("/arrangement")
@@ -287,6 +266,7 @@ public class BeherenController {
 
     //endregion
 
+    //region Reservering
     @RequestMapping("/reservering")
     public String Reservering(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         Boeking boeking = boekingRepository.getBoeking(Integer.parseInt(request.getParameter("Id")));
@@ -412,7 +392,8 @@ public class BeherenController {
 
         return "redirect:/reserveringen";
     }
-
+    //endregion
+    //region Private Methods
     //datums moeten naar String omgezet worden om te tonen in frontend
     private List<String> vulDatumsOp(List<Prijs> kamerPrijzen) {
         ArrayList<String> datums = new ArrayList<>();
@@ -424,4 +405,39 @@ public class BeherenController {
 
         return datums;
     }
+
+    //set default dates to show in frontend
+    private List<String> setDefaultDatums(int aantal) {
+        SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        ArrayList<String> datums = new ArrayList<>();
+        for (int i=0;i<aantal;i++){
+            String datum = simpleFormatter.format(new java.util.Date());
+            datums.add(datum);
+        }
+        return datums;
+    }
+
+    private List<Prijs> vulPrijzenOp(ArrayList<Kamer> alleKamersMetModel) {
+        ArrayList<Prijs> prijzenKamers = new ArrayList<>();
+
+        for (Kamer kamer:alleKamersMetModel) {
+            Prijs prijs = new Prijs();
+            prijs.setKamer(kamer);
+            prijs.setKamerID(kamer.getKamerID());
+            prijs.setPrijsPerKamer(new BigDecimal(0));
+
+            prijzenKamers.add(prijs);
+        }
+        return prijzenKamers;
+    }
+
+    private List<Prijs> getKamerPrijzenMetDatums(List<Prijs> kamerPrijzen, List<String> datums) {
+
+        for(int i=0;i<kamerPrijzen.size();i++) {
+            java.util.Date datum = Date.valueOf(datums.get(i));
+            kamerPrijzen.get(i).setDatumVanaf(datum);
+        }
+        return kamerPrijzen;
+    }
+    //endregion
 }
