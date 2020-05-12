@@ -62,6 +62,12 @@
                 <button type="submit" name="action" value="zoek-kamers" class="btn btn-primary w-100">Zoek</button>
             </div>
         </div>
+    </form>
+    <form action="#" data-th-action="@{/reserveren}" th:object="${reserveringDetails}" method="post">
+        <input hidden th:field="*{datumAankomst}">
+        <input hidden th:field="*{datumVertrek}">
+        <input hidden th:field="*{aantalPersonen}">
+        <input hidden th:field="*{keuzeArrangement}">
 
         <div  class="row" th:if="*{prijsVrijeKamers != null}">
             <div class="form-group col-md-4 mt-3">
