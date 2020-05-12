@@ -134,6 +134,10 @@ public class BoekingController {
 
         BigDecimal bedragVoorschot = getBedragVoorschot(totaalPrijs);
 
+        // Bij nieuwe reservering wordt er blijkbaar ergens een NULL bijgezet, maar ik vind niet waar
+        // Deze code verwijderd deze NULL
+        while(reserveringDetails.getKamers().remove(null)) {};
+
         int BoekingID = boekingRepository.toevoegenReservatie(
                 klant.getKlantID(),
                 reserveringDetails.getKeuzeArrangement(),
