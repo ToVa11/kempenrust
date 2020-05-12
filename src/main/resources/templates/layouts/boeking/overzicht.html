@@ -37,7 +37,7 @@
     </thead>
     <tbody>
         <tr th:each="kamer, i: ${overzichtDto.getKamers()}" class="text-center">
-            <td th:text="${kamer.getKamerNummer()}" style="width:75px"></td>
+            <td th:text="${kamer.getKamerNummer()}" class="width75"></td>
             <td th:each="item, j: ${overzichtDto.getOverzicht()[i.index]}"
                 th:classappend="${item} == null ? backgroundGreen : (${item.getBoeking()} == null ? backgroundStriped : backgroundRed)"
                 data-toggle="tooltip"
@@ -48,7 +48,6 @@
                         : ${item.getBoeking().getKlant().getVoornaam()} + ' ' + ${item.getBoeking().getKlant().getNaam()} +
                         '&#10;Van: ' + ${#dates.format(item.getBoeking().getDatumVan(), 'd MMMM yyyy')} +
                         '&#10;Tot: ' + ${#dates.format(item.getBoeking().getDatumTot(), 'd MMMM yyyy')})">
-    <!--            inline css moet nog weg-->
                 <a class="anchorTableLink"
                    th:href="${item} == null
                     ? @{/reserveren(Datum=${overzichtDto.getJaar()} + '-' + ${#numbers.formatInteger(overzichtDto.getMaand(), 2)} + '-'+ ${#numbers.formatInteger(j.index+1, 2)},KamerID=${kamer.getKamerID()})}
