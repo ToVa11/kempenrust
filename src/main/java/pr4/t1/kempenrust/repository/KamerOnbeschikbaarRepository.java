@@ -74,7 +74,7 @@ public class KamerOnbeschikbaarRepository {
 
 
 
-    public void KamerOnbechikbaarMaken(int kamerID, Date datumVan,Date datumTot){
+    public void KamerOnbeschikbaarMaken(int kamerID, Date datumVan,Date datumTot){
         jdbcTemplate.update("INSERT INTO KamersOnbeschikbaar (KamerID, DatumVan, DatumTot)" +
                 " VALUES (?, ?, ?)",kamerID,datumVan,datumTot);
     }

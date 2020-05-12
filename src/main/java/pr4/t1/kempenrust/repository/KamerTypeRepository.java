@@ -27,6 +27,7 @@ public class KamerTypeRepository {
         }
         return KamerTypes;
     }
+
     public KamerDto getKamerByID(int kamerID){
         KamerDto kamer=new KamerDto();
         SqlRowSet rowSet =jdbcTemplate.queryForRowSet("SELECT * FROM " +

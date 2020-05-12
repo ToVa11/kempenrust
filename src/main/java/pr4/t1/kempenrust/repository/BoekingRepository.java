@@ -214,7 +214,7 @@ public class BoekingRepository {
 
     public Boeking getBoekingVoorKlant(int klantId) {
         Boeking boeking = new Boeking();
-        Klant klan=new Klant();
+        Klant klant=new Klant();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
 
                 "SELECT * FROM  " +
@@ -225,10 +225,10 @@ public class BoekingRepository {
 
 
         while (rowSet.next()) {
-            klan.setNaam(rowSet.getString("naam"));
-            klan.setVoornaam(rowSet.getString("voornaam"));
+            klant.setNaam(rowSet.getString("naam"));
+            klant.setVoornaam(rowSet.getString("voornaam"));
 
-            boeking.setKlant(klan);
+            boeking.setKlant(klant);
             boeking.setDatumVan(rowSet.getDate("DatumVan"));
             boeking.setDatumTot(rowSet.getDate("DatumTot"));
 

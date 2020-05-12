@@ -261,7 +261,8 @@ public class BoekingController {
             return "layouts/boeking/afgelopen_reservaties";
         }
         else
-            melding.setTitel("Gelieve de datums te controleren");
+            melding.setTitel(" ");
+            melding.setFoutmelding("Gelieve de datums te controleren");
             model.addAttribute("melding", melding);
             model.addAttribute("boeking",boeking);
         return "layouts/boeking/afgelopen_reservaties";

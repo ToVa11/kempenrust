@@ -23,6 +23,9 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1 th:text="${melding.titel}"></h1>
+    <div th:if="${melding.foutmelding != null}" class="alert alert-danger">
+        <h3 th:text="${melding.foutmelding} ? ${melding.foutmelding}"></h3>
+    </div>
     <form class="form-inline" th:action="@{/afgelopen_reservaties}" method="post" th:object="${boeking}">
         <div class="form-group mb-2">
             <label for="datumVan" style="margin-right: 10px">Datum Van: </label>
