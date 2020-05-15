@@ -53,38 +53,6 @@ public class BeherenController {
         return "layouts/beheren/klanten";
     }
 
-    @RequestMapping("/nieuweKlantToevoegen")
-    public String NieuweKlantToevogen(Model model){
-        MeldingDto melding= new MeldingDto();
-        Klant klant=new Klant();
-        model.addAttribute("klant",klant);
-        model.addAttribute("melding",melding);
-        return "layouts/beheren/klantToevoegen";
-    }
-
-    @PostMapping("/nieuweKlantToevoegen")
-    public String NieuweKlantToevoegen( Model model,@ModelAttribute("klant") Klant klant){
-      MeldingDto melding= new MeldingDto();
-      var result=  klantRepository.klantToevoegen( klant.getVoornaam(),
-                klant.getNaam(), klant.getTelefoonnummer(),
-                klant.getEmail(),klant.getStraat(), klant.getHuisnummer(),
-                klant.getPostcode(),klant.getGemeente());
-
-        if (result > 0)
-        {
-            melding.setMelding("Nieuwe klant is toegevoegd");
-            model.addAttribute("melding",melding);
-            ArrayList<Klant> klanten=klantRepository.getKlanten();
-            model.addAttribute("klanten",klanten);
-            return "layouts/beheren/klanten";
-        }
-        melding.setFoutmelding("Attentie! Nieuwe klant is niet toegevoegd");
-        model.addAttribute("melding",melding);
-        model.addAttribute("klant",klant);
-        return "layouts/beheren/klantToevoegen";
-    }
-
-
     @RequestMapping("/KlantgegevensAanpassen")
     public String klantAanpassen(Model model, HttpServletRequest request){
         int klantId= Integer.parseInt((request.getParameter("klantId")));

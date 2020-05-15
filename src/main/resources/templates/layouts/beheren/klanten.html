@@ -33,11 +33,6 @@
             <th class="align-middle">Telefoon</th>
             <th class="align-middle">Email</th>
             <th class="align-middle">Adres</th>
-            <th>
-                <a th:href="@{/nieuweKlantToevoegen}"
-                   class="btn btn-secondary">
-                    <i class="fas fa-plus"></i></a>
-            </th>
         </tr>
         </thead>
         <tbody>
@@ -45,7 +40,11 @@
             <td th:text="${klant.voornaam}+ ' '+ ${klant.naam}" class="align-middle"></td>
             <td th:text="${klant.telefoonnummer}" class="align-middle"></td>
             <td th:text="${klant.email}" class="align-middle"></td>
-            <td th:text="${klant.straat} +' '+ ${klant.huisnummer} +', '+ ${klant.postcode} +' '+ ${klant.gemeente}" class="align-middle"></td>
+            <td th:text="${klant.straat} +' '+
+             ${klant.huisnummer} +', '+
+             ${klant.postcode} +' '+
+             ${klant.gemeente}"
+            class="align-middle"></td>
             <td>
                 <a class="btn btn-secondary"
                     th:href="@{/KlantgegevensAanpassen(klantId=${klant.klantID})}">
