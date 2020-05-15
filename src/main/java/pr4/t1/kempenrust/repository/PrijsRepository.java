@@ -22,19 +22,6 @@ public class PrijsRepository {
     public void prijsVerwijderen(int kamerID){
         jdbcTemplate.update("DELETE FROM Prijzen WHERE KamerID =? ",kamerID);
     }
-    public KamerDto kamerTeVerwijderen(int kamerID){
-        KamerDto kamer=new KamerDto();
-        SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT * " +
-                "FROM " +
-                "kamers  INNER JOIN Prijzen " +
-                    "ON kamers.KAMERID = Prijzen.KAMERID " +
-                "WHERE Kamers.kamerID = ? ",kamerID);
-        while(rowSet.next()){
-            kamer.setKamerID(rowSet.getInt("KamerID"));
-            prijsVerwijderen(kamerID);
-        }
-        return  kamer;
-    }
 
     public ArrayList<Prijs> GetPrijzenVoorReservatie(int verblijfsKeuzeId, List<Integer> kamers) {
         ArrayList<Prijs> prijzenKamers = new ArrayList<>();

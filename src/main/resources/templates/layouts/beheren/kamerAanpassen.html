@@ -25,10 +25,10 @@
 
    <h1 th:text="'Kamernummer ' + ${kamer.kamerNummer} + ' beheren'"></h1>
    <form th:action="@{/wijzigKamer}" method="post" th:object="${kamer}" >
-       <input type="hidden" name="kamerID" th:field="*{kamerID}">
-       <input type="hidden" name="kamernummer" th:field="*{kamerNummer}">
+       <input type="hidden"  th:field="*{kamerID}">
+       <input type="hidden"  th:field="*{kamerNummer}">
        <div class="form-group col-md-8">
-           <select  class="custom-select" id="omschrijving" th:field="*{kamerTypeID}" name="omschrijving" required>
+           <select  class="custom-select" id="omschrijving" th:field="*{kamerTypeID}"  required>
                    <option th:each="kamerType : ${kamer.kamerTypes}"
                            th:value="${kamerType.kamerTypeID}"
                            th:text="${kamerType.omschrijving}">

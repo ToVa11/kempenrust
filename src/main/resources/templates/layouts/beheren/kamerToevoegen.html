@@ -25,7 +25,7 @@
 
     <h1 th:text="${melding.titel} ? ${melding.titel} :'Nieuwe Kamer Toevoegen'"></h1>
     <div th:if="${melding.foutmelding != null}" class="alert alert-secondary">
-        <h3 th:text="${melding.foutmelding} ? ${melding.foutmelding}"></h3>
+        <h3 th:text="${melding.foutmelding}"></h3>
     </div>
 
       <form th:action="@{/KamerToevoegen}" method="post" th:object="${kamer}" >
