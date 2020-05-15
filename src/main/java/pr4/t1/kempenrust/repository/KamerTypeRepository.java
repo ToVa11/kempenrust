@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
-import pr4.t1.kempenrust.DTO.KamerDto;
+import pr4.t1.kempenrust.model.BoekingDetail;
+import pr4.t1.kempenrust.model.DTO.KamerDto;
 import pr4.t1.kempenrust.model.KamerType;
 
 import java.util.ArrayList;

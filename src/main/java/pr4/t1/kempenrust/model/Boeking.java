@@ -106,5 +106,7 @@ public class Boeking {
     public void setVerblijfsKeuzeID(int verblijfsKeuzeID) {
         this.verblijfsKeuzeID = verblijfsKeuzeID;
     }
+
+
 }
 

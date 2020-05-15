@@ -1,12 +1,12 @@
-package pr4.t1.kempenrust.DTO;
+package pr4.t1.kempenrust.model.DTO;
+
 import org.springframework.format.annotation.DateTimeFormat;
-import pr4.t1.kempenrust.model.KamerOnbeschikbaar;
 import pr4.t1.kempenrust.model.KamerType;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-public class KamerDto {
+public  class KamerDto {
     private int kamerID;
     private int kamerNummer;
     private int kamerTypeID;

@@ -1,4 +1,4 @@
-package pr4.t1.kempenrust.DTO;
+package pr4.t1.kempenrust.model.DTO;
 
 import java.util.Date;
 

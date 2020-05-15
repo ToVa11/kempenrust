@@ -5,8 +5,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import pr4.t1.kempenrust.DTO.MeldingDto;
 import pr4.t1.kempenrust.model.*;
+import pr4.t1.kempenrust.model.DTO.KamerDto;
+import pr4.t1.kempenrust.model.DTO.MeldingDto;
 import pr4.t1.kempenrust.model.DTO.UpdateReserveringDTO;
 import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.BoekingRepository;
@@ -14,7 +15,6 @@ import pr4.t1.kempenrust.repository.KlantRepository;
 import pr4.t1.kempenrust.repository.VerblijfsKeuzeRepository;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
-import pr4.t1.kempenrust.DTO.KamerDto;
 import pr4.t1.kempenrust.repository.*;
 import java.sql.Date;
 import java.text.ParseException;
@@ -46,7 +46,9 @@ public class BeherenController {
 
     @RequestMapping("/klanten")
     public String klanten(Model model) {
+        MeldingDto melding= new MeldingDto();
         ArrayList<Klant> klanten=klantRepository.getKlanten();
+        model.addAttribute("melding",melding);
         model.addAttribute("klanten",klanten);
         return "layouts/beheren/klanten";
     }
@@ -70,11 +72,11 @@ public class BeherenController {
 
         if (result > 0)
         {
-            klant=new Klant();
             melding.setMelding("Nieuwe klant is toegevoegd");
             model.addAttribute("melding",melding);
-            model.addAttribute("klant",klant);
-            return "layouts/beheren/klantToevoegen";
+            ArrayList<Klant> klanten=klantRepository.getKlanten();
+            model.addAttribute("klanten",klanten);
+            return "layouts/beheren/klanten";
         }
         melding.setFoutmelding("Attentie! Nieuwe klant is niet toegevoegd");
         model.addAttribute("melding",melding);
@@ -93,6 +95,7 @@ public class BeherenController {
 
     @PostMapping("/wijzigKlant")
     public String WijzigKlant( Model model,@ModelAttribute("klant") Klant klant){
+        MeldingDto melding= new MeldingDto();
         klantRepository.wijzigKlant(klant.getKlantID(), klant.getVoornaam(),
                         klant.getNaam(), klant.getTelefoonnummer(),
                         klant.getEmail(),klant.getStraat(), klant.getHuisnummer(),
@@ -100,6 +103,7 @@ public class BeherenController {
 
         ArrayList<Klant> klanten=klantRepository.getKlanten();
         model.addAttribute("klanten",klanten);
+        model.addAttribute("melding",melding);
         return "layouts/beheren/klanten";
     }
 
@@ -125,8 +129,10 @@ public class BeherenController {
 
     @RequestMapping("/kamers")
     public String Kamers(Model model) {
+        MeldingDto melding=new MeldingDto();
         ArrayList<KamerDto> kamers=kamerRepository.getKamers();
         model.addAttribute("kamers",kamers);
+        model.addAttribute("melding",melding);
         return "layouts/beheren/kamers";
     }
 
@@ -142,12 +148,15 @@ public class BeherenController {
 
     @PostMapping("/wijzigKamer")
     public String WijzigKamer( Model model,@ModelAttribute("kamer") Kamer kamer){
-            kamerRepository.WijzigKamer(kamer.getKamerID(),
-            kamer.getKamerTypeID(),kamer.getKamerNummer());
+        MeldingDto melding= new MeldingDto();
 
-            ArrayList<KamerDto> kamers=kamerRepository.getKamers();
-            model.addAttribute("kamers",kamers);
-            return "layouts/beheren/kamers";
+        kamerRepository.WijzigKamer(kamer.getKamerID(),
+        kamer.getKamerTypeID(),kamer.getKamerNummer());
+        melding.setMelding("kamer is gewijzigd");
+        ArrayList<KamerDto> kamers=kamerRepository.getKamers();
+        model.addAttribute("kamers",kamers);
+        model.addAttribute("melding",melding);
+        return "layouts/beheren/kamers";
     }
 
     @RequestMapping("/kamerVerwijderen")
@@ -169,6 +178,7 @@ public class BeherenController {
         kamerRepository.KamerVerwijderen(kamerId);
         ArrayList<KamerDto> kamers=kamerRepository.getKamers();
         model.addAttribute("kamers",kamers);
+        model.addAttribute("melding",melding);
         return "layouts/beheren/kamers";
     }
 
@@ -183,15 +193,18 @@ public class BeherenController {
 
     @RequestMapping("/kamerBeschikbaarMaken")
     public String KamerBeschikabaarMaken(Model model, HttpServletRequest request){
+        MeldingDto melding=new MeldingDto();
         int kamerId= Integer.parseInt(request.getParameter("kamerId"));
         kamerOnbeschikbaarRepository.KamerBeschikbaarMaken(kamerId);
         ArrayList<KamerDto> kamers=kamerRepository.getKamers();
         model.addAttribute("kamers",kamers);
+        model.addAttribute("melding",melding);
         return "layouts/beheren/kamers";
     }
 
     @PostMapping("/kamerOnBeschikbaarMaken")
     public String OnbeschikbaarMaken( Model model,@ModelAttribute("KamerDto") KamerDto kamer){
+       // MeldingDto melding=new MeldingDto();
         KamerOnbeschikbaar kamerOnbeschikbaar= kamerOnbeschikbaarRepository.getOnbeschikbaarKamerByID(kamer.getKamerID());
        if (kamerOnbeschikbaar.getDatumVan()!=null)
        {
@@ -226,10 +239,11 @@ public class BeherenController {
             ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
             kamer.setKamerNummer(0);
             melding.setMelding("Nieuwe kamer is toegevoegd");
-            kamer.setKamerTypes(kamerTypes);
+            ArrayList<KamerDto> kamers=kamerRepository.getKamers();
+            model.addAttribute("kamers",kamers);
             model.addAttribute("melding", melding);
-            model.addAttribute("kamer",kamer);
-            return "layouts/beheren/kamerToevoegen";
+            return "layouts/beheren/kamers";
+
         }else {
             ArrayList<KamerType> kamerTypes = kamerTypeRepository.getLijstKamerTypes();
             kamer.setKamerTypes(kamerTypes);

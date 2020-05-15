@@ -12,7 +12,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <!-- Kan je aanpassen = tabblad titel-->
-    <title>Kamer Beheren</title>
+    <title>Klant Toevoegen</title>
 </head>
 <body>
 
@@ -24,15 +24,11 @@
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Klant Toevoegen</h1>
 
-    <div th:if="${melding.melding != null}" class="alert alert-dismissible alert-success">
-        <h3 th:text="${melding.melding} ? ${melding.melding}"></h3>
-</div>
-
-    <div th:if="${melding.foutmelding != null}" class="alert alert-danger">
+    <div th:if="${melding.foutmelding != null}" class="alert alert-secondary">
         <h3 th:text="${melding.foutmelding} ? ${melding.foutmelding}"></h3>
     </div>
 
-    <form action="#" data-th-action="@{/nieweKlantToeveogen}" th:object="${klant}" method="post">
+    <form action="#" data-th-action="@{/nieuweKlantToevoegen}" th:object="${klant}" method="post">
 
         <div class="row">
 
@@ -93,10 +89,7 @@
             </div>
         </div>
 
-
     </form>
-
-
 
 </div>
     <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">

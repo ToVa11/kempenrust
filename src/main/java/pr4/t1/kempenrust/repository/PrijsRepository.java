@@ -5,14 +5,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
+import pr4.t1.kempenrust.model.BoekingDetail;
+import pr4.t1.kempenrust.model.DTO.KamerDto;
 import pr4.t1.kempenrust.model.Kamer;
 import pr4.t1.kempenrust.model.KamerType;
 import pr4.t1.kempenrust.model.Prijs;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import pr4.t1.kempenrust.DTO.KamerDto;
 
 
 @Repository

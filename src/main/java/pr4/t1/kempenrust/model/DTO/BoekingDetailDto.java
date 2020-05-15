@@ -1,10 +1,4 @@
-package pr4.t1.kempenrust.DTO;
-
-import org.springframework.format.annotation.DateTimeFormat;
-import pr4.t1.kempenrust.model.Boeking;
-import pr4.t1.kempenrust.model.Kamer;
-
-import java.util.Date;
+package pr4.t1.kempenrust.model.DTO;
 
 public class BoekingDetailDto {
     private String datumVan;

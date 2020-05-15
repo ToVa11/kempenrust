@@ -12,7 +12,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <!-- Kan je aanpassen = tabblad titel-->
-    <title>Kamers</title>
+    <title>Klanten</title>
 </head>
 <body>
 
@@ -23,6 +23,9 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Klanten</h1>
+    <div th:if="${melding.melding != null}" class="alert alert-dismissible alert-success">
+        <h3 th:text="${melding.melding} ? ${melding.melding}"></h3>
+    </div>
     <table class="table" th:if="${klanten.size()!=0}">
         <thead>
         <tr>
@@ -31,7 +34,7 @@
             <th class="align-middle">Email</th>
             <th class="align-middle">Adres</th>
             <th>
-                <a th:href="@{/nieweKlantToeveogen}"
+                <a th:href="@{/nieuweKlantToevoegen}"
                    class="btn btn-secondary">
                     <i class="fas fa-plus"></i></a>
             </th>

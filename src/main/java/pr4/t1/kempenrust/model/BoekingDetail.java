@@ -1,5 +1,10 @@
 package pr4.t1.kempenrust.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.ArrayList;
+import java.util.Date;
+
 public class BoekingDetail {
     private int boekingDetailID;
     private int boekingID;
@@ -49,4 +54,5 @@ public class BoekingDetail {
     public void setKamer(Kamer kamer) {
         this.kamer = kamer;
     }
+
 }

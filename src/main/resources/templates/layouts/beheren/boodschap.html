@@ -21,7 +21,7 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <div th:if="${melding != null}" class="alert alert-danger">
+    <div th:if="${melding != null}" class="alert alert-secondary">
         <h3 th:text="${melding.foutmelding} ? ${melding.foutmelding}"></h3>
     </div>
     <table class="table">

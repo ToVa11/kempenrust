@@ -7,7 +7,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
-import pr4.t1.kempenrust.DTO.BoekingDetailDto;
 import pr4.t1.kempenrust.model.Boeking;
 import pr4.t1.kempenrust.model.BoekingDetail;
 import pr4.t1.kempenrust.model.Kamer;
@@ -16,7 +15,6 @@ import pr4.t1.kempenrust.model.Klant;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 

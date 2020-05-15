@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
-import pr4.t1.kempenrust.DTO.KamerDto;
 
 import pr4.t1.kempenrust.model.Kamer;
 import pr4.t1.kempenrust.model.KamerOnbeschikbaar;
@@ -22,10 +21,8 @@ public class KamerOnbeschikbaarRepository {
         KamerOnbeschikbaar onbeschikbaarKamer=new KamerOnbeschikbaar();
     SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT * " +
                 "from" +
-                "(" +
                 "     kamers  LEFT JOIN  KAMERSONBESCHIKBAAR " +
-                "    on kamers.KAMERID = KAMERSONBESCHIKBAAR.KAMERID" +
-                ")" +
+                "     on kamers.KAMERID = KAMERSONBESCHIKBAAR.KAMERID " +
                 "where Kamers.kamerID = ? ",kamerID);
     while(rowSet.next()){
         kamer.setKamerNummer(rowSet.getInt("KamerNummer"));

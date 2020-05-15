@@ -23,6 +23,11 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Kamers</h1>
+
+    <div th:if="${melding.melding != null}" class="alert alert-secondary">
+        <h3 th:text="${melding.melding} ? ${melding.melding}"></h3>
+    </div>
+
     <table class="table" th:if="${kamers.size()!=0}">
         <thead>
         <tr>
