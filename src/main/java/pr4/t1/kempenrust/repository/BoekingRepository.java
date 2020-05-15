@@ -265,4 +265,9 @@ public class BoekingRepository {
 
         return rowsUpdated;
     }
+
+    public int getAantalBoekingenVoorVerblijfskeuze(int verblijfskeuzeID) {
+        return jdbcTemplate.queryForObject( "SELECT COUNT(*) FROM Boekingen " +
+                "WHERE verblijfskeuzeID = ? AND datumVan >= ? ", new Object[] { verblijfskeuzeID, new Date(System.currentTimeMillis()) }, Integer.class);
+    }
 }

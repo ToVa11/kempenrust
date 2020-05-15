@@ -1,6 +1,7 @@
 package pr4.t1.kempenrust.controller;
 
 import javafx.scene.input.DataFormat;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pr4.t1.kempenrust.model.*;
+import pr4.t1.kempenrust.model.DTO.ArrangementDTO;
 import pr4.t1.kempenrust.model.DTO.UpdateReserveringDTO;
 import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.BoekingRepository;
@@ -23,9 +25,11 @@ import pr4.t1.kempenrust.repository.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.ParseException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,12 +156,117 @@ public class BeherenController {
         return "layouts/beheren/kamerToevoegen";
     }
 
-
+    //region Arrangementen
     @RequestMapping("/arrangementen")
-    public String Arrangementen() {
+    public String Arrangementen(Model model, RedirectAttributes redirectAttributes) {
+        ArrayList<VerblijfsKeuze> verblijfskeuzes = verblijfsKeuzeRepository.getAlleVerblijfsKeuzes();
+
+        model.addAttribute("verblijfskeuzes", verblijfskeuzes);
+
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute("message", redirectAttributes.getAttribute("message"));
+        }
+
         return "layouts/beheren/arrangementen";
     }
 
+    @RequestMapping("/toevoegen/arrangement")
+    public String VoegVerblijfskeuzeToe(Model model) {
+        ArrangementDTO arrangementDTO = new ArrangementDTO();
+
+        arrangementDTO.setKamerPrijzen(vulPrijzenOp(kamerRepository.getAlleKamersMetModel()));
+        arrangementDTO.setDatums(setDefaultDatums(arrangementDTO.getKamerPrijzen().size()));
+        model.addAttribute("arrangement", arrangementDTO);
+
+        return "layouts/beheren/arrangementToevoegen";
+    }
+
+    @RequestMapping("/add/arrangement")
+    public String addArrangement(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
+        String message= null;
+
+        arrangementDTO.setKamerPrijzen(getKamerPrijzenMetDatums(arrangementDTO.getKamerPrijzen(),arrangementDTO.getDatums()));
+
+        int verblijfskeuzeID = verblijfsKeuzeRepository.addVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
+        int prijsKamersToegevoegd = prijsRepository.voegPrijsToeVoorVerblijfskeuze(arrangementDTO.getKamerPrijzen(), verblijfskeuzeID);
+
+        if(prijsKamersToegevoegd==0 && verblijfskeuzeID > 0) {
+            message = "Het arrangement is succesvol aangemaakt maar er ging iets mis bij het toevoegen van de prijzen voor het arrangement. Gelieve deze na te kijken.";
+        }
+        else if(verblijfskeuzeID >0 && prijsKamersToegevoegd>0) {
+            message = "Arrangement is succesvol aangemaakt.";
+        }
+        else {
+            message = "Er ging iets mis bij het aanmaken van het arrangement.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+
+        return "redirect:/arrangementen";
+    }
+
+    @RequestMapping("/arrangement")
+    public String Arrangement(Model model, HttpServletRequest request) {
+        VerblijfsKeuze verblijfskeuze = verblijfsKeuzeRepository.getVerblijfkeuze(Integer.parseInt(request.getParameter("verblijfskeuzeID")));
+
+        ArrangementDTO arrangementDTO = new ArrangementDTO();
+
+        arrangementDTO.setVerblijfsKeuze(verblijfskeuze);
+        arrangementDTO.setKamerPrijzen(prijsRepository.getPrijzenVoorVerblijfskeuze(verblijfskeuze.getVerblijfskeuzeID()));
+
+        arrangementDTO.setDatums(vulDatumsOp(arrangementDTO.getKamerPrijzen()));
+
+        model.addAttribute("arrangement", arrangementDTO );
+
+        return "layouts/beheren/arrangement";
+    }
+
+    @RequestMapping("/update/arrangement")
+    public String UpdateArrangement(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
+        String message=null;
+
+        int rowsUpdatedVerblijfskeuze = verblijfsKeuzeRepository.updateVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
+        int rowsUpdatedPrijzen = prijsRepository.updatePrijzenVoorVerblijfskeuze(getKamerPrijzenMetDatums(arrangementDTO.getKamerPrijzen(), arrangementDTO.getDatums()));
+
+        if(rowsUpdatedVerblijfskeuze>0 && rowsUpdatedPrijzen>0) {
+            message= "Verblijfskeuze is succesvol aangepast.";
+        }
+        else if(rowsUpdatedPrijzen==0) {
+            message="Er ging iets mis bij het aanpassen van de prijzen.";
+        }
+        else {
+            message = "Er is iets misgegaan tijdens het updaten.";
+        }
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/arrangementen";
+    }
+
+    @RequestMapping("/delete/arrangement")
+    public String VerwijderArrangement(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        String message=null;
+        int verblijfskeuzeID = Integer.parseInt(request.getParameter("verblijfskeuzeID"));
+
+        VerblijfsKeuze verblijfsKeuze = verblijfsKeuzeRepository.getVerblijfkeuze(verblijfskeuzeID);
+        int aantalBoekingenVoorVerblijfskeuze = boekingRepository.getAantalBoekingenVoorVerblijfskeuze(verblijfskeuzeID);
+
+        if(aantalBoekingenVoorVerblijfskeuze>0) {
+            message = "Er zijn nog reservaties voor dit arrangement.";
+        }
+        else if(verblijfsKeuze != null) {
+            prijsRepository.deletePrijsVoorVerblijfskeuze(verblijfskeuzeID);
+            verblijfsKeuzeRepository.deleteVerblijfskeuze(verblijfskeuzeID);
+            message ="Reservatie verwijderd.";
+        }
+        else {
+            message ="Reservatie niet gevonden.";
+        }
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/arrangementen";
+    }
+
+    //endregion
+
+    //region Reservering
     @RequestMapping("/reservering")
     public String Reservering(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         Boeking boeking = boekingRepository.getBoeking(Integer.parseInt(request.getParameter("Id")));
@@ -283,6 +392,52 @@ public class BeherenController {
 
         return "redirect:/reserveringen";
     }
+    //endregion
+    //region Private Methods
+    //datums moeten naar String omgezet worden om te tonen in frontend
+    private List<String> vulDatumsOp(List<Prijs> kamerPrijzen) {
+        ArrayList<String> datums = new ArrayList<>();
 
+        for (Prijs prijs: kamerPrijzen) {
+            String datum = prijs.getDatumVanaf().toString();
+            datums.add(datum);
+        }
 
+        return datums;
+    }
+
+    //set default dates to show in frontend
+    private List<String> setDefaultDatums(int aantal) {
+        SimpleDateFormat simpleFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        ArrayList<String> datums = new ArrayList<>();
+        for (int i=0;i<aantal;i++){
+            String datum = simpleFormatter.format(new java.util.Date());
+            datums.add(datum);
+        }
+        return datums;
+    }
+
+    private List<Prijs> vulPrijzenOp(ArrayList<Kamer> alleKamersMetModel) {
+        ArrayList<Prijs> prijzenKamers = new ArrayList<>();
+
+        for (Kamer kamer:alleKamersMetModel) {
+            Prijs prijs = new Prijs();
+            prijs.setKamer(kamer);
+            prijs.setKamerID(kamer.getKamerID());
+            prijs.setPrijsPerKamer(new BigDecimal(0));
+
+            prijzenKamers.add(prijs);
+        }
+        return prijzenKamers;
+    }
+
+    private List<Prijs> getKamerPrijzenMetDatums(List<Prijs> kamerPrijzen, List<String> datums) {
+
+        for(int i=0;i<kamerPrijzen.size();i++) {
+            java.util.Date datum = Date.valueOf(datums.get(i));
+            kamerPrijzen.get(i).setDatumVanaf(datum);
+        }
+        return kamerPrijzen;
+    }
+    //endregion
 }
