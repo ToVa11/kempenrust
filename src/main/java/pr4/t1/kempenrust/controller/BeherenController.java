@@ -98,7 +98,7 @@ public class BeherenController {
     @RequestMapping("/kamers")
     public String Kamers(Model model) {
         MeldingDto melding=new MeldingDto();
-        ArrayList<KamerDto> kamers=kamerRepository.getKamers();
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
         model.addAttribute("kamers",kamers);
         model.addAttribute("melding",melding);
         return "layouts/beheren/kamers";
@@ -107,9 +107,9 @@ public class BeherenController {
     @RequestMapping("/kamerAanpassen")
     public String kamerAanpassen(Model model, HttpServletRequest request){
         int kamerId= Integer.parseInt((request.getParameter("kamerId")));
-        KamerDto kamer=kamerTypeRepository.getKamerByID(kamerId);
+        Kamer kamer=kamerRepository.getKamerMetTypeByID(kamerId);
         ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
-        kamer.setKamerTypes(kamerTypes);
+        model.addAttribute("kamerTypes",kamerTypes);
         model.addAttribute("kamer",kamer);
         return "layouts/beheren/kamerAanpassen";
     }
@@ -117,11 +117,10 @@ public class BeherenController {
     @PostMapping("/wijzigKamer")
     public String WijzigKamer( Model model,@ModelAttribute("kamer") Kamer kamer){
         MeldingDto melding= new MeldingDto();
-
         kamerRepository.WijzigKamer(kamer.getKamerID(),
         kamer.getKamerTypeID(),kamer.getKamerNummer());
         melding.setMelding("kamer is gewijzigd");
-        ArrayList<KamerDto> kamers=kamerRepository.getKamers();
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
         model.addAttribute("kamers",kamers);
         model.addAttribute("melding",melding);
         return "layouts/beheren/kamers";
@@ -145,7 +144,7 @@ public class BeherenController {
 //        prijsRepository.kamerTeVerwijderen(kamerId);
         prijsRepository.prijsVerwijderen(kamerId);
         kamerRepository.KamerVerwijderen(kamerId);
-        ArrayList<KamerDto> kamers=kamerRepository.getKamers();
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
         model.addAttribute("kamers",kamers);
         model.addAttribute("melding",melding);
         return "layouts/beheren/kamers";
@@ -165,7 +164,7 @@ public class BeherenController {
         MeldingDto melding=new MeldingDto();
         int kamerId= Integer.parseInt(request.getParameter("kamerId"));
         kamerOnbeschikbaarRepository.KamerBeschikbaarMaken(kamerId);
-        ArrayList<KamerDto> kamers=kamerRepository.getKamers();
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
         model.addAttribute("kamers",kamers);
         model.addAttribute("melding",melding);
         return "layouts/beheren/kamers";
@@ -183,7 +182,7 @@ public class BeherenController {
            kamerOnbeschikbaarRepository.KamerOnbeschikbaarMaken(kamer.getKamerID(),
                    kamer.getDatumVan(), kamer.getDatumTot());
        }
-           ArrayList<KamerDto> kamers=kamerRepository.getKamers();
+           ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
            model.addAttribute("kamers",kamers);
            return "layouts/beheren/kamers";
 
@@ -208,7 +207,7 @@ public class BeherenController {
             ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
             kamer.setKamerNummer(0);
             melding.setMelding("Nieuwe kamer is toegevoegd");
-            ArrayList<KamerDto> kamers=kamerRepository.getKamers();
+            ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
             model.addAttribute("kamers",kamers);
             model.addAttribute("melding", melding);
             return "layouts/beheren/kamers";

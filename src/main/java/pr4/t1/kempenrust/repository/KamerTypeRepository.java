@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import pr4.t1.kempenrust.model.BoekingDetail;
 import pr4.t1.kempenrust.model.DTO.KamerDto;
+import pr4.t1.kempenrust.model.Kamer;
 import pr4.t1.kempenrust.model.KamerType;
 
 import java.util.ArrayList;
@@ -27,20 +28,6 @@ public class KamerTypeRepository {
             KamerTypes.add(kamerType);
         }
         return KamerTypes;
-    }
-
-    public KamerDto getKamerByID(int kamerID){
-        KamerDto kamer=new KamerDto();
-        SqlRowSet rowSet =jdbcTemplate.queryForRowSet("SELECT * FROM " +
-                "Kamers INNER JOIN Kamertypes " +
-                    "ON Kamers.KamerTypeID = Kamertypes.kamertypeID " +
-                "WHERE KamerID =? ",kamerID);
-        while (rowSet.next()){
-            kamer.setKamerID(rowSet.getInt("KamerID"));
-            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
-            kamer.setOmschrijving(rowSet.getString("Omschrijving"));
-        }
-        return kamer;
     }
 
     public void KamerTypeToevoegen(String omschrijving){

@@ -16,8 +16,9 @@ import java.util.Date;
 public class KamerRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    public ArrayList<KamerDto> getKamers(){
-        ArrayList<KamerDto> lijstKamers=new ArrayList<>();
+
+    public ArrayList<KamerOnbeschikbaar> getKamers(){
+        ArrayList<KamerOnbeschikbaar> lijstKamers=new ArrayList<>();
         SqlRowSet rowSet=jdbcTemplate.queryForRowSet("SELECT *" +
                 "FROM " +
                 "( Kamers INNER JOIN Kamertypes " +
@@ -26,17 +27,43 @@ public class KamerRepository {
                 "ON Kamers.kamerID=Kamersonbeschikbaar.kamerID " +
                 "ORDER BY Kamers.KamerNummer");
         while (rowSet.next()){
-            KamerDto kamer=new KamerDto();
-            kamer.setKamerID(rowSet.getInt("KamerID"));
-            kamer.setDatumTot (rowSet.getDate("DatumTot"));
-            kamer.setDatumVan(rowSet.getDate("DatumVan"));
-            kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
-            kamer.setOmschrijving(rowSet.getString("Omschrijving"));
+            KamerOnbeschikbaar kamerOnb=new KamerOnbeschikbaar();
+            Kamer kamer= new Kamer();
+            KamerType kamerType= new KamerType();
+
+            kamerType.setOmschrijving(rowSet.getString("Omschrijving"));
+
+            kamer.setKamerType(kamerType);
             kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
             kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
-            lijstKamers.add(kamer);
+
+            kamerOnb.setKamer(kamer);
+            kamerOnb.setKamerID(rowSet.getInt("KamerID"));
+            kamerOnb.setDatumTot (rowSet.getDate("DatumTot"));
+            kamerOnb.setDatumVan(rowSet.getDate("DatumVan"));
+
+            lijstKamers.add(kamerOnb);
+
         }
         return lijstKamers;
+    }
+
+    public Kamer getKamerMetTypeByID(int kamerID){
+        Kamer kamer=new Kamer();
+        KamerType kamerType=new KamerType();
+        SqlRowSet rowSet =jdbcTemplate.queryForRowSet("SELECT * FROM " +
+                "Kamers INNER JOIN KamerTypes " +
+                "ON Kamers.KamerTypeID = KamerTypes.KamerTypeID " +
+                "WHERE KamerID =? ",kamerID);
+        while (rowSet.next()){
+
+            kamerType.setOmschrijving(rowSet.getString("Omschrijving"));
+
+            kamer.setKamerType(kamerType);
+            kamer.setKamerID(rowSet.getInt("KamerID"));
+            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
+        }
+        return kamer;
     }
 
     // Hier ga ik enkel alle kamers ophalen zonder Dto & zonder joins

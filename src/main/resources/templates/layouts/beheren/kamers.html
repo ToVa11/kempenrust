@@ -1,3 +1,98 @@
+<!--<!DOCTYPE html>-->
+<!--&lt;!&ndash;  main-fragment (title, nav, mainContent, footer)  &ndash;&gt;-->
+<!--<html xmlns:th="http://www.thymeleaf.org"-->
+<!--      th:replace="~{layouts/main-layout :: main-fragment(-->
+<!--                                                ~{::title},-->
+<!--                                                ~{:: #nav-kempenrust},-->
+<!--                                                ~{:: #main-content-kempenrust},-->
+<!--                                                ~{:: #footer-kempenrust}-->
+<!--                                               )}">-->
+<!--<head>-->
+<!--    &lt;!&ndash; Required meta tags &ndash;&gt;-->
+<!--    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">-->
+
+<!--    &lt;!&ndash; Kan je aanpassen = tabblad titel&ndash;&gt;-->
+<!--    <title>Kamers</title>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<div id="nav-kempenrust" th:replace="~{/fragments/app-fragments :: nav-default}">-->
+<!--    Nav-->
+<!--</div>-->
+
+<!--<div id="main-content-kempenrust">-->
+<!--    &lt;!&ndash; Enkel hier en title aanpassen!! Rest laten staan&ndash;&gt;-->
+<!--    <h1>Kamers</h1>-->
+
+<!--    <div th:if="${melding.melding != null}" class="alert alert-secondary">-->
+<!--        <h3 th:text="${melding.melding} ? ${melding.melding}"></h3>-->
+<!--    </div>-->
+
+<!--    <table class="table" th:if="${kamers.size()!=0}">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th class="align-middle">Kamer Nummer</th>-->
+<!--            <th class="align-middle">Omschrijving</th>-->
+<!--            <th class="align-middle">Onbeschikbaar Van</th>-->
+<!--            <th class="align-middle">Onbeschikbaar Tot</th>-->
+<!--            <th>-->
+<!--                <a th:href="@{/nieweKamerToeveogen}"-->
+<!--                   class="btn btn-secondary">-->
+<!--                    <i class="fas fa-plus"></i></a>-->
+<!--            </th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr  th:each="kamer :${kamers}">-->
+<!--            <td th:text="${kamer.kamerNummer}" class="align-middle"></td>-->
+<!--            <td th:text="${kamer.omschrijving}" class="align-middle"></td>-->
+<!--            <td th:text="${#dates.format(kamer.datumVan,'dd/MM/yyyy')}" class="align-middle"></td>-->
+<!--            <td th:text="${#dates.format(kamer.datumTot,'dd/MM/yyyy')}" class="align-middle"></td>-->
+<!--            <td>-->
+<!--                <a class="btn btn-secondary"-->
+<!--                    th:href="@{/kamerAanpassen(kamerId=${kamer.kamerID})}">-->
+<!--                    <li class="fas fa-pen"></li></a>-->
+<!--                <button class="btn btn-secondary" data-toggle="modal"-->
+<!--                        data-target="#deleteConfirmation">-->
+<!--                    <i class="fas fa-trash"></i></button>-->
+<!--                <div class="modal fade" id="deleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">-->
+<!--                    <div class="modal-dialog modal-dialog-centered" role="document">-->
+<!--                        <div class="modal-content">-->
+<!--                            <div class="modal-header">-->
+<!--                                <h5 class="modal-title" id="exampleModalCenterTitle">Verwijder kamer?</h5>-->
+<!--                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                                    <span aria-hidden="true">&times;</span>-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                            <div class="modal-body">-->
+<!--                                Ben je zeker dat je deze kamer wil verwijderen?-->
+<!--                            </div>-->
+<!--                            <div class="modal-footer">-->
+<!--                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleer</button>-->
+<!--                                <a class="btn btn-secondary" th:href="@{/kamerVerwijderen(kamerId=${kamer.kamerID})}">Verwijder</li></a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </td>-->
+<!--            </td>-->
+<!--            <td>-->
+<!--                <a class="btn btn-secondary"-->
+<!--                th:href="@{/kamerBeschikbaarheid(kamerId=${kamer.kamerID})}">-->
+<!--                Beschikbaarheid</a>-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+<!--<div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">-->
+<!--    Footer-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
+
+
 <!DOCTYPE html>
 <!--  main-fragment (title, nav, mainContent, footer)  -->
 <html xmlns:th="http://www.thymeleaf.org"
@@ -44,13 +139,13 @@
         </thead>
         <tbody>
         <tr  th:each="kamer :${kamers}">
-            <td th:text="${kamer.kamerNummer}" class="align-middle"></td>
-            <td th:text="${kamer.omschrijving}" class="align-middle"></td>
+            <td th:text="${kamer.kamer.kamerNummer}" class="align-middle"></td>
+            <td th:text="${kamer.kamer.kamerType.omschrijving}" class="align-middle"></td>
             <td th:text="${#dates.format(kamer.datumVan,'dd/MM/yyyy')}" class="align-middle"></td>
             <td th:text="${#dates.format(kamer.datumTot,'dd/MM/yyyy')}" class="align-middle"></td>
             <td>
                 <a class="btn btn-secondary"
-                    th:href="@{/kamerAanpassen(kamerId=${kamer.kamerID})}">
+                   th:href="@{/kamerAanpassen(kamerId=${kamer.kamerID})}">
                     <li class="fas fa-pen"></li></a>
                 <button class="btn btn-secondary" data-toggle="modal"
                         data-target="#deleteConfirmation">
@@ -78,8 +173,8 @@
             </td>
             <td>
                 <a class="btn btn-secondary"
-                th:href="@{/kamerBeschikbaarheid(kamerId=${kamer.kamerID})}">
-                Beschikbaarheid</a>
+                   th:href="@{/kamerBeschikbaarheid(kamerId=${kamer.kamerID})}">
+                    Beschikbaarheid</a>
             </td>
         </tr>
         </tbody>

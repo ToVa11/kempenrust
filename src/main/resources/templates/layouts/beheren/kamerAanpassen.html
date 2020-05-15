@@ -29,7 +29,7 @@
        <input type="hidden"  th:field="*{kamerNummer}">
        <div class="form-group col-md-8">
            <select  class="custom-select" id="omschrijving" th:field="*{kamerTypeID}"  required>
-                   <option th:each="kamerType : ${kamer.kamerTypes}"
+                   <option th:each="kamerType : ${kamerTypes}"
                            th:value="${kamerType.kamerTypeID}"
                            th:text="${kamerType.omschrijving}">
                    </option>
