@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -61,13 +62,23 @@ public class BoekingController {
 
     //    Hier komen alle methodes die iets te maken hebben met boekingen
     @RequestMapping("/reserveren")
-    public String Reserveren(Model model, RedirectAttributes redirectAttributes) {
+    public String Reserveren(Model model, HttpServletRequest request,  RedirectAttributes redirectAttributes) {
         if(redirectAttributes.containsAttribute("message")) {
             model.addAttribute(redirectAttributes.getAttribute("message"));
         }
+        var datum = request.getParameter("Datum");
+        var kamerId = request.getParameter("KamerID");
 
         ReserveringDto reserveringDto = new ReserveringDto();
         reserveringDto.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+
+        if(datum != null && kamerId != null) {
+            reserveringDto.setDatumAankomst(datum);
+            reserveringDto.setDatumVertrek(datum);
+            reserveringDto.setAantalPersonen(1);
+            List<Integer> kamers = Arrays.asList(Integer.parseInt(kamerId));
+            reserveringDto.setKamers(kamers);
+        }
 
         model.addAttribute("reserveringDetails", reserveringDto);
 
@@ -123,6 +134,10 @@ public class BoekingController {
 
         BigDecimal bedragVoorschot = getBedragVoorschot(totaalPrijs);
 
+        // Bij nieuwe reservering wordt er blijkbaar ergens een NULL bijgezet, maar ik vind niet waar
+        // Deze code verwijderd deze NULL
+        while(reserveringDetails.getKamers().remove(null)) {};
+
         int BoekingID = boekingRepository.toevoegenReservatie(
                 klant.getKlantID(),
                 reserveringDetails.getKeuzeArrangement(),
@@ -170,6 +185,10 @@ public class BoekingController {
             maand = vandaag.getMonth().getValue();
             jaar = vandaag.getYear();
         }
+
+        overzichtDto.setMaand(maand);
+        overzichtDto.setJaar(jaar);
+        overzichtDto.setDatum(LocalDate.of(jaar, maand, 1));
 
         ArrayList<Kamer> kamers = kamerRepository.getAlleKamersMetModel();
         overzichtDto.setKamers(kamers);
