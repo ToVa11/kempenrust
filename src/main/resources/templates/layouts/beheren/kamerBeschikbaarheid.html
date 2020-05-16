@@ -45,7 +45,7 @@
         </tbody>
     </table>
         <form th:action="@{/kamerOnBeschikbaarMaken}" method="post" th:object="${kamer}" >
-            <input type="hidden" name="KamerOnbeschikbaarId" th:field="*{kamerID}">
+            <input type="hidden" th:field="*{kamerID}">
             <div class="form-group col-md-8">
                 <label for="datumVan">Datum Van</label>
                 <input th:field="*{datumVan}" id="datumVan" type="date" class="form-control" required/>
