@@ -1,32 +1,70 @@
-/*.container {*/
-/*    position: relative;*/
-/*    height: 100vh;*/
-/*}*/
+.container {
+    position: relative;
+    padding-bottom: 2.5rem;
+    min-height: 100vh;
+}
 
-/*#content-wrap {*/
-/*    padding-bottom: 2.5rem;    !* Footer height *!*/
-/*}*/
+#content-wrap {
+    padding-bottom: 2.5rem;    /* Footer height */
+}
 
-/*footer {*/
-/*    position: absolute;*/
-/*    bottom: 0;*/
-/*    width: 100%;*/
-/*    height: 2.5rem;*/
-/*}*/
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding-bottom: 10px;
+}
 
 td.backgroundRed {
     background: red;
     cursor: pointer;
+    padding: 0px;
+    margin: 0px;
 }
 
 td.backgroundGreen {
     background: green;
     cursor: pointer;
+    padding: 0px;
+    margin: 0px;
 }
 
 td.backgroundStriped{
     background-image: linear-gradient(-45deg, #ff0000 25%, #272b30 25%, #272b30 50%, #ff0000 50%, #ff0000 75%, #272b30 75%, #272b30 100%);
     cursor: not-allowed;
+    padding: 0px;
+    margin: 0px;
 }
 
+td.backgroundStriped a{
+    cursor: not-allowed;
+}
+
+#ui-datepicker-div .ui-datepicker-calendar,
+#ui-datepicker-div .ui-datepicker-current
+{
+    display: none !important;
+}
+
+.btn-custom-a{
+    height:50px;
+    width:65px;
+}
+.btn-custom-a1{
+    width: 182px;
+}
+.m-left{
+    width: 182px;
+    margin-left: 37px;
+}
+
+.width75 {
+    width: 75px;
+}
+
+a.anchorTableLink {
+    display: block;
+    width: 100%;
+    height: 50px;
+}
 

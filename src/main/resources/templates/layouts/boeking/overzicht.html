@@ -6,26 +6,39 @@
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/slate/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-G9YbB4o4U6WS4wCthMOpAeweY4gQJyyx0P3nZbEBHyz+AtNoeasfRChmek1C2iqV" crossorigin="anonymous">
-
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- Own CSS -->
     <link rel="stylesheet" type="text/css" th:href="@{/main.css}" href="../../static/main.css"/>
     <!-- Fontawesome Icons-->
     <script src="https://kit.fontawesome.com/064c0b8681.js" crossorigin="anonymous"></script>
-
 </head>
 <body class="p-2">
+<div class="row justify-content-between">
+    <h1 class="col-6" th:text="${#strings.capitalize(#temporals.format(overzichtDto.getDatum(), 'MMMM yyyy')) }"></h1>
+    <form th:action="@{/overzicht}" method="post" th:object="${overzichtDto}" class="col-3">
+        <div class="input-group">
+            <input type="text" id="monthpicker" class="form-control date-picker" placeholder="Kies een maand" autocomplete="off"/>
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit" id="button-addon2">Kies</button>
+            </div>
+        </div>
+        <input hidden type="text" id="maand" th:field="*{maand}">
+        <input hidden type="text" id="jaar" th:field="*{jaar}">
+    </form>
+</div>
+
 <table class="table table-bordered overzicht">
     <thead>
     <tr>
-        <th style="width:75px">Dag / Kamer</th>
+        <th class="width75">Dag / Kamer</th>
         <th th:each="dag: ${#numbers.sequence(1, overzichtDto.getDagenInMaand())}" th:text="${#numbers.formatInteger(dag, 2)}" class="align-top text-center"></th>
     </tr>
     </thead>
     <tbody>
         <tr th:each="kamer, i: ${overzichtDto.getKamers()}" class="text-center">
-            <td th:text="${kamer.getKamerNummer()}" style="width:75px"></td>
-            <td style="padding: 0"
-                    th:each="item: ${overzichtDto.getOverzicht()[i.index]}"
+            <td th:text="${kamer.getKamerNummer()}" class="width75"></td>
+            <td th:each="item, j: ${overzichtDto.getOverzicht()[i.index]}"
                 th:classappend="${item} == null ? backgroundGreen : (${item.getBoeking()} == null ? backgroundStriped : backgroundRed)"
                 data-toggle="tooltip"
                 th:title="${item} == null
@@ -35,15 +48,22 @@
                         : ${item.getBoeking().getKlant().getVoornaam()} + ' ' + ${item.getBoeking().getKlant().getNaam()} +
                         '&#10;Van: ' + ${#dates.format(item.getBoeking().getDatumVan(), 'd MMMM yyyy')} +
                         '&#10;Tot: ' + ${#dates.format(item.getBoeking().getDatumTot(), 'd MMMM yyyy')})">
-    <!--            Nu nog aanpassen zodat er data wordt meegestuurd + inline css moet nog weg-->
-                <a style="display: block;width: 100%;height: 50px;" th:if="${item} and ${item.getBoeking()}" th:href="@{/reservering(Id=${item.getBoekingID()})}"></a>
-                <a style="display: block;width: 100%;height: 50px;" th:if="${item} == null" th:href="@{/reserveren}"></a>
+                <a class="anchorTableLink"
+                   th:href="${item} == null
+                    ? @{/reserveren(Datum=${overzichtDto.getJaar()} + '-' + ${#numbers.formatInteger(overzichtDto.getMaand(), 2)} + '-'+ ${#numbers.formatInteger(j.index+1, 2)},KamerID=${kamer.getKamerID()})}
+                    : (${item.getBoeking()}
+                        ? @{/reservering(Id=${item.getBoekingID()})})")></a>
             </td>
-            </a>
         </tr>
     </tbody>
 </table>
 
-<!--<script src="tooltip.js"></script>-->
+<script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+        crossorigin="anonymous"></script>
+<script src="datepicker.js"></script>
 </body>
 </html>
