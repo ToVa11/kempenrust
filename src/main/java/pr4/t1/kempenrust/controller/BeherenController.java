@@ -155,7 +155,6 @@ public class BeherenController {
             return "layouts/beheren/boodschap";
         }
         kamerOnbeschikbaarRepository.KamerBeschikbaarMaken(kamerId);
-//        prijsRepository.kamerTeVerwijderen(kamerId);
         prijsRepository.prijsVerwijderen(kamerId);
         kamerRepository.KamerVerwijderen(kamerId);
         ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
