@@ -92,7 +92,7 @@ public class BeherenController {
     @RequestMapping("/klantVerwijderen")
     public String KlantVerwijderen(Model model, HttpServletRequest request){
         MeldingDto melding=new MeldingDto();
-        int klantId= Integer.parseInt((request.getParameter("klantId")));
+        int klantId= Integer.parseInt(request.getParameter("klantId"));
         Boeking boeking = boekingRepository.getBoekingVoorKlant(klantId);
         if (boeking.getDatumVan() !=null && boeking.getDatumTot()!=null)
         {
