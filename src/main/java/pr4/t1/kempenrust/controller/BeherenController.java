@@ -55,7 +55,7 @@ public class BeherenController {
 
     @RequestMapping("/KlantgegevensAanpassen")
     public String klantAanpassen(Model model, HttpServletRequest request){
-        int klantId= Integer.parseInt((request.getParameter("klantId")));
+        int klantId= Integer.parseInt(request.getParameter("klantId"));
         Klant klant=klantRepository.getKlantById(klantId);
         model.addAttribute("klant",klant);
         return "layouts/beheren/klantgegevensAanpassen";
@@ -106,7 +106,7 @@ public class BeherenController {
 
     @RequestMapping("/kamerAanpassen")
     public String kamerAanpassen(Model model, HttpServletRequest request){
-        int kamerId= Integer.parseInt((request.getParameter("kamerId")));
+        int kamerId= Integer.parseInt(request.getParameter("kamerId"));
         Kamer kamer=kamerRepository.getKamerMetTypeByID(kamerId);
         ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
         model.addAttribute("kamerTypes",kamerTypes);
@@ -172,7 +172,6 @@ public class BeherenController {
 
     @PostMapping("/kamerOnBeschikbaarMaken")
     public String OnbeschikbaarMaken( Model model,@ModelAttribute("KamerDto") KamerDto kamer){
-       // MeldingDto melding=new MeldingDto();
         KamerOnbeschikbaar kamerOnbeschikbaar= kamerOnbeschikbaarRepository.getOnbeschikbaarKamerByID(kamer.getKamerID());
        if (kamerOnbeschikbaar.getDatumVan()!=null)
        {

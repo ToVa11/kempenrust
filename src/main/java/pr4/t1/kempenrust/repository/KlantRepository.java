@@ -176,8 +176,8 @@ public class KlantRepository {
                         "WHERE KlantID = '"+klantId+"'");
     }
 
-    public void klantVerwijderen(int kamerID){
-        jdbcTemplate.update("DELETE FROM Kamers WHERE KamerID =? ",kamerID);
+    public void klantVerwijderen(int klantId){
+        jdbcTemplate.update("DELETE FROM Klanten WHERE KlantID =? ",klantId);
     }
 
 

@@ -256,13 +256,13 @@ public class BoekingController {
             model.addAttribute("boeking",boeking);
             return "layouts/boeking/afgelopen_reservaties";
         }
-        else
+        else {
             melding.setTitel(" ");
             melding.setFoutmelding("Gelieve de datums te controleren");
             model.addAttribute("melding", melding);
-            model.addAttribute("boeking",boeking);
-        return "layouts/boeking/afgelopen_reservaties";
-
+            model.addAttribute("boeking", boeking);
+            return "layouts/boeking/afgelopen_reservaties";
+        }
     }
 
     private Klant getKlantVoorBevestigingReservering(ReserveringDto reserveringDetails) {
