@@ -61,7 +61,7 @@ public class BeherenController {
     @RequestMapping("/klanten")
     public String klanten(Model model) {
         MeldingDto melding= new MeldingDto();
-        ArrayList<Klant> klanten=klantRepository.getKlanten();
+        ArrayList<Klant> klanten=klantRepository.get();
         model.addAttribute("melding",melding);
         model.addAttribute("klanten",klanten);
         return "layouts/beheren/klanten";
@@ -70,7 +70,7 @@ public class BeherenController {
     @RequestMapping("/KlantgegevensAanpassen")
     public String klantAanpassen(Model model, HttpServletRequest request){
         int klantId= Integer.parseInt(request.getParameter("klantId"));
-        Klant klant=klantRepository.getKlantById(klantId);
+        Klant klant=klantRepository.getById(klantId);
         model.addAttribute("klant",klant);
         return "layouts/beheren/klantgegevensAanpassen";
     }
@@ -78,12 +78,12 @@ public class BeherenController {
     @PostMapping("/wijzigKlant")
     public String WijzigKlant( Model model,@ModelAttribute("klant") Klant klant){
         MeldingDto melding= new MeldingDto();
-        klantRepository.wijzigKlant(klant.getKlantID(), klant.getVoornaam(),
+        klantRepository.update(klant.getKlantID(), klant.getVoornaam(),
                         klant.getNaam(), klant.getTelefoonnummer(),
                         klant.getEmail(),klant.getStraat(), klant.getHuisnummer(),
                         klant.getPostcode(),klant.getGemeente());
 
-        ArrayList<Klant> klanten=klantRepository.getKlanten();
+        ArrayList<Klant> klanten=klantRepository.get();
         model.addAttribute("klanten",klanten);
         model.addAttribute("melding",melding);
         return "layouts/beheren/klanten";
@@ -103,8 +103,8 @@ public class BeherenController {
             model.addAttribute("melding",melding);
             return "layouts/beheren/boodschap";
         }
-        klantRepository.klantVerwijderen(klantId);
-        ArrayList<Klant> klanten=klantRepository.getKlanten();
+        klantRepository.delete(klantId);
+        ArrayList<Klant> klanten=klantRepository.get();
         model.addAttribute("klanten",klanten);
         return "layouts/beheren/klanten";
     }
@@ -214,7 +214,7 @@ public class BeherenController {
     public String KamerToevoegen( Model model,@ModelAttribute("KamerDto") KamerDto kamer){
         MeldingDto melding=new MeldingDto();
 
-        if (kamerRepository.checkIfKamernummerExists(kamer.getKamerNummer()) == false) {
+        if (kamerRepository.existsByKamerNummer(kamer.getKamerNummer()) == false) {
             kamerRepository.create(kamer.getKamerNummer(), kamer.getKamerTypeID());
             ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
             kamer.setKamerNummer(0);
@@ -443,7 +443,7 @@ public class BeherenController {
     public String updateReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes) {
         int rowsUpdated = boekingRepository.update(reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
 
-        reservering.setKlant(klantRepository.getKlantVoorBoeking(reservering.getBoekingID()));
+        reservering.setKlant(klantRepository.getByBoekingId(reservering.getBoekingID()));
         reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
 
         //add a redirectAttribute so we can give a message if the update succeeded.

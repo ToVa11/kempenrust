@@ -285,14 +285,14 @@ public class BoekingController {
     }
 
     private Klant getKlantVoorBevestigingReservering(ReserveringDto reserveringDetails) {
-        if(klantRepository.customerExists(reserveringDetails.getEmail()) == false) {
-            klantRepository.toevoegenKlant(
+        if(klantRepository.existsByEmail(reserveringDetails.getEmail()) == false) {
+            klantRepository.create(
                     reserveringDetails.getVoornaam(),
                     reserveringDetails.getNaam(),
                     reserveringDetails.getTelefoon(),
                     reserveringDetails.getEmail());
         }
-        return klantRepository.getKlantByEmail(reserveringDetails.getEmail());
+        return klantRepository.getByEmail(reserveringDetails.getEmail());
     }
 
     private BigDecimal getTotalePrijsVoorBoeking(ArrayList<Prijs> prijzenReservatie) {

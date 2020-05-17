@@ -84,7 +84,7 @@ public class KamerRepository {
         return kamer;
     }
     
-    public boolean checkIfKamernummerExists(int kamerNummer){
+    public boolean existsByKamerNummer(int kamerNummer){
         SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT * " +
                 "FROM Kamers " +
                 " WHERE Kamers.KamerNummer = ? ",kamerNummer);
