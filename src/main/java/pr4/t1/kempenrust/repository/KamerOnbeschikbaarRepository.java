@@ -16,7 +16,8 @@ public class KamerOnbeschikbaarRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public KamerOnbeschikbaar getOnbeschikbaarKamerByID(int kamerID){
+    //region Queries
+    public KamerOnbeschikbaar getByKamerId(int kamerID){
         Kamer kamer=new Kamer();
         KamerOnbeschikbaar onbeschikbaarKamer=new KamerOnbeschikbaar();
     SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT * " +
@@ -35,7 +36,8 @@ public class KamerOnbeschikbaarRepository {
     }
     return  onbeschikbaarKamer;
     }
-    public ArrayList<KamerOnbeschikbaar> getOnbeschikbaarKamerTussenTweeDatums(java.sql.Date van, java.sql.Date tot) {
+
+    public ArrayList<KamerOnbeschikbaar> getTussenTweeDatums(java.sql.Date van, java.sql.Date tot) {
         ArrayList<KamerOnbeschikbaar> lijstKamerOnbeschikbaar = new ArrayList<>();
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
@@ -68,20 +70,21 @@ public class KamerOnbeschikbaarRepository {
 
         return lijstKamerOnbeschikbaar;
     }
+    //endregion
 
-
-
-    public void KamerOnbeschikbaarMaken(int kamerID, Date datumVan,Date datumTot){
+    //region Commands
+    public void create(int kamerID, Date datumVan, Date datumTot){
         jdbcTemplate.update("INSERT INTO KamersOnbeschikbaar (KamerID, DatumVan, DatumTot)" +
                 " VALUES (?, ?, ?)",kamerID,datumVan,datumTot);
     }
-    public void  wijzigOnbeschikbaarheid(int kamerId, Date datumVan, Date datumTot){
+
+    public void update(int kamerId, Date datumVan, Date datumTot){
         jdbcTemplate.update("UPDATE KamersOnbeschikbaar SET DatumVan = ? , DatumTot = ? " +
                 " WHERE KamerID = ? ", datumVan, datumTot, kamerId);
     }
-    public void KamerBeschikbaarMaken(int kamerID){
+
+    public void delete(int kamerID){
         jdbcTemplate.update("DELETE FROM KAMERSONBESCHIKBAAR WHERE KamerID =? ",kamerID);
-
     }
-
+    //endregion
 }

@@ -32,32 +32,36 @@ import java.util.List;
 
 @Controller
 public class BoekingController {
+    //region DI Repos
     @Autowired
-    BoekingRepository boekingRepository;
+    private BoekingRepository boekingRepository;
     @Autowired
-    BoekingDetailRepository boekingDetailRepository;
+    private BoekingDetailRepository boekingDetailRepository;
     @Autowired
-    VerblijfsKeuzeRepository verblijfsKeuzeRepository;
+    private VerblijfsKeuzeRepository verblijfsKeuzeRepository;
     @Autowired
-    KamerRepository kamerRepository;
+    private KamerRepository kamerRepository;
     @Autowired
-    KlantRepository klantRepository;
+    private KlantRepository klantRepository;
     @Autowired
-    PrijsRepository prijsRepository;
+    private PrijsRepository prijsRepository;
     @Autowired
-    KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
+    private KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
+    //endregion
 
-    SimpleDateFormat simpleFormatter = new SimpleDateFormat("dd/MM/yyyy");
+    //region Class variables
+    private SimpleDateFormat simpleFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    Date datumAankomst;
-    Date datumVertrek;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private Date datumAankomst;
+    private Date datumVertrek;
 
-    BoekingDetail[][] overzicht;
+    private BoekingDetail[][] overzicht;
+    //endregion
 
-    //    Hier komen alle methodes die iets te maken hebben met boekingen
+    //region Boeken
     @RequestMapping("/reserveren")
-    public String Reserveren(Model model, HttpServletRequest request,  RedirectAttributes redirectAttributes) {
+    public String getBoekingForm(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         if(redirectAttributes.containsAttribute("message")) {
             model.addAttribute(redirectAttributes.getAttribute("message"));
         }
@@ -65,7 +69,7 @@ public class BoekingController {
         var kamerId = request.getParameter("KamerID");
 
         ReserveringDto reserveringDto = new ReserveringDto();
-        reserveringDto.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+        reserveringDto.setVerblijfsKeuzes(verblijfsKeuzeRepository.get());
 
         if(datum != null && kamerId != null) {
             reserveringDto.setDatumAankomst(datum);
@@ -80,9 +84,8 @@ public class BoekingController {
         return "layouts/boeking/reserveren";
     }
 
-    // via params kan ik meerdere submits in mijn form gebruiken
-    @RequestMapping(value = "/reserveren", method = RequestMethod.POST, params = "action=zoek-kamers")
-    public String ZoekKamers(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model, RedirectAttributes redirectAttributes) {
+    @RequestMapping("/zoekkamers")
+    public String getBeschikbareKamers(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model, RedirectAttributes redirectAttributes) {
         String message = null;
         message = checkDatums(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
@@ -93,7 +96,7 @@ public class BoekingController {
 
         vulDatumsOp(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
-        reserveringDetails.setPrijsVrijeKamers(kamerRepository.getAlleVrijeKamers(reserveringDetails.getKeuzeArrangement(), datumAankomst, datumVertrek));
+        reserveringDetails.setPrijsVrijeKamers(kamerRepository.getByBeschikbaarheid(reserveringDetails.getKeuzeArrangement(), datumAankomst, datumVertrek));
 
         if(reserveringDetails.getPrijsVrijeKamers().isEmpty())
         {
@@ -105,23 +108,22 @@ public class BoekingController {
 
         //Hier ga ik nog eens verblijfskeuzes ophalen, hebben jullie een betere oplossing?
         //object Dto kan geen complexe objecten doorsturen (enkel int, double, String & List (van de afgelopen 3)
-        reserveringDetails.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+        reserveringDetails.setVerblijfsKeuzes(verblijfsKeuzeRepository.get());
 
         model.addAttribute("reserveringDetails", reserveringDetails);
 
         return "layouts/boeking/reserveren";
     }
 
-    // via params kan ik meerdere submits in mijn form gebruiken
-    @PostMapping(value = "/reserveren", params = "action=bevestigen")
-    public String ReserveringBevestigen(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails,  Model model) {
+    @PostMapping("/reserveren")
+    public String createBoeking(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model) {
 
         // Is enkel nodig als de page word gerefreshed, omdat ik hier met classvariables werk
         vulDatumsOp(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
         Klant klant = getKlantVoorBevestigingReservering(reserveringDetails);
 
-        var prijsVoorBoeking = prijsRepository.GetPrijzenVoorReservatie(
+        var prijsVoorBoeking = prijsRepository.getByKamers(
                 reserveringDetails.getKeuzeArrangement(),
                 reserveringDetails.getKamers());
 
@@ -133,7 +135,7 @@ public class BoekingController {
         // Deze code verwijderd deze NULL
         while(reserveringDetails.getKamers().remove(null)) {};
 
-        int BoekingID = boekingRepository.toevoegenReservatie(
+        int BoekingID = boekingRepository.create(
                 klant.getKlantID(),
                 reserveringDetails.getKeuzeArrangement(),
                 bedragVoorschot,
@@ -144,7 +146,7 @@ public class BoekingController {
 
         ReserveringBevestigingDto bevestiging = new ReserveringBevestigingDto();
 
-        var boeking = boekingRepository.getReservatieByID(BoekingID);
+        var boeking = boekingRepository.getById(BoekingID);
 
         bevestiging.setBoeking(boeking);
         bevestiging.setPrijzenKamers(prijsVoorBoeking);
@@ -154,17 +156,18 @@ public class BoekingController {
 
         return "layouts/boeking/bevestiging";
 }
+    //endregion
 
-
+    //region Overzicht & Lijsten
     @RequestMapping("/reserveringen")
-    public String Reserveringen(Model model, RedirectAttributes redirectAttributes) {
+    public String getBoekingen(Model model, RedirectAttributes redirectAttributes) {
 
         //If redirectAttribute is set, this has to be added to the model, so we can show it at frontend
         if(redirectAttributes.containsAttribute("message")) {
             model.addAttribute(redirectAttributes.getAttribute("message"));
         }
 
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAlleToekomstigeBoekingdetails();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getToekomst();
 
         model.addAttribute("details",details);
 
@@ -172,7 +175,7 @@ public class BoekingController {
     }
 
     @RequestMapping("/overzicht")
-    public String Overzicht(Model model, Integer maand, Integer jaar) {
+    public String getOverzicht(Model model, Integer maand, Integer jaar) {
         OverzichtDto overzichtDto = new OverzichtDto();
 
         if(maand == null || jaar == null) {
@@ -185,7 +188,7 @@ public class BoekingController {
         overzichtDto.setJaar(jaar);
         overzichtDto.setDatum(LocalDate.of(jaar, maand, 1));
 
-        ArrayList<Kamer> kamers = kamerRepository.getAlleKamersMetModel();
+        ArrayList<Kamer> kamers = kamerRepository.get();
         overzichtDto.setKamers(kamers);
 
         int dagenInMaand = YearMonth.of(jaar, maand).lengthOfMonth();
@@ -196,10 +199,10 @@ public class BoekingController {
 
         overzicht = new BoekingDetail[kamers.size()][dagenInMaand];
 
-        var lijstKamersOnbeschikbaar = kamerOnbeschikbaarRepository.getOnbeschikbaarKamerTussenTweeDatums(van, tot);
+        var lijstKamersOnbeschikbaar = kamerOnbeschikbaarRepository.getTussenTweeDatums(van, tot);
         VulOverzichtOp(lijstKamersOnbeschikbaar, kamers, maand, jaar);
 
-        var boekingen = boekingDetailRepository.getBoekingsdetailsTussenTweeDatums(van, tot);
+        var boekingen = boekingDetailRepository.getTussenTweeDatums(van, tot);
         VulOverzichtOp(boekingen, kamers, maand, jaar);
 
         overzichtDto.setOverzicht(overzicht);
@@ -208,40 +211,10 @@ public class BoekingController {
         return "layouts/boeking/overzicht";
     }
 
-    @RequestMapping("/voorschotten")
-    public String Voorschotten(Model model, RedirectAttributes redirectAttributes) {
-        List<Boeking> boekingenMetOnbetaaldeVoorschotten = boekingRepository.getBoekingenMetOnbetaaldVoorschot();
-
-        if(redirectAttributes.containsAttribute("message")) {
-            model.addAttribute(redirectAttributes.getAttribute("message"));
-        }
-        model.addAttribute("boekingen", boekingenMetOnbetaaldeVoorschotten);
-
-        return "layouts/boeking/voorschotten";
-    }
-
-    @RequestMapping("/reservering/bevestig/voorschot")
-    public String bevestigVoorschot(HttpServletRequest request, RedirectAttributes redirectAttributes){
-        int rowsUpdated = boekingRepository.bevestigVoorschot(request.getParameter("boekingID"));
-        String message=null;
-
-        if(rowsUpdated> 0 ) {
-            message="De betaling van het voorschot is bevestigd.";
-        }
-        else {
-            message="Er is iets misgegaan bij het bevestigen van het voorschot.";
-        }
-
-        redirectAttributes.addFlashAttribute("message", message);
-        return "redirect:/voorschotten";
-
-
-    }
-
     @RequestMapping("/afgelopen_reservaties")
-    public String AfgelopenReserveringen(Model model) {
+    public String getAfgelopenBoekingen(Model model) {
         BoekingDetailDto boeking=new BoekingDetailDto();
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getVerleden();
         MeldingDto melding=new MeldingDto();
         melding.setTitel("Afgelopen Reservaties");
         model.addAttribute("details",details);
@@ -251,14 +224,14 @@ public class BoekingController {
     }
 
     @PostMapping("/afgelopen_reservaties")
-    public String AfgelopenReserveringen(Model model,@ModelAttribute("Boeking") BoekingDetailDto boeking) {
+    public String getAfgelopenBoekingen(Model model, @ModelAttribute("Boeking") BoekingDetailDto boeking) {
         MeldingDto melding=new MeldingDto();
         var datumVan = Date.valueOf(boeking.getDatumVan());
         var datumTot = Date.valueOf(boeking.getDatumTot());
         if (datumVan !=null && datumTot!=null && datumVan.before(datumTot))
         {
             ArrayList<BoekingDetail> details = boekingDetailRepository
-            .getAlleDetailsMetDatums(datumVan,datumTot);
+                    .getTussenTweeDatums(datumVan,datumTot);
 
             String startDatum = simpleFormatter.format(datumVan);
             String endDatum = simpleFormatter.format(datumTot);
@@ -283,16 +256,50 @@ public class BoekingController {
             return "layouts/boeking/afgelopen_reservaties";
         }
     }
+    //endregion
 
+    //region Voorschotten
+    @RequestMapping("/voorschotten")
+    public String getVoorschotten(Model model, RedirectAttributes redirectAttributes) {
+        List<Boeking> boekingenMetOnbetaaldeVoorschotten = boekingRepository.getByOnbetaaldeVoorschotten();
+
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute(redirectAttributes.getAttribute("message"));
+        }
+        model.addAttribute("boekingen", boekingenMetOnbetaaldeVoorschotten);
+
+        return "layouts/boeking/voorschotten";
+    }
+
+    @RequestMapping("/reservering/bevestig/voorschot")
+    public String updateVoorschotBetaald(HttpServletRequest request, RedirectAttributes redirectAttributes){
+        int rowsUpdated = boekingRepository.updateVoorschotBetaald(request.getParameter("boekingID"));
+        String message=null;
+
+        if(rowsUpdated> 0 ) {
+            message="De betaling van het voorschot is bevestigd.";
+        }
+        else {
+            message="Er is iets misgegaan bij het bevestigen van het voorschot.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/voorschotten";
+
+
+    }
+    //endregion
+
+    //region Private methods
     private Klant getKlantVoorBevestigingReservering(ReserveringDto reserveringDetails) {
-        if(klantRepository.customerExists(reserveringDetails.getEmail()) == false) {
-            klantRepository.toevoegenKlant(
+        if(klantRepository.existsByEmail(reserveringDetails.getEmail()) == false) {
+            klantRepository.create(
                     reserveringDetails.getVoornaam(),
                     reserveringDetails.getNaam(),
                     reserveringDetails.getTelefoon(),
                     reserveringDetails.getEmail());
         }
-        return klantRepository.getKlantByEmail(reserveringDetails.getEmail());
+        return klantRepository.getByEmail(reserveringDetails.getEmail());
     }
 
     private BigDecimal getTotalePrijsVoorBoeking(ArrayList<Prijs> prijzenReservatie) {
@@ -369,4 +376,5 @@ public class BoekingController {
 
         return message;
     }
+    //endregion
 }

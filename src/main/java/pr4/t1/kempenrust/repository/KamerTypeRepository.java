@@ -16,7 +16,8 @@ public class KamerTypeRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ArrayList<KamerType>  getLijstKamerTypes(){
+    //region Queries
+    public ArrayList<KamerType> get(){
         ArrayList<KamerType> KamerTypes=new ArrayList<>();
         SqlRowSet rowSet=jdbcTemplate.queryForRowSet
                 ("SELECT * FROM KamerTypes " +
@@ -29,11 +30,13 @@ public class KamerTypeRepository {
         }
         return KamerTypes;
     }
+    //endregion
 
-    public void KamerTypeToevoegen(String omschrijving){
+    //region Commands
+    public void create(String omschrijving){
         jdbcTemplate.update
                 ("INSERT INTO Kamertypes ( Omschrijving) " +
                       "VALUES (?)",omschrijving);
     }
-
+    //endregion
 }
