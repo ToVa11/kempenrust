@@ -155,7 +155,7 @@ public class BeherenController {
             return "layouts/beheren/boodschap";
         }
         kamerOnbeschikbaarRepository.delete(kamerId);
-        prijsRepository.prijsVerwijderen(kamerId);
+        prijsRepository.deleteByKamerId(kamerId);
         kamerRepository.delete(kamerId);
         ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
         model.addAttribute("kamers",kamers);
@@ -275,7 +275,7 @@ public class BeherenController {
         arrangementDTO.setKamerPrijzen(getKamerPrijzenMetDatums(arrangementDTO.getKamerPrijzen(),arrangementDTO.getDatums()));
 
         int verblijfskeuzeID = verblijfsKeuzeRepository.addVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
-        int prijsKamersToegevoegd = prijsRepository.voegPrijsToeVoorVerblijfskeuze(arrangementDTO.getKamerPrijzen(), verblijfskeuzeID);
+        int prijsKamersToegevoegd = prijsRepository.create(arrangementDTO.getKamerPrijzen(), verblijfskeuzeID);
 
         if(prijsKamersToegevoegd==0 && verblijfskeuzeID > 0) {
             message = "Het arrangement is succesvol aangemaakt maar er ging iets mis bij het toevoegen van de prijzen voor het arrangement. Gelieve deze na te kijken.";
@@ -299,7 +299,7 @@ public class BeherenController {
         ArrangementDTO arrangementDTO = new ArrangementDTO();
 
         arrangementDTO.setVerblijfsKeuze(verblijfskeuze);
-        arrangementDTO.setKamerPrijzen(prijsRepository.getPrijzenVoorVerblijfskeuze(verblijfskeuze.getVerblijfskeuzeID()));
+        arrangementDTO.setKamerPrijzen(prijsRepository.getByVerblijfskeuzeId(verblijfskeuze.getVerblijfskeuzeID()));
 
         arrangementDTO.setDatums(vulDatumsOp(arrangementDTO.getKamerPrijzen()));
 
@@ -313,7 +313,7 @@ public class BeherenController {
         String message=null;
 
         int rowsUpdatedVerblijfskeuze = verblijfsKeuzeRepository.updateVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
-        int rowsUpdatedPrijzen = prijsRepository.updatePrijzenVoorVerblijfskeuze(getKamerPrijzenMetDatums(arrangementDTO.getKamerPrijzen(), arrangementDTO.getDatums()));
+        int rowsUpdatedPrijzen = prijsRepository.update(getKamerPrijzenMetDatums(arrangementDTO.getKamerPrijzen(), arrangementDTO.getDatums()));
 
         if(rowsUpdatedVerblijfskeuze>0 && rowsUpdatedPrijzen>0) {
             message= "Verblijfskeuze is succesvol aangepast.";
@@ -340,7 +340,7 @@ public class BeherenController {
             message = "Er zijn nog reservaties voor dit arrangement.";
         }
         else if(verblijfsKeuze != null) {
-            prijsRepository.deletePrijsVoorVerblijfskeuze(verblijfskeuzeID);
+            prijsRepository.deleteByVerblijfskeuzeId(verblijfskeuzeID);
             verblijfsKeuzeRepository.deleteVerblijfskeuze(verblijfskeuzeID);
             message ="Reservatie verwijderd.";
         }
@@ -367,7 +367,7 @@ public class BeherenController {
         updateReserveringDTO.setBoekingID(Integer.parseInt(request.getParameter("Id")));
         updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
         updateReserveringDTO.setPrijsKamers(kamerRepository.getByBeschikbaarheid(boeking.getVerblijfsKeuzeID(), boeking.getDatumVan(), boeking.getDatumTot()));
-        updateReserveringDTO.setPrijsKamersBoeking(prijsRepository.getKamerPrijsVoorBoeking(boeking.getBoekingID(), boeking.getVerblijfsKeuzeID()));
+        updateReserveringDTO.setPrijsKamersBoeking(prijsRepository.getByBoekingId(boeking.getBoekingID(), boeking.getVerblijfsKeuzeID()));
 
         if(redirectAttributes.containsAttribute("message")) {
             model.addAttribute(redirectAttributes.getAttribute("message"));

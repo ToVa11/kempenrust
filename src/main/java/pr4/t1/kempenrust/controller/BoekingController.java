@@ -121,7 +121,7 @@ public class BoekingController {
 
         Klant klant = getKlantVoorBevestigingReservering(reserveringDetails);
 
-        var prijsVoorBoeking = prijsRepository.GetPrijzenVoorReservatie(
+        var prijsVoorBoeking = prijsRepository.getByKamers(
                 reserveringDetails.getKeuzeArrangement(),
                 reserveringDetails.getKamers());
 
