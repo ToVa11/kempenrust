@@ -246,7 +246,7 @@ public class BeherenController {
     //region Arrangementen
     @RequestMapping("/arrangementen")
     public String Arrangementen(Model model, RedirectAttributes redirectAttributes) {
-        ArrayList<VerblijfsKeuze> verblijfskeuzes = verblijfsKeuzeRepository.getAlleVerblijfsKeuzes();
+        ArrayList<VerblijfsKeuze> verblijfskeuzes = verblijfsKeuzeRepository.get();
 
         model.addAttribute("verblijfskeuzes", verblijfskeuzes);
 
@@ -274,7 +274,7 @@ public class BeherenController {
 
         arrangementDTO.setKamerPrijzen(getKamerPrijzenMetDatums(arrangementDTO.getKamerPrijzen(),arrangementDTO.getDatums()));
 
-        int verblijfskeuzeID = verblijfsKeuzeRepository.addVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
+        int verblijfskeuzeID = verblijfsKeuzeRepository.create(arrangementDTO.getVerblijfsKeuze());
         int prijsKamersToegevoegd = prijsRepository.create(arrangementDTO.getKamerPrijzen(), verblijfskeuzeID);
 
         if(prijsKamersToegevoegd==0 && verblijfskeuzeID > 0) {
@@ -294,7 +294,7 @@ public class BeherenController {
 
     @RequestMapping("/arrangement")
     public String Arrangement(Model model, HttpServletRequest request) {
-        VerblijfsKeuze verblijfskeuze = verblijfsKeuzeRepository.getVerblijfkeuze(Integer.parseInt(request.getParameter("verblijfskeuzeID")));
+        VerblijfsKeuze verblijfskeuze = verblijfsKeuzeRepository.getById(Integer.parseInt(request.getParameter("verblijfskeuzeID")));
 
         ArrangementDTO arrangementDTO = new ArrangementDTO();
 
@@ -312,7 +312,7 @@ public class BeherenController {
     public String UpdateArrangement(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
         String message=null;
 
-        int rowsUpdatedVerblijfskeuze = verblijfsKeuzeRepository.updateVerblijfskeuze(arrangementDTO.getVerblijfsKeuze());
+        int rowsUpdatedVerblijfskeuze = verblijfsKeuzeRepository.update(arrangementDTO.getVerblijfsKeuze());
         int rowsUpdatedPrijzen = prijsRepository.update(getKamerPrijzenMetDatums(arrangementDTO.getKamerPrijzen(), arrangementDTO.getDatums()));
 
         if(rowsUpdatedVerblijfskeuze>0 && rowsUpdatedPrijzen>0) {
@@ -333,7 +333,7 @@ public class BeherenController {
         String message=null;
         int verblijfskeuzeID = Integer.parseInt(request.getParameter("verblijfskeuzeID"));
 
-        VerblijfsKeuze verblijfsKeuze = verblijfsKeuzeRepository.getVerblijfkeuze(verblijfskeuzeID);
+        VerblijfsKeuze verblijfsKeuze = verblijfsKeuzeRepository.getById(verblijfskeuzeID);
         int aantalBoekingenVoorVerblijfskeuze = boekingRepository.getAantalByVerblijfskeuzeId(verblijfskeuzeID);
 
         if(aantalBoekingenVoorVerblijfskeuze>0) {
@@ -341,7 +341,7 @@ public class BeherenController {
         }
         else if(verblijfsKeuze != null) {
             prijsRepository.deleteByVerblijfskeuzeId(verblijfskeuzeID);
-            verblijfsKeuzeRepository.deleteVerblijfskeuze(verblijfskeuzeID);
+            verblijfsKeuzeRepository.delete(verblijfskeuzeID);
             message ="Reservatie verwijderd.";
         }
         else {
@@ -365,7 +365,7 @@ public class BeherenController {
         updateReserveringDTO.setAantalPersonen(boeking.getAantalPersonen());
         updateReserveringDTO.setKlant(boeking.getKlant());
         updateReserveringDTO.setBoekingID(Integer.parseInt(request.getParameter("Id")));
-        updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+        updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.get());
         updateReserveringDTO.setPrijsKamers(kamerRepository.getByBeschikbaarheid(boeking.getVerblijfsKeuzeID(), boeking.getDatumVan(), boeking.getDatumTot()));
         updateReserveringDTO.setPrijsKamersBoeking(prijsRepository.getByBoekingId(boeking.getBoekingID(), boeking.getVerblijfsKeuzeID()));
 
@@ -444,7 +444,7 @@ public class BeherenController {
         int rowsUpdated = boekingRepository.update(reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
 
         reservering.setKlant(klantRepository.getByBoekingId(reservering.getBoekingID()));
-        reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+        reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.get());
 
         //add a redirectAttribute so we can give a message if the update succeeded.
         //This redirectAttribute is catched in BeherenController/reservering

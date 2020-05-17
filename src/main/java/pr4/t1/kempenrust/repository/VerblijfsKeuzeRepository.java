@@ -17,7 +17,8 @@ public class VerblijfsKeuzeRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public ArrayList<VerblijfsKeuze> getAlleVerblijfsKeuzes() {
+    //region Queries
+    public ArrayList<VerblijfsKeuze> get() {
 
         ArrayList<VerblijfsKeuze> verblijfsKeuzes = new ArrayList<>();
 
@@ -38,7 +39,7 @@ public class VerblijfsKeuzeRepository {
         return verblijfsKeuzes;
     }
 
-    public VerblijfsKeuze getVerblijfkeuze(int verblijfskeuzeID) {
+    public VerblijfsKeuze getById(int verblijfskeuzeID) {
         VerblijfsKeuze keuze = new VerblijfsKeuze();
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
@@ -56,18 +57,10 @@ public class VerblijfsKeuzeRepository {
 
         return keuze;
     }
+    //endregion
 
-    public void deleteVerblijfskeuze(int verblijfskeuzeID) {
-
-        Object[] params = {verblijfskeuzeID};
-        int[] types = {Types.INTEGER};
-        String sqlVerwijderVerblijfskeuze = "DELETE FROM verblijfskeuzes WHERE verblijfskeuzeID = ?";
-
-        jdbcTemplate.update(sqlVerwijderVerblijfskeuze, params, types);
-
-    }
-
-    public int addVerblijfskeuze(VerblijfsKeuze verblijfsKeuze) {
+    //region Commands
+    public int create(VerblijfsKeuze verblijfsKeuze) {
         String sqlInsertStatement = "" +
                 "INSERT INTO verblijfskeuzes " +
                 "(naam, omschrijving) " +
@@ -86,7 +79,7 @@ public class VerblijfsKeuzeRepository {
         return keyHolder.getKey().intValue(); //returns new verblijfskeuzeID
     }
 
-    public int updateVerblijfskeuze(VerblijfsKeuze verblijfsKeuze) {
+    public int update(VerblijfsKeuze verblijfsKeuze) {
         Object[] params = {verblijfsKeuze.getNaam(), verblijfsKeuze.getOmschrijving(), verblijfsKeuze.getVerblijfskeuzeID()};
         int[] types = {Types.VARCHAR, Types.VARCHAR, Types.INTEGER};
 
@@ -95,4 +88,15 @@ public class VerblijfsKeuzeRepository {
 
         return jdbcTemplate.update(sql,params,types);
     }
+
+    public void delete(int verblijfskeuzeID) {
+
+        Object[] params = {verblijfskeuzeID};
+        int[] types = {Types.INTEGER};
+        String sqlVerwijderVerblijfskeuze = "DELETE FROM verblijfskeuzes WHERE verblijfskeuzeID = ?";
+
+        jdbcTemplate.update(sqlVerwijderVerblijfskeuze, params, types);
+
+    }
+    //endregion
 }

@@ -65,7 +65,7 @@ public class BoekingController {
         var kamerId = request.getParameter("KamerID");
 
         ReserveringDto reserveringDto = new ReserveringDto();
-        reserveringDto.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+        reserveringDto.setVerblijfsKeuzes(verblijfsKeuzeRepository.get());
 
         if(datum != null && kamerId != null) {
             reserveringDto.setDatumAankomst(datum);
@@ -105,7 +105,7 @@ public class BoekingController {
 
         //Hier ga ik nog eens verblijfskeuzes ophalen, hebben jullie een betere oplossing?
         //object Dto kan geen complexe objecten doorsturen (enkel int, double, String & List (van de afgelopen 3)
-        reserveringDetails.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
+        reserveringDetails.setVerblijfsKeuzes(verblijfsKeuzeRepository.get());
 
         model.addAttribute("reserveringDetails", reserveringDetails);
 
