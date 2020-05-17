@@ -39,15 +39,13 @@ import java.util.List;
 public class BeherenController {
 
     @Autowired
-    BoekingDetailRepository boekingDetailRepository;
+    private BoekingDetailRepository boekingDetailRepository;
     @Autowired
-    VerblijfsKeuzeRepository verblijfsKeuzeRepository;
+    private VerblijfsKeuzeRepository verblijfsKeuzeRepository;
     @Autowired
-    BoekingRepository boekingRepository;
+    private BoekingRepository boekingRepository;
     @Autowired
-    KlantRepository klantRepository;
-
-    //    Hier komen alle methodes in die iets te maken hebben met het beheren (CRUD) van het hotel
+    private KlantRepository klantRepository;
     @Autowired
     private KamerRepository kamerRepository;
     @Autowired
@@ -56,10 +54,10 @@ public class BeherenController {
     private KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
     @Autowired
     private PrijsRepository prijsRepository;
-    // Hier komen alle methodes in die iets te maken hebben met het beheren (CRUD) van het hotel
 
+    //region Klanten
     @RequestMapping("/klanten")
-    public String klanten(Model model) {
+    public String getKlanten(Model model) {
         MeldingDto melding= new MeldingDto();
         ArrayList<Klant> klanten=klantRepository.get();
         model.addAttribute("melding",melding);
@@ -68,7 +66,7 @@ public class BeherenController {
     }
 
     @RequestMapping("/KlantgegevensAanpassen")
-    public String klantAanpassen(Model model, HttpServletRequest request){
+    public String getKlantForm(Model model, HttpServletRequest request){
         int klantId= Integer.parseInt(request.getParameter("klantId"));
         Klant klant=klantRepository.getById(klantId);
         model.addAttribute("klant",klant);
@@ -76,7 +74,7 @@ public class BeherenController {
     }
 
     @PostMapping("/wijzigKlant")
-    public String WijzigKlant( Model model,@ModelAttribute("klant") Klant klant){
+    public String updateKlant(Model model, @ModelAttribute("klant") Klant klant){
         MeldingDto melding= new MeldingDto();
         klantRepository.update(klant.getKlantID(), klant.getVoornaam(),
                         klant.getNaam(), klant.getTelefoonnummer(),
@@ -90,7 +88,7 @@ public class BeherenController {
     }
 
     @RequestMapping("/klantVerwijderen")
-    public String KlantVerwijderen(Model model, HttpServletRequest request){
+    public String deleteKlant(Model model, HttpServletRequest request){
         MeldingDto melding=new MeldingDto();
         int klantId= Integer.parseInt(request.getParameter("klantId"));
         Boeking boeking = boekingRepository.getByKlantId(klantId);
@@ -108,9 +106,11 @@ public class BeherenController {
         model.addAttribute("klanten",klanten);
         return "layouts/beheren/klanten";
     }
+    //endregion
 
+    //region Kamers
     @RequestMapping("/kamers")
-    public String Kamers(Model model) {
+    public String getKamers(Model model) {
         MeldingDto melding=new MeldingDto();
         ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
         model.addAttribute("kamers",kamers);
@@ -118,89 +118,8 @@ public class BeherenController {
         return "layouts/beheren/kamers";
     }
 
-    @RequestMapping("/kamerAanpassen")
-    public String kamerAanpassen(Model model, HttpServletRequest request){
-        int kamerId= Integer.parseInt(request.getParameter("kamerId"));
-        Kamer kamer=kamerRepository.getById(kamerId);
-        ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
-        model.addAttribute("kamerTypes",kamerTypes);
-        model.addAttribute("kamer",kamer);
-        return "layouts/beheren/kamerAanpassen";
-    }
-
-    @PostMapping("/wijzigKamer")
-    public String WijzigKamer( Model model,@ModelAttribute("kamer") Kamer kamer){
-        MeldingDto melding= new MeldingDto();
-        kamerRepository.update(kamer.getKamerID(),
-        kamer.getKamerTypeID(),kamer.getKamerNummer());
-        melding.setMelding("kamer is gewijzigd");
-        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
-        model.addAttribute("kamers",kamers);
-        model.addAttribute("melding",melding);
-        return "layouts/beheren/kamers";
-    }
-
-    @RequestMapping("/kamerVerwijderen")
-    public String KamerVerwijderen(Model model, HttpServletRequest request){
-        MeldingDto melding=new MeldingDto();
-        int kamerId= Integer.parseInt((request.getParameter("kamerId")));
-        Boeking boeking= boekingRepository.getByKamerId(kamerId);
-        if (boeking.getDatumVan() !=null && boeking.getDatumTot()!=null)
-        {
-            melding.setFoutmelding("Attentie! Deze kamer is reeds geboekt:");
-            melding.setBoekingDatumVan(boeking.getDatumVan());
-            melding.setBoekingDatumTot(boeking.getDatumTot());
-            melding.setKamer(true);
-            model.addAttribute("melding",melding);
-            return "layouts/beheren/boodschap";
-        }
-        kamerOnbeschikbaarRepository.delete(kamerId);
-        prijsRepository.deleteByKamerId(kamerId);
-        kamerRepository.delete(kamerId);
-        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
-        model.addAttribute("kamers",kamers);
-        model.addAttribute("melding",melding);
-        return "layouts/beheren/kamers";
-    }
-
-    @RequestMapping("/kamerBeschikbaarheid")
-    public String KamerBeschikabaarheid(Model model, HttpServletRequest request) throws ParseException {
-        int kamerId= Integer.parseInt(request.getParameter("kamerId"));
-        KamerOnbeschikbaar kamer=kamerOnbeschikbaarRepository.getByKamerId(kamerId);
-        model.addAttribute("kamer",kamer);
-        return "layouts/beheren/kamerBeschikbaarheid";
-    }
-
-
-    @RequestMapping("/kamerBeschikbaarMaken")
-    public String KamerBeschikabaarMaken(Model model, HttpServletRequest request){
-        MeldingDto melding=new MeldingDto();
-        int kamerId= Integer.parseInt(request.getParameter("kamerId"));
-        kamerOnbeschikbaarRepository.delete(kamerId);
-        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
-        model.addAttribute("kamers",kamers);
-        model.addAttribute("melding",melding);
-        return "layouts/beheren/kamers";
-    }
-
-    @PostMapping("/kamerOnBeschikbaarMaken")
-    public String OnbeschikbaarMaken( Model model,@ModelAttribute("KamerDto") KamerDto kamer){
-        KamerOnbeschikbaar kamerOnbeschikbaar= kamerOnbeschikbaarRepository.getByKamerId(kamer.getKamerID());
-       if (kamerOnbeschikbaar.getDatumVan()!=null)
-       {
-           kamerOnbeschikbaarRepository.update(kamer.getKamerID(),
-                                           kamer.getDatumVan(),kamer.getDatumTot());
-       }else {
-           kamerOnbeschikbaarRepository.create(kamer.getKamerID(),
-                   kamer.getDatumVan(), kamer.getDatumTot());
-       }
-           ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
-           model.addAttribute("kamers",kamers);
-           return "layouts/beheren/kamers";
-
-    }
     @RequestMapping("/nieweKamerToeveogen")
-    public String NieuweKamerToevoegen(Model model){
+    public String getKamerCreateForm(Model model){
         MeldingDto melding=new MeldingDto();
         ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
         KamerDto kamer=new KamerDto();
@@ -211,7 +130,7 @@ public class BeherenController {
     }
 
     @PostMapping("/KamerToevoegen")
-    public String KamerToevoegen( Model model,@ModelAttribute("KamerDto") KamerDto kamer){
+    public String createKamer(Model model, @ModelAttribute("KamerDto") KamerDto kamer){
         MeldingDto melding=new MeldingDto();
 
         if (kamerRepository.existsByKamerNummer(kamer.getKamerNummer()) == false) {
@@ -234,18 +153,105 @@ public class BeherenController {
             return "layouts/beheren/kamerToevoegen";
         }
     }
+
+    @RequestMapping("/kamerAanpassen")
+    public String getKamerUpdateForm(Model model, HttpServletRequest request){
+        int kamerId= Integer.parseInt(request.getParameter("kamerId"));
+        Kamer kamer=kamerRepository.getById(kamerId);
+        ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
+        model.addAttribute("kamerTypes",kamerTypes);
+        model.addAttribute("kamer",kamer);
+        return "layouts/beheren/kamerAanpassen";
+    }
+
+    @PostMapping("/wijzigKamer")
+    public String updateKamer(Model model, @ModelAttribute("kamer") Kamer kamer){
+        MeldingDto melding= new MeldingDto();
+        kamerRepository.update(kamer.getKamerID(),
+                kamer.getKamerTypeID(),kamer.getKamerNummer());
+        melding.setMelding("kamer is gewijzigd");
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
+        model.addAttribute("kamers",kamers);
+        model.addAttribute("melding",melding);
+        return "layouts/beheren/kamers";
+    }
+
+    @RequestMapping("/kamerVerwijderen")
+    public String deleteKamer(Model model, HttpServletRequest request){
+        MeldingDto melding=new MeldingDto();
+        int kamerId= Integer.parseInt((request.getParameter("kamerId")));
+        Boeking boeking= boekingRepository.getByKamerId(kamerId);
+        if (boeking.getDatumVan() !=null && boeking.getDatumTot()!=null)
+        {
+            melding.setFoutmelding("Attentie! Deze kamer is reeds geboekt:");
+            melding.setBoekingDatumVan(boeking.getDatumVan());
+            melding.setBoekingDatumTot(boeking.getDatumTot());
+            melding.setKamer(true);
+            model.addAttribute("melding",melding);
+            return "layouts/beheren/boodschap";
+        }
+        kamerOnbeschikbaarRepository.delete(kamerId);
+        prijsRepository.deleteByKamerId(kamerId);
+        kamerRepository.delete(kamerId);
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
+        model.addAttribute("kamers",kamers);
+        model.addAttribute("melding",melding);
+        return "layouts/beheren/kamers";
+    }
+    //endregion
+
+    //region Kamertypes
     @PostMapping("/KamerTypeToevoegen")
-    public String KamerTypeToevoegen( Model model,@ModelAttribute("KamerBeheer") KamerDto kamer){
+    public String createKamerType(Model model, @ModelAttribute("KamerBeheer") KamerDto kamer){
         kamerTypeRepository.create(kamer.getOmschrijving());
         ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
         kamer.setKamerTypes(kamerTypes);
         model.addAttribute("kamer",kamer);
         return "layouts/beheren/kamerToevoegen";
     }
+    //endregion
+
+    //region KamerOnbeschikbaar
+    @RequestMapping("/kamerBeschikbaarheid")
+    public String getKamersOnbeschikbaar(Model model, HttpServletRequest request) throws ParseException {
+        int kamerId= Integer.parseInt(request.getParameter("kamerId"));
+        KamerOnbeschikbaar kamer=kamerOnbeschikbaarRepository.getByKamerId(kamerId);
+        model.addAttribute("kamer",kamer);
+        return "layouts/beheren/kamerBeschikbaarheid";
+    }
+
+    @PostMapping("/kamerOnBeschikbaarMaken")
+    public String createKamerOnbeschikbaar(Model model, @ModelAttribute("KamerDto") KamerDto kamer){
+        KamerOnbeschikbaar kamerOnbeschikbaar= kamerOnbeschikbaarRepository.getByKamerId(kamer.getKamerID());
+        if (kamerOnbeschikbaar.getDatumVan()!=null)
+        {
+            kamerOnbeschikbaarRepository.update(kamer.getKamerID(),
+                    kamer.getDatumVan(),kamer.getDatumTot());
+        }else {
+            kamerOnbeschikbaarRepository.create(kamer.getKamerID(),
+                    kamer.getDatumVan(), kamer.getDatumTot());
+        }
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
+        model.addAttribute("kamers",kamers);
+        return "layouts/beheren/kamers";
+
+    }
+
+    @RequestMapping("/kamerBeschikbaarMaken")
+    public String deleteKamerOnbeschikbaar(Model model, HttpServletRequest request){
+        MeldingDto melding=new MeldingDto();
+        int kamerId= Integer.parseInt(request.getParameter("kamerId"));
+        kamerOnbeschikbaarRepository.delete(kamerId);
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
+        model.addAttribute("kamers",kamers);
+        model.addAttribute("melding",melding);
+        return "layouts/beheren/kamers";
+    }
+    //endregion
 
     //region Arrangementen
     @RequestMapping("/arrangementen")
-    public String Arrangementen(Model model, RedirectAttributes redirectAttributes) {
+    public String getVerblijfskeuzes(Model model, RedirectAttributes redirectAttributes) {
         ArrayList<VerblijfsKeuze> verblijfskeuzes = verblijfsKeuzeRepository.get();
 
         model.addAttribute("verblijfskeuzes", verblijfskeuzes);
@@ -257,8 +263,24 @@ public class BeherenController {
         return "layouts/beheren/arrangementen";
     }
 
+    @RequestMapping("/arrangement")
+    public String getVerblijfskeuzeById(Model model, HttpServletRequest request) {
+        VerblijfsKeuze verblijfskeuze = verblijfsKeuzeRepository.getById(Integer.parseInt(request.getParameter("verblijfskeuzeID")));
+
+        ArrangementDTO arrangementDTO = new ArrangementDTO();
+
+        arrangementDTO.setVerblijfsKeuze(verblijfskeuze);
+        arrangementDTO.setKamerPrijzen(prijsRepository.getByVerblijfskeuzeId(verblijfskeuze.getVerblijfskeuzeID()));
+
+        arrangementDTO.setDatums(vulDatumsOp(arrangementDTO.getKamerPrijzen()));
+
+        model.addAttribute("arrangement", arrangementDTO );
+
+        return "layouts/beheren/arrangement";
+    }
+
     @RequestMapping("/toevoegen/arrangement")
-    public String VoegVerblijfskeuzeToe(Model model) {
+    public String getVerblijfskeuzeForm(Model model) {
         ArrangementDTO arrangementDTO = new ArrangementDTO();
 
         arrangementDTO.setKamerPrijzen(vulPrijzenOp(kamerRepository.getWithKamerOnbeschikbaar()));
@@ -269,7 +291,7 @@ public class BeherenController {
     }
 
     @RequestMapping("/add/arrangement")
-    public String addArrangement(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
+    public String createVerblijfskeuze(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
         String message= null;
 
         arrangementDTO.setKamerPrijzen(getKamerPrijzenMetDatums(arrangementDTO.getKamerPrijzen(),arrangementDTO.getDatums()));
@@ -292,24 +314,8 @@ public class BeherenController {
         return "redirect:/arrangementen";
     }
 
-    @RequestMapping("/arrangement")
-    public String Arrangement(Model model, HttpServletRequest request) {
-        VerblijfsKeuze verblijfskeuze = verblijfsKeuzeRepository.getById(Integer.parseInt(request.getParameter("verblijfskeuzeID")));
-
-        ArrangementDTO arrangementDTO = new ArrangementDTO();
-
-        arrangementDTO.setVerblijfsKeuze(verblijfskeuze);
-        arrangementDTO.setKamerPrijzen(prijsRepository.getByVerblijfskeuzeId(verblijfskeuze.getVerblijfskeuzeID()));
-
-        arrangementDTO.setDatums(vulDatumsOp(arrangementDTO.getKamerPrijzen()));
-
-        model.addAttribute("arrangement", arrangementDTO );
-
-        return "layouts/beheren/arrangement";
-    }
-
     @RequestMapping("/update/arrangement")
-    public String UpdateArrangement(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
+    public String updateVerblijfsKeuze(@ModelAttribute("arrangement") ArrangementDTO arrangementDTO, RedirectAttributes redirectAttributes) {
         String message=null;
 
         int rowsUpdatedVerblijfskeuze = verblijfsKeuzeRepository.update(arrangementDTO.getVerblijfsKeuze());
@@ -329,7 +335,7 @@ public class BeherenController {
     }
 
     @RequestMapping("/delete/arrangement")
-    public String VerwijderArrangement(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public String deleteVerblijfskeuze(HttpServletRequest request, RedirectAttributes redirectAttributes) {
         String message=null;
         int verblijfskeuzeID = Integer.parseInt(request.getParameter("verblijfskeuzeID"));
 
@@ -350,12 +356,11 @@ public class BeherenController {
         redirectAttributes.addFlashAttribute("message", message);
         return "redirect:/arrangementen";
     }
-
     //endregion
 
     //region Reservering
     @RequestMapping("/reservering")
-    public String Reservering(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public String getBoekingen(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         Boeking boeking = boekingRepository.getById(Integer.parseInt(request.getParameter("Id")));
 
         UpdateReserveringDTO updateReserveringDTO = new UpdateReserveringDTO();
@@ -376,48 +381,8 @@ public class BeherenController {
         return "layouts/beheren/reservering";
     }
 
-    @RequestMapping("/update/datum/reservering")
-    public String updateDatumReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
-        Date nieuweDatumVan = Date.valueOf(reservering.getDatumVan());
-        Date nieuweDatumTot = Date.valueOf(reservering.getDatumTot());
-        String message = null;
-
-        if(nieuweDatumVan.after(nieuweDatumTot) ) {
-            message="De aankomst datum mag niet na de vertrek datum liggen.";
-            redirectAttributes.addFlashAttribute("message", message);
-
-            return "redirect:/reservering?Id="+reservering.getBoekingID();
-        }
-
-        List<BoekingDetail> detailsBoekingen = boekingDetailRepository.getAllesZonderBoeking(reservering.getBoekingID(), nieuweDatumVan, nieuweDatumTot);
-        List<BoekingDetail> selectedBoekingDetails = boekingDetailRepository.getAllesVoorBoeking(reservering.getBoekingID());
-
-        for (BoekingDetail detail: selectedBoekingDetails)
-        {
-            for(BoekingDetail toekomstDetail: detailsBoekingen) {
-
-                if(detail.getKamerID() == toekomstDetail.getKamer().getKamerID()) {
-                message="De huidige kamer is niet beschikbaar in de gekozen periode. Gelieve een ander periode of kamer te kiezen.";
-                redirectAttributes.addFlashAttribute("message", message);
-
-                return "redirect:/reservering?Id="+reservering.getBoekingID();
-                }
-            }
-        }
-
-        if(boekingRepository.updateDatums(nieuweDatumVan, nieuweDatumTot, reservering.getBoekingID())>0) {
-            message = "Datums zijn succesvol aangepast.";
-        }
-        else {
-            message = "Er is iets misgegaan tijdens het updaten.";
-        }
-        redirectAttributes.addFlashAttribute("message", message);
-
-        return "redirect:/reservering?Id="+reservering.getBoekingID();
-    }
-
     @RequestMapping("/update/kamerToevoegen/reservering")
-    public String voegKamerToeReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+    public String addBoekingKamer(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
         List<Integer> kamers = reservering.getKamers();
         int rowsAdded = 0;
 
@@ -440,7 +405,7 @@ public class BeherenController {
     }
 
     @RequestMapping("/update/reservering")
-    public String updateReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes) {
+    public String updateBoeking(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes) {
         int rowsUpdated = boekingRepository.update(reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
 
         reservering.setKlant(klantRepository.getByBoekingId(reservering.getBoekingID()));
@@ -457,8 +422,60 @@ public class BeherenController {
         return "redirect:/reservering?Id="+reservering.getBoekingID();
     }
 
+    @RequestMapping("/update/datum/reservering")
+    public String updateBoekingDatum(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+        Date nieuweDatumVan = Date.valueOf(reservering.getDatumVan());
+        Date nieuweDatumTot = Date.valueOf(reservering.getDatumTot());
+        String message = null;
+
+        if(nieuweDatumVan.after(nieuweDatumTot) ) {
+            message="De aankomst datum mag niet na de vertrek datum liggen.";
+            redirectAttributes.addFlashAttribute("message", message);
+
+            return "redirect:/reservering?Id="+reservering.getBoekingID();
+        }
+
+        List<BoekingDetail> detailsBoekingen = boekingDetailRepository.getAllesZonderBoeking(reservering.getBoekingID(), nieuweDatumVan, nieuweDatumTot);
+        List<BoekingDetail> selectedBoekingDetails = boekingDetailRepository.getAllesVoorBoeking(reservering.getBoekingID());
+
+        for (BoekingDetail detail: selectedBoekingDetails)
+        {
+            for(BoekingDetail toekomstDetail: detailsBoekingen) {
+
+                if(detail.getKamerID() == toekomstDetail.getKamer().getKamerID()) {
+                    message="De huidige kamer is niet beschikbaar in de gekozen periode. Gelieve een ander periode of kamer te kiezen.";
+                    redirectAttributes.addFlashAttribute("message", message);
+
+                    return "redirect:/reservering?Id="+reservering.getBoekingID();
+                }
+            }
+        }
+
+        if(boekingRepository.updateDatums(nieuweDatumVan, nieuweDatumTot, reservering.getBoekingID())>0) {
+            message = "Datums zijn succesvol aangepast.";
+        }
+        else {
+            message = "Er is iets misgegaan tijdens het updaten.";
+        }
+        redirectAttributes.addFlashAttribute("message", message);
+
+        return "redirect:/reservering?Id="+reservering.getBoekingID();
+    }
+
+    @RequestMapping("/delete/reservering")
+    public String deleteBoeking(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+
+        boekingRepository.delete(Integer.parseInt(request.getParameter("boekingID")));
+
+        //add a redirectAttribute so we can give a message if the delete succeeded.
+        //This redirectAttribute is catched in BoekingController/reserveringen
+        redirectAttributes.addFlashAttribute("message", "Reservatie verwijderd.");
+
+        return "redirect:/reserveringen";
+    }
+
     @RequestMapping("/delete/kamer/reservering")
-    public String deleteKamerVanReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
+    public String deleteBoekingKamer(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
         int rows = 0;
 
         for(int kamerID: reservering.getGeboekteKamers()) {
@@ -478,19 +495,8 @@ public class BeherenController {
         redirectAttributes.addFlashAttribute("message", message);
         return "redirect:/reservering?Id="+reservering.getBoekingID();
     }
-
-    @RequestMapping("/delete/reservering")
-    public String deleteReservering(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
-
-        boekingRepository.delete(Integer.parseInt(request.getParameter("boekingID")));
-
-        //add a redirectAttribute so we can give a message if the delete succeeded.
-        //This redirectAttribute is catched in BoekingController/reserveringen
-        redirectAttributes.addFlashAttribute("message", "Reservatie verwijderd.");
-
-        return "redirect:/reserveringen";
-    }
     //endregion
+
     //region Private Methods
     //datums moeten naar String omgezet worden om te tonen in frontend
     private List<String> vulDatumsOp(List<Prijs> kamerPrijzen) {
