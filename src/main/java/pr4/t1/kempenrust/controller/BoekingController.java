@@ -93,7 +93,7 @@ public class BoekingController {
 
         vulDatumsOp(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
-        reserveringDetails.setPrijsVrijeKamers(kamerRepository.getAlleVrijeKamers(reserveringDetails.getKeuzeArrangement(), datumAankomst, datumVertrek));
+        reserveringDetails.setPrijsVrijeKamers(kamerRepository.getByBeschikbaarheid(reserveringDetails.getKeuzeArrangement(), datumAankomst, datumVertrek));
 
         if(reserveringDetails.getPrijsVrijeKamers().isEmpty())
         {
@@ -185,7 +185,7 @@ public class BoekingController {
         overzichtDto.setJaar(jaar);
         overzichtDto.setDatum(LocalDate.of(jaar, maand, 1));
 
-        ArrayList<Kamer> kamers = kamerRepository.getAlleKamersMetModel();
+        ArrayList<Kamer> kamers = kamerRepository.get();
         overzichtDto.setKamers(kamers);
 
         int dagenInMaand = YearMonth.of(jaar, maand).lengthOfMonth();

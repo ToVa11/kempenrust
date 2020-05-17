@@ -61,6 +61,46 @@ public class PrijsRepository {
         return prijzenKamers;
     }
 
+    public ArrayList<Prijs> getKamerPrijsVoorBoeking(int boekingID, int verblijfskeuzeID) {
+        ArrayList<Prijs> kamerPrijzen = new ArrayList<Prijs>();
+
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(""+
+                        "SELECT * " +
+                        "FROM Prijzen INNER JOIN Kamers " +
+                        "ON Prijzen.KamerID = Kamers.KamerID " +
+                        "INNER JOIN KamerTypes " +
+                        "ON Kamers.KamerTypeID = KamerTypes.KamerTypeID " +
+                        "WHERE VerblijfsKeuzeID = ? AND Kamers.KamerID IN " +
+                        "(SELECT BoekingDetails.KamerID " +
+                        "FROM BoekingDetails " +
+                        "WHERE BoekingDetails.BoekingID = ?) ",
+                verblijfskeuzeID,
+                boekingID
+        );
+
+        while (rowSet.next()) {
+            Kamer kamer = new Kamer();
+            KamerType kamerType = new KamerType();
+            Prijs prijs = new Prijs();
+            kamerType.setKamerTypeID(rowSet.getInt("KamerTypeID"));
+            kamerType.setOmschrijving(rowSet.getString("Omschrijving"));
+            kamer.setKamerID(rowSet.getInt("KamerID"));
+            kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
+            kamer.setKamerType(kamerType);
+            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
+            prijs.setPrijsID(rowSet.getInt("PrijsID"));
+            prijs.setKamerID(rowSet.getInt("KamerID"));
+            prijs.setKamer(kamer);
+            prijs.setVerblijfsKeuzeID(rowSet.getInt("VerblijfsKeuzeID"));
+            prijs.setPrijsPerKamer(rowSet.getBigDecimal("PrijsPerKamer"));
+            prijs.setDatumVanaf(rowSet.getDate("DatumVanaf"));
+
+            kamerPrijzen.add(prijs);
+        }
+
+        return kamerPrijzen;
+    }
+
     private String queryPrijzenVoorReservatie(List<Integer> kamers) {
         String query = "" +
                 "SELECT * " +

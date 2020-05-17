@@ -112,7 +112,7 @@ public class BeherenController {
     @RequestMapping("/kamers")
     public String Kamers(Model model) {
         MeldingDto melding=new MeldingDto();
-        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
         model.addAttribute("kamers",kamers);
         model.addAttribute("melding",melding);
         return "layouts/beheren/kamers";
@@ -121,7 +121,7 @@ public class BeherenController {
     @RequestMapping("/kamerAanpassen")
     public String kamerAanpassen(Model model, HttpServletRequest request){
         int kamerId= Integer.parseInt(request.getParameter("kamerId"));
-        Kamer kamer=kamerRepository.getKamerMetTypeByID(kamerId);
+        Kamer kamer=kamerRepository.getById(kamerId);
         ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
         model.addAttribute("kamerTypes",kamerTypes);
         model.addAttribute("kamer",kamer);
@@ -131,10 +131,10 @@ public class BeherenController {
     @PostMapping("/wijzigKamer")
     public String WijzigKamer( Model model,@ModelAttribute("kamer") Kamer kamer){
         MeldingDto melding= new MeldingDto();
-        kamerRepository.WijzigKamer(kamer.getKamerID(),
+        kamerRepository.update(kamer.getKamerID(),
         kamer.getKamerTypeID(),kamer.getKamerNummer());
         melding.setMelding("kamer is gewijzigd");
-        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
         model.addAttribute("kamers",kamers);
         model.addAttribute("melding",melding);
         return "layouts/beheren/kamers";
@@ -156,8 +156,8 @@ public class BeherenController {
         }
         kamerOnbeschikbaarRepository.delete(kamerId);
         prijsRepository.prijsVerwijderen(kamerId);
-        kamerRepository.KamerVerwijderen(kamerId);
-        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
+        kamerRepository.delete(kamerId);
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
         model.addAttribute("kamers",kamers);
         model.addAttribute("melding",melding);
         return "layouts/beheren/kamers";
@@ -177,7 +177,7 @@ public class BeherenController {
         MeldingDto melding=new MeldingDto();
         int kamerId= Integer.parseInt(request.getParameter("kamerId"));
         kamerOnbeschikbaarRepository.delete(kamerId);
-        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
+        ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
         model.addAttribute("kamers",kamers);
         model.addAttribute("melding",melding);
         return "layouts/beheren/kamers";
@@ -194,7 +194,7 @@ public class BeherenController {
            kamerOnbeschikbaarRepository.create(kamer.getKamerID(),
                    kamer.getDatumVan(), kamer.getDatumTot());
        }
-           ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
+           ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
            model.addAttribute("kamers",kamers);
            return "layouts/beheren/kamers";
 
@@ -213,13 +213,13 @@ public class BeherenController {
     @PostMapping("/KamerToevoegen")
     public String KamerToevoegen( Model model,@ModelAttribute("KamerDto") KamerDto kamer){
         MeldingDto melding=new MeldingDto();
-        Kamer gevondenKamer=kamerRepository.getKamerByKamernummer(kamer.getKamerNummer());
-        if (gevondenKamer.getKamerID() == 0) {
-            kamerRepository.KamerToevoegen(kamer.getKamerNummer(), kamer.getKamerTypeID());
+
+        if (kamerRepository.checkIfKamernummerExists(kamer.getKamerNummer()) == false) {
+            kamerRepository.create(kamer.getKamerNummer(), kamer.getKamerTypeID());
             ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
             kamer.setKamerNummer(0);
             melding.setMelding("Nieuwe kamer is toegevoegd");
-            ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
+            ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
             model.addAttribute("kamers",kamers);
             model.addAttribute("melding", melding);
             return "layouts/beheren/kamers";
@@ -261,7 +261,7 @@ public class BeherenController {
     public String VoegVerblijfskeuzeToe(Model model) {
         ArrangementDTO arrangementDTO = new ArrangementDTO();
 
-        arrangementDTO.setKamerPrijzen(vulPrijzenOp(kamerRepository.getAlleKamersMetModel()));
+        arrangementDTO.setKamerPrijzen(vulPrijzenOp(kamerRepository.getWithKamerOnbeschikbaar()));
         arrangementDTO.setDatums(setDefaultDatums(arrangementDTO.getKamerPrijzen().size()));
         model.addAttribute("arrangement", arrangementDTO);
 
@@ -366,8 +366,8 @@ public class BeherenController {
         updateReserveringDTO.setKlant(boeking.getKlant());
         updateReserveringDTO.setBoekingID(Integer.parseInt(request.getParameter("Id")));
         updateReserveringDTO.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
-        updateReserveringDTO.setPrijsKamers(kamerRepository.getAlleVrijeKamers(boeking.getVerblijfsKeuzeID(), boeking.getDatumVan(), boeking.getDatumTot()));
-        updateReserveringDTO.setPrijsKamersBoeking(kamerRepository.getKamerPrijsVoorBoeking(boeking.getBoekingID(), boeking.getVerblijfsKeuzeID()));
+        updateReserveringDTO.setPrijsKamers(kamerRepository.getByBeschikbaarheid(boeking.getVerblijfsKeuzeID(), boeking.getDatumVan(), boeking.getDatumTot()));
+        updateReserveringDTO.setPrijsKamersBoeking(prijsRepository.getKamerPrijsVoorBoeking(boeking.getBoekingID(), boeking.getVerblijfsKeuzeID()));
 
         if(redirectAttributes.containsAttribute("message")) {
             model.addAttribute(redirectAttributes.getAttribute("message"));
@@ -515,12 +515,12 @@ public class BeherenController {
         return datums;
     }
 
-    private List<Prijs> vulPrijzenOp(ArrayList<Kamer> alleKamersMetModel) {
+    private List<Prijs> vulPrijzenOp(ArrayList<KamerOnbeschikbaar> kamers) {
         ArrayList<Prijs> prijzenKamers = new ArrayList<>();
 
-        for (Kamer kamer:alleKamersMetModel) {
+        for (KamerOnbeschikbaar kamer:kamers) {
             Prijs prijs = new Prijs();
-            prijs.setKamer(kamer);
+            prijs.setKamer(kamer.getKamer());
             prijs.setKamerID(kamer.getKamerID());
             prijs.setPrijsPerKamer(new BigDecimal(0));
 
