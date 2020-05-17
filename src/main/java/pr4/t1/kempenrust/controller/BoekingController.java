@@ -133,7 +133,7 @@ public class BoekingController {
         // Deze code verwijderd deze NULL
         while(reserveringDetails.getKamers().remove(null)) {};
 
-        int BoekingID = boekingRepository.toevoegenReservatie(
+        int BoekingID = boekingRepository.create(
                 klant.getKlantID(),
                 reserveringDetails.getKeuzeArrangement(),
                 bedragVoorschot,
@@ -144,7 +144,7 @@ public class BoekingController {
 
         ReserveringBevestigingDto bevestiging = new ReserveringBevestigingDto();
 
-        var boeking = boekingRepository.getReservatieByID(BoekingID);
+        var boeking = boekingRepository.getById(BoekingID);
 
         bevestiging.setBoeking(boeking);
         bevestiging.setPrijzenKamers(prijsVoorBoeking);
@@ -164,7 +164,7 @@ public class BoekingController {
             model.addAttribute(redirectAttributes.getAttribute("message"));
         }
 
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAlleToekomstigeBoekingdetails();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getToekomst();
 
         model.addAttribute("details",details);
 
@@ -199,7 +199,7 @@ public class BoekingController {
         var lijstKamersOnbeschikbaar = kamerOnbeschikbaarRepository.getOnbeschikbaarKamerTussenTweeDatums(van, tot);
         VulOverzichtOp(lijstKamersOnbeschikbaar, kamers, maand, jaar);
 
-        var boekingen = boekingDetailRepository.getBoekingsdetailsTussenTweeDatums(van, tot);
+        var boekingen = boekingDetailRepository.getTussenTweeDatums(van, tot);
         VulOverzichtOp(boekingen, kamers, maand, jaar);
 
         overzichtDto.setOverzicht(overzicht);
@@ -210,7 +210,7 @@ public class BoekingController {
 
     @RequestMapping("/voorschotten")
     public String Voorschotten(Model model, RedirectAttributes redirectAttributes) {
-        List<Boeking> boekingenMetOnbetaaldeVoorschotten = boekingRepository.getBoekingenMetOnbetaaldVoorschot();
+        List<Boeking> boekingenMetOnbetaaldeVoorschotten = boekingRepository.getByOnbetaaldeVoorschotten();
 
         if(redirectAttributes.containsAttribute("message")) {
             model.addAttribute(redirectAttributes.getAttribute("message"));
@@ -222,7 +222,7 @@ public class BoekingController {
 
     @RequestMapping("/reservering/bevestig/voorschot")
     public String bevestigVoorschot(HttpServletRequest request, RedirectAttributes redirectAttributes){
-        int rowsUpdated = boekingRepository.bevestigVoorschot(request.getParameter("boekingID"));
+        int rowsUpdated = boekingRepository.updateVoorschotBetaald(request.getParameter("boekingID"));
         String message=null;
 
         if(rowsUpdated> 0 ) {
@@ -241,7 +241,7 @@ public class BoekingController {
     @RequestMapping("/afgelopen_reservaties")
     public String AfgelopenReserveringen(Model model) {
         BoekingDetailDto boeking=new BoekingDetailDto();
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getVerleden();
         MeldingDto melding=new MeldingDto();
         melding.setTitel("Afgelopen Reservaties");
         model.addAttribute("details",details);
@@ -258,7 +258,7 @@ public class BoekingController {
         if (datumVan !=null && datumTot!=null && datumVan.before(datumTot))
         {
             ArrayList<BoekingDetail> details = boekingDetailRepository
-            .getAlleDetailsMetDatums(datumVan,datumTot);
+            .getTussenTweeDatums(datumVan,datumTot);
 
             String startDatum = simpleFormatter.format(datumVan);
             String endDatum = simpleFormatter.format(datumTot);

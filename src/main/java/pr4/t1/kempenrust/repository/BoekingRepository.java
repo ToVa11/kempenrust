@@ -23,31 +23,8 @@ public class BoekingRepository {
     @Autowired
     private BoekingDetailRepository boekingDetailRepository;
 
-    public Boeking getBoeking(int boekingID) {
-        Boeking boeking = new Boeking();
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
-                "SELECT * FROM  " +
-                        "boekingen INNER JOIN klanten ON boekingen.klantId = klanten.klantId " +
-                        "WHERE " +
-                        "boekingen.boekingId = ?"
-                , boekingID);
-
-        while(rowSet.next()) {
-            Klant klant = new Klant();
-            klant.setVoornaam(rowSet.getString("voornaam"));
-            klant.setNaam(rowSet.getString("naam"));
-
-            boeking.setDatumVan(rowSet.getDate("datumVan"));
-            boeking.setDatumTot(rowSet.getDate("datumTot"));
-            boeking.setAantalPersonen(rowSet.getInt("aantalPersonen"));
-            boeking.setVerblijfsKeuzeID(rowSet.getInt("verblijfskeuzeID"));
-            boeking.setBoekingID(boekingID);
-            boeking.setKlant(klant);
-        }
-        return boeking;
-    }
-
-    public Boeking getReservatieByID(int boekingID) {
+    //region Queries
+    public Boeking getById(int boekingID) {
         Boeking boeking = null;
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
@@ -96,113 +73,14 @@ public class BoekingRepository {
         return boeking;
     }
 
-    public int updateBoeking(int aantalPersonen, int verblijfskeuzeID, int boekingID){
-        Object[] params = {aantalPersonen,verblijfskeuzeID,boekingID};
-        int[] types = {Types.INTEGER,Types.INTEGER,Types.INTEGER};
-
-        String sql = "UPDATE boekingen SET aantalPersonen=?,verblijfskeuzeID=? WHERE boekingID=?";
-
-        int rows = jdbcTemplate.update(sql,params,types);
-
-        return rows;
-    }
-
-    public int updateBoekingDatums(Date datumVan, Date datumTot, int boekingID) {
-        Object[] params = {datumVan, datumTot, boekingID};
-        int[] types = {Types.DATE, Types.DATE, Types.INTEGER};
-
-        String sql = "UPDATE boekingen SET datumVan=?,datumTot=? WHERE boekingID=?";
-
-        int rows = jdbcTemplate.update(sql, params, types);
-
-        return rows;
-    }
-
-    public int voegKamerToeAanBoeking(int boekingID, List<Integer> kamerIDs) {
-        int rows=0;
-        for (int kamerID:kamerIDs){
-            Object[] params = {boekingID,kamerID};
-            int[] types = {Types.INTEGER,Types.INTEGER};
-
-            String sql = "INSERT INTO boekingDetails (" +
-                    "boekingID, " +
-                    "kamerID" +
-                    ") VALUES(" +
-                    "? , " +
-                    "?)";
-
-            rows += jdbcTemplate.update(sql,params,types);
-        }
-
-        return rows;
-    }
-
-    public int verwijderKamerVanBoeking(int boekingID, List<Integer> kamerIDs) {
-        int rows=0;
-
-        for (int kamerID: kamerIDs) {
-            Object[] params = {boekingID, kamerID};
-            int[] types = {Types.INTEGER, Types.INTEGER};
-
-            String sql = "DELETE FROM boekingDetails WHERE boekingID=? AND kamerID=?";
-
-            rows += jdbcTemplate.update(sql,params,types);
-        }
-
-        return rows;
-    }
-
-    public void deleteBoeking(int boekingID) {
-
-        Object[] params = {boekingID};
-        int[] types = {Types.INTEGER};
-        String sqlDeleteBoekingDetails = "DELETE FROM boekingdetails WHERE boekingID = ?";
-        String sqlDeleteBoekingen = "DELETE FROM boekingen WHERE boekingID = ?";
-
-        jdbcTemplate.update(sqlDeleteBoekingDetails, params, types);
-        jdbcTemplate.update(sqlDeleteBoekingen, params, types);
-    }
-
-    public int toevoegenReservatie(int klantID, int verblijfsKeuzeID, BigDecimal bedragVoorschot, int aantalPersonen, Date datumVan, Date datumTot, List<Integer> kamers) {
-        String SqlInsertStatement = "" +
-                "INSERT INTO Boekingen (KlantID, VerblijfsKeuzeID, Datum, BedragVoorschot, AantalPersonen, DatumVan, DatumTot, IsBetaald) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection
-                    .prepareStatement(SqlInsertStatement, new String[]{"BoekingID"});
-            ps.setInt(1, klantID);
-            ps.setInt(2, verblijfsKeuzeID);
-            ps.setDate(3, new Date(new java.util.Date().getTime()));
-            ps.setBigDecimal(4, bedragVoorschot);
-            ps.setInt(5, aantalPersonen);
-            ps.setDate(6, datumVan);
-            ps.setDate(7, datumTot);
-            ps.setBoolean(8, false);
-            return ps;
-        }, keyHolder);
-
-        // gets the PK of the newly created record
-        int boekingID = keyHolder.getKey().intValue();
-
-        for (int kamerID :
-                kamers) {
-            boekingDetailRepository.toevoegenBoekingsdetails(boekingID, kamerID);
-        }
-
-        return boekingID;
-    }
-
-    public Boeking getBoekingVoorKamer(int kamerID){
+    public Boeking getByKamerId(int kamerID){
         Boeking boeking=new Boeking();
         SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT *" +
                 "from " +
-                        "((kamers  INNER JOIN BoekingDetails " +
-                                "ON kamers.KAMERID = BoekingDetails.KamerID) " +
-                        "INNER JOIN Boekingen " +
-                            "ON Boekingen.BoekingID = BoekingDetails.BoekingID ) " +
+                "((kamers  INNER JOIN BoekingDetails " +
+                "ON kamers.KAMERID = BoekingDetails.KamerID) " +
+                "INNER JOIN Boekingen " +
+                "ON Boekingen.BoekingID = BoekingDetails.BoekingID ) " +
                 "WHERE Kamers.kamerID = ? ",kamerID);
         while(rowSet.next()){
             boeking.setDatumVan(rowSet.getDate("DatumVan"));
@@ -211,7 +89,7 @@ public class BoekingRepository {
         return  boeking;
     }
 
-    public Boeking getBoekingVoorKlant(int klantId) {
+    public Boeking getByKlantId(int klantId) {
         Boeking boeking = new Boeking();
         Klant klant=new Klant();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
@@ -236,7 +114,7 @@ public class BoekingRepository {
         return boeking;
     }
 
-    public List<Boeking> getBoekingenMetOnbetaaldVoorschot() {
+    public List<Boeking> getByOnbetaaldeVoorschotten() {
         List<Boeking> boekingen = new ArrayList<>();
 
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet("" +
@@ -268,7 +146,68 @@ public class BoekingRepository {
         return boekingen;
     }
 
-    public int bevestigVoorschot(String boekingID) {
+    public int getAantalByVerblijfskeuzeId(int verblijfskeuzeID) {
+        return jdbcTemplate.queryForObject( "SELECT COUNT(*) FROM Boekingen " +
+                "WHERE verblijfskeuzeID = ? AND datumVan >= ? ", new Object[] { verblijfskeuzeID, new Date(System.currentTimeMillis()) }, Integer.class);
+    }
+    //endregion
+
+    //region Commands
+    public int create(int klantID, int verblijfsKeuzeID, BigDecimal bedragVoorschot, int aantalPersonen, Date datumVan, Date datumTot, List<Integer> kamers) {
+        String SqlInsertStatement = "" +
+                "INSERT INTO Boekingen (KlantID, VerblijfsKeuzeID, Datum, BedragVoorschot, AantalPersonen, DatumVan, DatumTot, IsBetaald) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection
+                    .prepareStatement(SqlInsertStatement, new String[]{"BoekingID"});
+            ps.setInt(1, klantID);
+            ps.setInt(2, verblijfsKeuzeID);
+            ps.setDate(3, new Date(new java.util.Date().getTime()));
+            ps.setBigDecimal(4, bedragVoorschot);
+            ps.setInt(5, aantalPersonen);
+            ps.setDate(6, datumVan);
+            ps.setDate(7, datumTot);
+            ps.setBoolean(8, false);
+            return ps;
+        }, keyHolder);
+
+        // gets the PK of the newly created record
+        int boekingID = keyHolder.getKey().intValue();
+
+        for (int kamerID :
+                kamers) {
+            boekingDetailRepository.create(boekingID, kamerID);
+        }
+
+        return boekingID;
+    }
+
+    public int update(int aantalPersonen, int verblijfskeuzeID, int boekingID){
+        Object[] params = {aantalPersonen,verblijfskeuzeID,boekingID};
+        int[] types = {Types.INTEGER,Types.INTEGER,Types.INTEGER};
+
+        String sql = "UPDATE boekingen SET aantalPersonen=?,verblijfskeuzeID=? WHERE boekingID=?";
+
+        int rows = jdbcTemplate.update(sql,params,types);
+
+        return rows;
+    }
+
+    public int updateDatums(Date datumVan, Date datumTot, int boekingID) {
+        Object[] params = {datumVan, datumTot, boekingID};
+        int[] types = {Types.DATE, Types.DATE, Types.INTEGER};
+
+        String sql = "UPDATE boekingen SET datumVan=?,datumTot=? WHERE boekingID=?";
+
+        int rows = jdbcTemplate.update(sql, params, types);
+
+        return rows;
+    }
+
+    public int updateVoorschotBetaald(String boekingID) {
         Object[] params = {TRUE, boekingID};
         int[] types = {Types.BOOLEAN, Types.INTEGER};
 
@@ -279,8 +218,15 @@ public class BoekingRepository {
         return rowsUpdated;
     }
 
-    public int getAantalBoekingenVoorVerblijfskeuze(int verblijfskeuzeID) {
-        return jdbcTemplate.queryForObject( "SELECT COUNT(*) FROM Boekingen " +
-                "WHERE verblijfskeuzeID = ? AND datumVan >= ? ", new Object[] { verblijfskeuzeID, new Date(System.currentTimeMillis()) }, Integer.class);
+    public void delete(int boekingID) {
+
+        Object[] params = {boekingID};
+        int[] types = {Types.INTEGER};
+        String sqlDeleteBoekingDetails = "DELETE FROM boekingdetails WHERE boekingID = ?";
+        String sqlDeleteBoekingen = "DELETE FROM boekingen WHERE boekingID = ?";
+
+        jdbcTemplate.update(sqlDeleteBoekingDetails, params, types);
+        jdbcTemplate.update(sqlDeleteBoekingen, params, types);
     }
+    //endregion
 }

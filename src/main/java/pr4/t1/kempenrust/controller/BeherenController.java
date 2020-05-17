@@ -93,7 +93,7 @@ public class BeherenController {
     public String KlantVerwijderen(Model model, HttpServletRequest request){
         MeldingDto melding=new MeldingDto();
         int klantId= Integer.parseInt(request.getParameter("klantId"));
-        Boeking boeking = boekingRepository.getBoekingVoorKlant(klantId);
+        Boeking boeking = boekingRepository.getByKlantId(klantId);
         if (boeking.getDatumVan() !=null && boeking.getDatumTot()!=null)
         {
             melding.setFoutmelding("Attentie! Voor deze klant bestaat er reeds een boeking:");
@@ -144,7 +144,7 @@ public class BeherenController {
     public String KamerVerwijderen(Model model, HttpServletRequest request){
         MeldingDto melding=new MeldingDto();
         int kamerId= Integer.parseInt((request.getParameter("kamerId")));
-        Boeking boeking= boekingRepository.getBoekingVoorKamer(kamerId);
+        Boeking boeking= boekingRepository.getByKamerId(kamerId);
         if (boeking.getDatumVan() !=null && boeking.getDatumTot()!=null)
         {
             melding.setFoutmelding("Attentie! Deze kamer is reeds geboekt:");
@@ -334,7 +334,7 @@ public class BeherenController {
         int verblijfskeuzeID = Integer.parseInt(request.getParameter("verblijfskeuzeID"));
 
         VerblijfsKeuze verblijfsKeuze = verblijfsKeuzeRepository.getVerblijfkeuze(verblijfskeuzeID);
-        int aantalBoekingenVoorVerblijfskeuze = boekingRepository.getAantalBoekingenVoorVerblijfskeuze(verblijfskeuzeID);
+        int aantalBoekingenVoorVerblijfskeuze = boekingRepository.getAantalByVerblijfskeuzeId(verblijfskeuzeID);
 
         if(aantalBoekingenVoorVerblijfskeuze>0) {
             message = "Er zijn nog reservaties voor dit arrangement.";
@@ -356,7 +356,7 @@ public class BeherenController {
     //region Reservering
     @RequestMapping("/reservering")
     public String Reservering(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        Boeking boeking = boekingRepository.getBoeking(Integer.parseInt(request.getParameter("Id")));
+        Boeking boeking = boekingRepository.getById(Integer.parseInt(request.getParameter("Id")));
 
         UpdateReserveringDTO updateReserveringDTO = new UpdateReserveringDTO();
         updateReserveringDTO.setDatumVan(boeking.getDatumVan().toString());
@@ -389,8 +389,8 @@ public class BeherenController {
             return "redirect:/reservering?Id="+reservering.getBoekingID();
         }
 
-        List<BoekingDetail> detailsBoekingen = boekingDetailRepository.getBoekingenZonderHuidigeBoeking(reservering.getBoekingID(), nieuweDatumVan, nieuweDatumTot);
-        List<BoekingDetail> selectedBoekingDetails = boekingDetailRepository.getDetailsVoorBoeking(reservering.getBoekingID());
+        List<BoekingDetail> detailsBoekingen = boekingDetailRepository.getAllesZonderBoeking(reservering.getBoekingID(), nieuweDatumVan, nieuweDatumTot);
+        List<BoekingDetail> selectedBoekingDetails = boekingDetailRepository.getAllesVoorBoeking(reservering.getBoekingID());
 
         for (BoekingDetail detail: selectedBoekingDetails)
         {
@@ -405,7 +405,7 @@ public class BeherenController {
             }
         }
 
-        if(boekingRepository.updateBoekingDatums(nieuweDatumVan, nieuweDatumTot, reservering.getBoekingID())>0) {
+        if(boekingRepository.updateDatums(nieuweDatumVan, nieuweDatumTot, reservering.getBoekingID())>0) {
             message = "Datums zijn succesvol aangepast.";
         }
         else {
@@ -419,7 +419,12 @@ public class BeherenController {
     @RequestMapping("/update/kamerToevoegen/reservering")
     public String voegKamerToeReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
         List<Integer> kamers = reservering.getKamers();
-        int rowsAdded = boekingRepository.voegKamerToeAanBoeking(reservering.getBoekingID(),kamers);
+        int rowsAdded = 0;
+
+        for (int kamerID: kamers) {
+            boekingDetailRepository.create(reservering.getBoekingID(), kamerID);
+            rowsAdded++;
+        }
 
         String message=null;
 
@@ -436,7 +441,7 @@ public class BeherenController {
 
     @RequestMapping("/update/reservering")
     public String updateReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes) {
-        int rowsUpdated = boekingRepository.updateBoeking(reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
+        int rowsUpdated = boekingRepository.update(reservering.getAantalPersonen(),reservering.getVerblijfskeuzeID(),reservering.getBoekingID());
 
         reservering.setKlant(klantRepository.getKlantVoorBoeking(reservering.getBoekingID()));
         reservering.setVerblijfsKeuzes(verblijfsKeuzeRepository.getAlleVerblijfsKeuzes());
@@ -454,7 +459,13 @@ public class BeherenController {
 
     @RequestMapping("/delete/kamer/reservering")
     public String deleteKamerVanReservering(@ModelAttribute("reservering") UpdateReserveringDTO reservering, RedirectAttributes redirectAttributes){
-        int rows = boekingRepository.verwijderKamerVanBoeking(reservering.getBoekingID(),reservering.getGeboekteKamers());
+        int rows = 0;
+
+        for(int kamerID: reservering.getGeboekteKamers()) {
+            boekingDetailRepository.delete(reservering.getBoekingID(), kamerID);
+            rows++;
+        }
+
         String message=null;
 
         if (rows>0) {
@@ -471,7 +482,7 @@ public class BeherenController {
     @RequestMapping("/delete/reservering")
     public String deleteReservering(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
 
-        boekingRepository.deleteBoeking(Integer.parseInt(request.getParameter("boekingID")));
+        boekingRepository.delete(Integer.parseInt(request.getParameter("boekingID")));
 
         //add a redirectAttribute so we can give a message if the delete succeeded.
         //This redirectAttribute is catched in BoekingController/reserveringen
