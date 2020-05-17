@@ -37,7 +37,7 @@ import java.util.List;
 
 @Controller
 public class BeherenController {
-
+    //region DI Repos
     @Autowired
     private BoekingDetailRepository boekingDetailRepository;
     @Autowired
@@ -54,6 +54,7 @@ public class BeherenController {
     private KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
     @Autowired
     private PrijsRepository prijsRepository;
+    //endregion
 
     //region Klanten
     @RequestMapping("/klanten")

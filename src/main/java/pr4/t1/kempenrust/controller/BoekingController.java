@@ -32,32 +32,36 @@ import java.util.List;
 
 @Controller
 public class BoekingController {
+    //region DI Repos
     @Autowired
-    BoekingRepository boekingRepository;
+    private BoekingRepository boekingRepository;
     @Autowired
-    BoekingDetailRepository boekingDetailRepository;
+    private BoekingDetailRepository boekingDetailRepository;
     @Autowired
-    VerblijfsKeuzeRepository verblijfsKeuzeRepository;
+    private VerblijfsKeuzeRepository verblijfsKeuzeRepository;
     @Autowired
-    KamerRepository kamerRepository;
+    private KamerRepository kamerRepository;
     @Autowired
-    KlantRepository klantRepository;
+    private KlantRepository klantRepository;
     @Autowired
-    PrijsRepository prijsRepository;
+    private PrijsRepository prijsRepository;
     @Autowired
-    KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
+    private KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
+    //endregion
 
-    SimpleDateFormat simpleFormatter = new SimpleDateFormat("dd/MM/yyyy");
+    //region Class variables
+    private SimpleDateFormat simpleFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    Date datumAankomst;
-    Date datumVertrek;
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private Date datumAankomst;
+    private Date datumVertrek;
 
-    BoekingDetail[][] overzicht;
+    private BoekingDetail[][] overzicht;
+    //endregion
 
-    //    Hier komen alle methodes die iets te maken hebben met boekingen
+    //region Boeken
     @RequestMapping("/reserveren")
-    public String Reserveren(Model model, HttpServletRequest request,  RedirectAttributes redirectAttributes) {
+    public String getBoekingForm(Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         if(redirectAttributes.containsAttribute("message")) {
             model.addAttribute(redirectAttributes.getAttribute("message"));
         }
@@ -80,9 +84,8 @@ public class BoekingController {
         return "layouts/boeking/reserveren";
     }
 
-    // via params kan ik meerdere submits in mijn form gebruiken
-    @RequestMapping(value = "/reserveren", method = RequestMethod.POST, params = "action=zoek-kamers")
-    public String ZoekKamers(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model, RedirectAttributes redirectAttributes) {
+    @RequestMapping("/zoekkamers")
+    public String getBeschikbareKamers(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model, RedirectAttributes redirectAttributes) {
         String message = null;
         message = checkDatums(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
@@ -112,9 +115,8 @@ public class BoekingController {
         return "layouts/boeking/reserveren";
     }
 
-    // via params kan ik meerdere submits in mijn form gebruiken
-    @PostMapping(value = "/reserveren", params = "action=bevestigen")
-    public String ReserveringBevestigen(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails,  Model model) {
+    @PostMapping("/reserveren")
+    public String createBoeking(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model) {
 
         // Is enkel nodig als de page word gerefreshed, omdat ik hier met classvariables werk
         vulDatumsOp(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
@@ -154,10 +156,11 @@ public class BoekingController {
 
         return "layouts/boeking/bevestiging";
 }
+    //endregion
 
-
+    //region Overzicht & Lijsten
     @RequestMapping("/reserveringen")
-    public String Reserveringen(Model model, RedirectAttributes redirectAttributes) {
+    public String getBoekingen(Model model, RedirectAttributes redirectAttributes) {
 
         //If redirectAttribute is set, this has to be added to the model, so we can show it at frontend
         if(redirectAttributes.containsAttribute("message")) {
@@ -172,7 +175,7 @@ public class BoekingController {
     }
 
     @RequestMapping("/overzicht")
-    public String Overzicht(Model model, Integer maand, Integer jaar) {
+    public String getOverzicht(Model model, Integer maand, Integer jaar) {
         OverzichtDto overzichtDto = new OverzichtDto();
 
         if(maand == null || jaar == null) {
@@ -208,38 +211,8 @@ public class BoekingController {
         return "layouts/boeking/overzicht";
     }
 
-    @RequestMapping("/voorschotten")
-    public String Voorschotten(Model model, RedirectAttributes redirectAttributes) {
-        List<Boeking> boekingenMetOnbetaaldeVoorschotten = boekingRepository.getByOnbetaaldeVoorschotten();
-
-        if(redirectAttributes.containsAttribute("message")) {
-            model.addAttribute(redirectAttributes.getAttribute("message"));
-        }
-        model.addAttribute("boekingen", boekingenMetOnbetaaldeVoorschotten);
-
-        return "layouts/boeking/voorschotten";
-    }
-
-    @RequestMapping("/reservering/bevestig/voorschot")
-    public String bevestigVoorschot(HttpServletRequest request, RedirectAttributes redirectAttributes){
-        int rowsUpdated = boekingRepository.updateVoorschotBetaald(request.getParameter("boekingID"));
-        String message=null;
-
-        if(rowsUpdated> 0 ) {
-            message="De betaling van het voorschot is bevestigd.";
-        }
-        else {
-            message="Er is iets misgegaan bij het bevestigen van het voorschot.";
-        }
-
-        redirectAttributes.addFlashAttribute("message", message);
-        return "redirect:/voorschotten";
-
-
-    }
-
     @RequestMapping("/afgelopen_reservaties")
-    public String AfgelopenReserveringen(Model model) {
+    public String getAfgelopenBoekingen(Model model) {
         BoekingDetailDto boeking=new BoekingDetailDto();
         ArrayList<BoekingDetail> details = boekingDetailRepository.getVerleden();
         MeldingDto melding=new MeldingDto();
@@ -251,14 +224,14 @@ public class BoekingController {
     }
 
     @PostMapping("/afgelopen_reservaties")
-    public String AfgelopenReserveringen(Model model,@ModelAttribute("Boeking") BoekingDetailDto boeking) {
+    public String getAfgelopenBoekingen(Model model, @ModelAttribute("Boeking") BoekingDetailDto boeking) {
         MeldingDto melding=new MeldingDto();
         var datumVan = Date.valueOf(boeking.getDatumVan());
         var datumTot = Date.valueOf(boeking.getDatumTot());
         if (datumVan !=null && datumTot!=null && datumVan.before(datumTot))
         {
             ArrayList<BoekingDetail> details = boekingDetailRepository
-            .getTussenTweeDatums(datumVan,datumTot);
+                    .getTussenTweeDatums(datumVan,datumTot);
 
             String startDatum = simpleFormatter.format(datumVan);
             String endDatum = simpleFormatter.format(datumTot);
@@ -283,7 +256,41 @@ public class BoekingController {
             return "layouts/boeking/afgelopen_reservaties";
         }
     }
+    //endregion
 
+    //region Voorschotten
+    @RequestMapping("/voorschotten")
+    public String getVoorschotten(Model model, RedirectAttributes redirectAttributes) {
+        List<Boeking> boekingenMetOnbetaaldeVoorschotten = boekingRepository.getByOnbetaaldeVoorschotten();
+
+        if(redirectAttributes.containsAttribute("message")) {
+            model.addAttribute(redirectAttributes.getAttribute("message"));
+        }
+        model.addAttribute("boekingen", boekingenMetOnbetaaldeVoorschotten);
+
+        return "layouts/boeking/voorschotten";
+    }
+
+    @RequestMapping("/reservering/bevestig/voorschot")
+    public String updateVoorschotBetaald(HttpServletRequest request, RedirectAttributes redirectAttributes){
+        int rowsUpdated = boekingRepository.updateVoorschotBetaald(request.getParameter("boekingID"));
+        String message=null;
+
+        if(rowsUpdated> 0 ) {
+            message="De betaling van het voorschot is bevestigd.";
+        }
+        else {
+            message="Er is iets misgegaan bij het bevestigen van het voorschot.";
+        }
+
+        redirectAttributes.addFlashAttribute("message", message);
+        return "redirect:/voorschotten";
+
+
+    }
+    //endregion
+
+    //region Private methods
     private Klant getKlantVoorBevestigingReservering(ReserveringDto reserveringDetails) {
         if(klantRepository.existsByEmail(reserveringDetails.getEmail()) == false) {
             klantRepository.create(
@@ -369,4 +376,5 @@ public class BoekingController {
 
         return message;
     }
+    //endregion
 }
