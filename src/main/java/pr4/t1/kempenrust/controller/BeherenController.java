@@ -154,7 +154,7 @@ public class BeherenController {
             model.addAttribute("melding",melding);
             return "layouts/beheren/boodschap";
         }
-        kamerOnbeschikbaarRepository.KamerBeschikbaarMaken(kamerId);
+        kamerOnbeschikbaarRepository.delete(kamerId);
         prijsRepository.prijsVerwijderen(kamerId);
         kamerRepository.KamerVerwijderen(kamerId);
         ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
@@ -166,7 +166,7 @@ public class BeherenController {
     @RequestMapping("/kamerBeschikbaarheid")
     public String KamerBeschikabaarheid(Model model, HttpServletRequest request) throws ParseException {
         int kamerId= Integer.parseInt(request.getParameter("kamerId"));
-        KamerOnbeschikbaar kamer=kamerOnbeschikbaarRepository.getOnbeschikbaarKamerByID(kamerId);
+        KamerOnbeschikbaar kamer=kamerOnbeschikbaarRepository.getByKamerId(kamerId);
         model.addAttribute("kamer",kamer);
         return "layouts/beheren/kamerBeschikbaarheid";
     }
@@ -176,7 +176,7 @@ public class BeherenController {
     public String KamerBeschikabaarMaken(Model model, HttpServletRequest request){
         MeldingDto melding=new MeldingDto();
         int kamerId= Integer.parseInt(request.getParameter("kamerId"));
-        kamerOnbeschikbaarRepository.KamerBeschikbaarMaken(kamerId);
+        kamerOnbeschikbaarRepository.delete(kamerId);
         ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();
         model.addAttribute("kamers",kamers);
         model.addAttribute("melding",melding);
@@ -185,13 +185,13 @@ public class BeherenController {
 
     @PostMapping("/kamerOnBeschikbaarMaken")
     public String OnbeschikbaarMaken( Model model,@ModelAttribute("KamerDto") KamerDto kamer){
-        KamerOnbeschikbaar kamerOnbeschikbaar= kamerOnbeschikbaarRepository.getOnbeschikbaarKamerByID(kamer.getKamerID());
+        KamerOnbeschikbaar kamerOnbeschikbaar= kamerOnbeschikbaarRepository.getByKamerId(kamer.getKamerID());
        if (kamerOnbeschikbaar.getDatumVan()!=null)
        {
-           kamerOnbeschikbaarRepository.wijzigOnbeschikbaarheid(kamer.getKamerID(),
+           kamerOnbeschikbaarRepository.update(kamer.getKamerID(),
                                            kamer.getDatumVan(),kamer.getDatumTot());
        }else {
-           kamerOnbeschikbaarRepository.KamerOnbeschikbaarMaken(kamer.getKamerID(),
+           kamerOnbeschikbaarRepository.create(kamer.getKamerID(),
                    kamer.getDatumVan(), kamer.getDatumTot());
        }
            ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getKamers();

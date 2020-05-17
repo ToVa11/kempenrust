@@ -196,7 +196,7 @@ public class BoekingController {
 
         overzicht = new BoekingDetail[kamers.size()][dagenInMaand];
 
-        var lijstKamersOnbeschikbaar = kamerOnbeschikbaarRepository.getOnbeschikbaarKamerTussenTweeDatums(van, tot);
+        var lijstKamersOnbeschikbaar = kamerOnbeschikbaarRepository.getTussenTweeDatums(van, tot);
         VulOverzichtOp(lijstKamersOnbeschikbaar, kamers, maand, jaar);
 
         var boekingen = boekingDetailRepository.getTussenTweeDatums(van, tot);
