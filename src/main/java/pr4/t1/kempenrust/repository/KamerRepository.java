@@ -5,11 +5,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
-import pr4.t1.kempenrust.DTO.KamerBeheer;
-import pr4.t1.kempenrust.model.Kamer;
-import pr4.t1.kempenrust.model.KamerOnbeschikbaar;
-import pr4.t1.kempenrust.model.KamerType;
-import pr4.t1.kempenrust.model.Prijs;
+import pr4.t1.kempenrust.model.*;
+import pr4.t1.kempenrust.model.DTO.KamerDto;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -18,27 +16,54 @@ import java.util.Date;
 public class KamerRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    public ArrayList<KamerBeheer> getAlleKamers(){
-        ArrayList<KamerBeheer> alleKamers=new ArrayList<>();
+
+    public ArrayList<KamerOnbeschikbaar> getKamers(){
+        ArrayList<KamerOnbeschikbaar> lijstKamers=new ArrayList<>();
         SqlRowSet rowSet=jdbcTemplate.queryForRowSet("SELECT *" +
                 "FROM " +
-                        "( Kamers INNER JOIN Kamertypes " +
-                            "ON Kamers.KamerTypeID = Kamertypes.kamertypeID ) " +
-                        "LEFT JOIN Kamersonbeschikbaar " +
-                            "ON Kamers.kamerID=Kamersonbeschikbaar.kamerID " +
-                        "ORDER BY Kamers.KamerNummer");
+                "( Kamers INNER JOIN Kamertypes " +
+                "ON Kamers.KamerTypeID = Kamertypes.kamertypeID ) " +
+                "LEFT JOIN Kamersonbeschikbaar " +
+                "ON Kamers.kamerID=Kamersonbeschikbaar.kamerID " +
+                "ORDER BY Kamers.KamerNummer");
         while (rowSet.next()){
-            KamerBeheer kamer=new KamerBeheer();
-            kamer.setKamerID(rowSet.getInt("KamerID"));
-            kamer.setDatumTot (rowSet.getDate("DatumTot"));
-            kamer.setDatumVan(rowSet.getDate("DatumVan"));
-            kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
-            kamer.setOmschrijving(rowSet.getString("Omschrijving"));
+            KamerOnbeschikbaar kamerOnb=new KamerOnbeschikbaar();
+            Kamer kamer= new Kamer();
+            KamerType kamerType= new KamerType();
+
+            kamerType.setOmschrijving(rowSet.getString("Omschrijving"));
+
+            kamer.setKamerType(kamerType);
             kamer.setKamerTypeID(rowSet.getInt("KamerTypeID"));
             kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
-            alleKamers.add(kamer);
+
+            kamerOnb.setKamer(kamer);
+            kamerOnb.setKamerID(rowSet.getInt("KamerID"));
+            kamerOnb.setDatumTot (rowSet.getDate("DatumTot"));
+            kamerOnb.setDatumVan(rowSet.getDate("DatumVan"));
+
+            lijstKamers.add(kamerOnb);
+
         }
-        return alleKamers;
+        return lijstKamers;
+    }
+
+    public Kamer getKamerMetTypeByID(int kamerID){
+        Kamer kamer=new Kamer();
+        KamerType kamerType=new KamerType();
+        SqlRowSet rowSet =jdbcTemplate.queryForRowSet("SELECT * FROM " +
+                "Kamers INNER JOIN KamerTypes " +
+                "ON Kamers.KamerTypeID = KamerTypes.KamerTypeID " +
+                "WHERE KamerID =? ",kamerID);
+        while (rowSet.next()){
+
+            kamerType.setOmschrijving(rowSet.getString("Omschrijving"));
+
+            kamer.setKamerType(kamerType);
+            kamer.setKamerID(rowSet.getInt("KamerID"));
+            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
+        }
+        return kamer;
     }
 
     // Hier ga ik enkel alle kamers ophalen zonder Dto & zonder joins
@@ -81,6 +106,7 @@ public class KamerRepository {
         jdbcTemplate.update("UPDATE Kamers SET KamerNummer = ? , KamerTypeID = ? " +
                 "WHERE KamerID = ?",kamerNummer,kamerTypeID,kamerID);
     }
+
     public void KamerVerwijderen(int kamerID){
         jdbcTemplate.update("DELETE FROM Kamers WHERE KamerID =? ",kamerID);
     }

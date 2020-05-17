@@ -1,5 +1,4 @@
 package pr4.t1.kempenrust.controller;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,13 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import pr4.t1.kempenrust.DTO.KamerBeheer;
 import pr4.t1.kempenrust.model.*;
-import pr4.t1.kempenrust.model.DTO.OverzichtDto;
-import pr4.t1.kempenrust.model.DTO.ReserveringBevestigingDto;
-import pr4.t1.kempenrust.DTO.BoekingDetailDto;
+import pr4.t1.kempenrust.model.DTO.*;
 import pr4.t1.kempenrust.model.BoekingDetail;
-import pr4.t1.kempenrust.model.DTO.ReserveringDto;
 import pr4.t1.kempenrust.repository.BoekingDetailRepository;
 import pr4.t1.kempenrust.repository.KamerRepository;
 import pr4.t1.kempenrust.repository.VerblijfsKeuzeRepository;
@@ -243,46 +238,50 @@ public class BoekingController {
 
     }
 
-
     @RequestMapping("/afgelopen_reservaties")
     public String AfgelopenReserveringen(Model model) {
-        ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties ();
-        BoekingDetailDto boekingDetailDto=new BoekingDetailDto();
-        boekingDetailDto.setTitel("Afgelopen Reservaties");
+        BoekingDetailDto boeking=new BoekingDetailDto();
+        ArrayList<BoekingDetail> details = boekingDetailRepository.getAfgelopenReservaties();
+        MeldingDto melding=new MeldingDto();
+        melding.setTitel("Afgelopen Reservaties");
         model.addAttribute("details",details);
-        model.addAttribute("boekingDetailDto",boekingDetailDto);
-
+        model.addAttribute("boeking",boeking);
+        model.addAttribute("melding",melding);
         return "layouts/boeking/afgelopen_reservaties";
     }
 
     @PostMapping("/afgelopen_reservaties")
-    public String AfgelopenReserveringen(Model model,@ModelAttribute("KamerBeheer") BoekingDetailDto boekingDetailDto) {
-        var datumVan = Date.valueOf(boekingDetailDto.getDatumVan());
-        var datumTot = Date.valueOf(boekingDetailDto.getDatumTot());
+    public String AfgelopenReserveringen(Model model,@ModelAttribute("Boeking") BoekingDetailDto boeking) {
+        MeldingDto melding=new MeldingDto();
+        var datumVan = Date.valueOf(boeking.getDatumVan());
+        var datumTot = Date.valueOf(boeking.getDatumTot());
         if (datumVan !=null && datumTot!=null && datumVan.before(datumTot))
         {
-            ArrayList<BoekingDetailDto> details = boekingDetailRepository
+            ArrayList<BoekingDetail> details = boekingDetailRepository
             .getAlleDetailsMetDatums(datumVan,datumTot);
 
             String startDatum = simpleFormatter.format(datumVan);
             String endDatum = simpleFormatter.format(datumTot);
 
             if (details.size()>0){
-                boekingDetailDto.setTitel("Reservaties tussen "+startDatum +" en "+endDatum);
+                melding.setTitel("Reservaties tussen "+startDatum +" en "+endDatum);
             }else
             {
-                boekingDetailDto.setTitel("Geen reservaties gevonden tussen "+startDatum+" en "+endDatum);
+                melding.setTitel("Geen reservaties gevonden tussen "+startDatum+" en "+endDatum);
             }
 
             model.addAttribute("details",details);
-            model.addAttribute("boekingDetailDto",boekingDetailDto);
+            model.addAttribute("melding",melding);
+            model.addAttribute("boeking",boeking);
             return "layouts/boeking/afgelopen_reservaties";
         }
-        else
-            boekingDetailDto.setTitel("Gelieve de datums te controleren");
-            model.addAttribute("boekingDetailDto", boekingDetailDto);
+        else {
+            melding.setTitel(" ");
+            melding.setFoutmelding("Gelieve de datums te controleren");
+            model.addAttribute("melding", melding);
+            model.addAttribute("boeking", boeking);
             return "layouts/boeking/afgelopen_reservaties";
-
+        }
     }
 
     private Klant getKlantVoorBevestigingReservering(ReserveringDto reserveringDetails) {

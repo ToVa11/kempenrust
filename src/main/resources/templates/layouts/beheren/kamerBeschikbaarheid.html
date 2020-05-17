@@ -22,7 +22,7 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1 th:text="'Kamer '+ ${kamer.kamerNummer}+ ' Beschikbaarheid'"></h1>
+    <h1 th:text="'Kamer '+ ${kamer.kamer.kamerNummer}+ ' Beschikbaarheid'"></h1>
     <table class="table" th:if="${kamer.datumVan}">
         <thead>
         <tr>
@@ -33,7 +33,7 @@
         </thead>
         <tbody>
         <tr>
-            <td th:text="${kamer.kamerNummer}"></td>
+            <td th:text="${kamer.kamer.kamerNummer}"></td>
             <td th:text="${kamer.datumVan}"></td>
             <td th:text="${kamer.datumTot}"></td>
             <td><a th:href="@{/kamerBeschikbaarMaken(kamerId=${kamer.kamerID})}"
@@ -44,30 +44,29 @@
         </tr>
         </tbody>
     </table>
-    <div class="col-md-8">
         <form th:action="@{/kamerOnBeschikbaarMaken}" method="post" th:object="${kamer}" >
-            <input type="hidden" name="kamerID" th:field="*{kamerID}">
+            <input type="hidden" th:field="*{kamerID}">
             <div class="form-group col-md-8">
                 <label for="datumVan">Datum Van</label>
-                <input name="datumVan" th:field="*{datumVan}" id="datumVan" type="date" class="form-control" required/>
+                <input th:field="*{datumVan}" id="datumVan" type="date" class="form-control" required/>
             </div>
             <div class="form-group col-md-8">
                 <label for="datumTot">Datum Tot</label>
-                <input name="datumTot" th:field="*{datumTot}" id="datumTot" type="date" class="form-control" required/>
+                <input th:field="*{datumTot}" id="datumTot" type="date" class="form-control" required/>
             </div>
-            <div class="form-group col-md-8 col-">
-                <div class="form-row">
-                    <div class="col-6">
-                        <a th:href="@{/kamers}" class="btn btn-primary btn-custom-a1" >Cancel</a>
-                    </div>
-                    <div class="col-4">
-                        <button type="submit" class="btn btn-primary m-left"
-                        name="wijzig">Onbeschikbaar Maken</button>
-                    </div>
+
+            <div class="form-group col-md-8">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <a th:href="@{/kamers}" class="btn btn-primary form-control" >Cancel</a>
+                </div>
+                <div class="form-group col-md-6">
+                    <button type="submit" class="btn btn-primary form-control">Onbeschikbaar Maken</button>
                 </div>
             </div>
+            </div>
+
         </form>
-    </div>
 </div>
     <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
         Footer

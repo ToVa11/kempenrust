@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!--  main-fragment (title, nav, mainContent, footer)  -->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main-layout :: main-fragment(
+                                                ~{::title},
+                                                ~{:: #nav-kempenrust},
+                                                ~{:: #main-content-kempenrust},
+                                                ~{:: #footer-kempenrust}
+                                               )}">
+<head>
+    <!-- Required meta tags -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!-- Kan je aanpassen = tabblad titel-->
+    <title>Klant Beheren</title>
+</head>
+<body>
+
+<div id="nav-kempenrust" th:replace="~{/fragments/app-fragments :: nav-default}">
+    Nav
+</div>
+
+<div id="main-content-kempenrust">
+    <!-- Enkel hier en title aanpassen!! Rest laten staan-->
+    <h1>Klant Beheren</h1>
+
+    <form action="#" data-th-action="@{/wijzigKlant}" th:object="${klant}" method="post">
+        <div class="row">
+            <input type="hidden" id="klantID" th:field="*{klantID}" >
+
+            <div class="form-group col-md-4 mt-3">
+                <label for="voornaam">Voornaam</label>
+                <input type="text" class="form-control" id="voornaam" th:field="*{voornaam}" required>
+            </div>
+
+            <div class="form-group col-md-4 mt-md-3">
+                <label for="naam">Naam</label>
+                <input type="text" class="form-control" id="naam" th:field="*{naam}" required>
+            </div>
+
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+
+            <div class="form-group col-md-4">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email"  required th:field="*{email}">
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="telefoonnummer">Telefoonnummer</label>
+                <input type="text" class="form-control" id="telefoonnummer"  required th:field="*{telefoonnummer}">
+            </div>
+
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+
+            <div class="form-group col-md-4">
+                <label for="straat">Straat</label>
+                <input type="text" class="form-control" id="straat"  required th:field="*{straat}">
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="huisnummer">Huisnummer</label>
+                <input type="number" class="form-control" id="huisnummer"  required th:field="*{huisnummer}">
+            </div>
+
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+
+            <div class="form-group col-md-4">
+                <label for="postcode">Postcode</label>
+                <input type="text" class="form-control" id="postcode"  required th:field="*{postcode}">
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="huisnummer">Gemeente</label>
+                <input type="text" class="form-control" id="gemeente"  required th:field="*{gemeente}">
+            </div>
+
+            <!-- Force next columns to break to new line -->
+            <div class="w-100"></div>
+
+            <div class="form-group col-md-4">
+                <a th:href="@{/klanten}" class="btn btn-primary form-control" >Cancel</a>
+            </div>
+
+            <div class="form-group col-md-4">
+                <button type="submit" name="action" value="zoek-kamers" class="btn btn-primary form-control">Wijzig</button>
+            </div>
+        </div>
+
+
+    </form>
+
+
+
+</div>
+    <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
+        Footer
+    </div>
+</body>
+</html>

@@ -1,25 +1,18 @@
 package pr4.t1.kempenrust.repository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import pr4.t1.kempenrust.model.*;
-
 import java.sql.Date;
 import java.sql.Types;
-
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
-
-import pr4.t1.kempenrust.DTO.KamerBeheer;
-
+import java.util.ArrayList;
 import static java.lang.Boolean.TRUE;
 
 @Repository
@@ -202,25 +195,46 @@ public class BoekingRepository {
         return boekingID;
     }
 
-    public KamerBeheer getGeboekteKamer(int kamerID){
-        KamerBeheer kamer=new KamerBeheer();
+    public Boeking getBoekingVoorKamer(int kamerID){
+        Boeking boeking=new Boeking();
         SqlRowSet rowSet= jdbcTemplate.queryForRowSet("SELECT *" +
                 "from " +
-                        "(((kamers  INNER JOIN BoekingDetails " +
+                        "((kamers  INNER JOIN BoekingDetails " +
                                 "ON kamers.KAMERID = BoekingDetails.KamerID) " +
                         "INNER JOIN Boekingen " +
-                            "ON Boekingen.BoekingID = BoekingDetails.BoekingID )" +
-                        "INNER JOIN Prijzen " +
-                            "ON Prijzen.KamerID=Kamers.kamerID )" +
+                            "ON Boekingen.BoekingID = BoekingDetails.BoekingID ) " +
                 "WHERE Kamers.kamerID = ? ",kamerID);
         while(rowSet.next()){
-            kamer.setKamerID(rowSet.getInt("KamerID"));
-            kamer.setKamerNummer(rowSet.getInt("KamerNummer"));
-            kamer.setDatumVan(rowSet.getDate("DatumVan"));
-            kamer.setDatumTot(rowSet.getDate("DatumTot"));
-            kamer.setGeboekt(true);
+            boeking.setDatumVan(rowSet.getDate("DatumVan"));
+            boeking.setDatumTot(rowSet.getDate("DatumTot"));
         }
-        return  kamer;
+        return  boeking;
+    }
+
+
+    public Boeking getBoekingVoorKlant(int klantId) {
+        Boeking boeking = new Boeking();
+        Klant klant=new Klant();
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
+
+                "SELECT * FROM  " +
+                        "boekingen INNER JOIN klanten ON boekingen.klantId = klanten.klantId " +
+                        "WHERE " +
+                        "boekingen.KlantID = '"+klantId+"'" +
+                        "AND Boekingen.DatumTot > '"+Date.valueOf(LocalDate.now())+"' ");
+
+
+        while (rowSet.next()) {
+            klant.setNaam(rowSet.getString("naam"));
+            klant.setVoornaam(rowSet.getString("voornaam"));
+
+            boeking.setKlant(klant);
+            boeking.setDatumVan(rowSet.getDate("DatumVan"));
+            boeking.setDatumTot(rowSet.getDate("DatumTot"));
+
+
+        }
+        return boeking;
     }
 
     public List<Boeking> getBoekingenMetOnbetaaldVoorschot() {

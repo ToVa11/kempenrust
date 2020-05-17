@@ -22,14 +22,12 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1 th:text="${kamer.titel} ? ${kamer.titel} :'Nieuwe Kamer Toevoegen'"></h1>
-    <div th:if="${kamer.melding != null}" class="alert alert-dismissible alert-success">
-        <h3 th:text="${kamer.melding} ? ${kamer.melding}"></h3>
+
+    <h1 th:text="${melding.titel} ? ${melding.titel} :'Nieuwe Kamer Toevoegen'"></h1>
+    <div th:if="${melding.foutmelding != null}" class="alert alert-secondary">
+        <h3 th:text="${melding.foutmelding}"></h3>
     </div>
-    <div th:if="${kamer.foutMelding != null}" class="alert alert-danger">
-        <h3 th:text="${kamer.foutMelding} ? ${kamer.foutMelding}"></h3>
-    </div>
-  <div class="col-md-8">
+
       <form th:action="@{/KamerToevoegen}" method="post" th:object="${kamer}" >
           <input type="hidden" name="kamerID" th:field="*{kamerID}">
           <div class="form-group col-md-8">
@@ -39,49 +37,50 @@
           <div class="form-group col-md-8">
               <label for="kamerNummer">Omschrijving Kamer</label>
               <div class="form-row">
-                  <div class="col-10">
-                  <select  class="custom-select" id="omschrijving" th:field="*{kamerTypeID}" name="omschrijving" required>
-                      <option th:each="kamerType : ${kamer.kamerTypes}"
-                              th:value="${kamerType.kamerTypeID}"
-                              th:text="${kamerType.omschrijving}">
-                      </option>
-                  </select>
+                  <div class="form-group col-md-10">
+                      <select  class="custom-select form-control" id="omschrijving" th:field="*{kamerTypeID}" name="omschrijving" required>
+                          <option th:each="kamerType : ${kamer.kamerTypes}"
+                                  th:value="${kamerType.kamerTypeID}"
+                                  th:text="${kamerType.omschrijving}">
+                          </option>
+                      </select>
                   </div>
-                  <div class="col">
-                  <a role="button" data-toggle="collapse" data-target="#kamerTypeToevoegen"
-                     aria-expanded="true"  class="btn btn-secondary btn-custom-a" >
-                      <i class="fas fa-plus"></i>
-                  </a>
+                  <div class="form-group col-md-2">
+                      <a role="button" data-toggle="collapse" data-target="#kamerTypeToevoegen"
+                         aria-expanded="true"  class="btn btn-secondary form-control" >
+                          <i class="fas fa-plus"></i>
+                      </a>
                   </div>
               </div>
           </div>
           <div class="form-group col-md-8">
               <div class="form-row">
-                  <div class="col-6">
-                          <a th:href="@{/kamers}" class="btn btn-primary btn-custom-a1" >Terug</a>
+                  <div class="form-group col-md-6">
+                      <a th:href="@{/kamers}" class="btn btn-primary form-control" >Cancel</a>
                   </div>
-                  <div class="col-4">
-                      <button type="submit" class="btn btn-primary m-left" name="toevoegen">Toevoegen</button>
+                  <div class="form-group col-md-6">
+                      <button type="submit" class="btn btn-primary form-control">Toevoegen</button>
                   </div>
-              </div>
+            </div>
           </div>
       </form>
-  </div>
-  <div id="kamerTypeToevoegen" class="collapse">
-      <h1>Nieuw Type Kamer Toevoegen</h1>
-      <div class="col-md-8">
-          <form th:action="@{/KamerTypeToevoegen}" method="post" th:object="${kamer}" >
-              <div class="form-group col-md-8">
-                  <label for="omschrijving1">Omschrijving</label>
-                  <input name="omschrijving1" th:field="*{omschrijving}" id="omschrijving1" type="text" class="form-control" required/>
-              </div>
-              <div class="form-group col-md-8">
-                  <button type="submit" class="btn btn-primary w-100" name="toevoegen">Toevoegen</button>
-              </div>
-          </form>
-      </div>
-  </div>
-</div>
+
+      <div id="kamerTypeToevoegen" class="collapse">
+          <h1>Nieuw Type Kamer Toevoegen</h1>
+              <form th:action="@{/KamerTypeToevoegen}" method="post" th:object="${kamer}" >
+                  <div class="form-group col-md-8">
+                      <label for="omschrijving1">Omschrijving</label>
+                      <input name="omschrijving1" th:field="*{omschrijving}" id="omschrijving1" type="text" class="form-control" required/>
+                  </div>
+
+                  <div class="form-group col-md-8">
+                  <div class="form-group col-md-4">
+                      <button type="submit" class="btn btn-primary w-100">Toevoegen</button>
+                  </div>
+                  </div>
+              </form>
+          </div>
+    </div>
 
   <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
       Footer
