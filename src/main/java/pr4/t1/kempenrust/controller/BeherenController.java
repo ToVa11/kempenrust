@@ -122,7 +122,7 @@ public class BeherenController {
     public String kamerAanpassen(Model model, HttpServletRequest request){
         int kamerId= Integer.parseInt(request.getParameter("kamerId"));
         Kamer kamer=kamerRepository.getById(kamerId);
-        ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
+        ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
         model.addAttribute("kamerTypes",kamerTypes);
         model.addAttribute("kamer",kamer);
         return "layouts/beheren/kamerAanpassen";
@@ -202,7 +202,7 @@ public class BeherenController {
     @RequestMapping("/nieweKamerToeveogen")
     public String NieuweKamerToevoegen(Model model){
         MeldingDto melding=new MeldingDto();
-        ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
+        ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
         KamerDto kamer=new KamerDto();
         kamer.setKamerTypes(kamerTypes);
         model.addAttribute("kamer",kamer);
@@ -216,7 +216,7 @@ public class BeherenController {
 
         if (kamerRepository.checkIfKamernummerExists(kamer.getKamerNummer()) == false) {
             kamerRepository.create(kamer.getKamerNummer(), kamer.getKamerTypeID());
-            ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
+            ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
             kamer.setKamerNummer(0);
             melding.setMelding("Nieuwe kamer is toegevoegd");
             ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
@@ -225,7 +225,7 @@ public class BeherenController {
             return "layouts/beheren/kamers";
 
         }else {
-            ArrayList<KamerType> kamerTypes = kamerTypeRepository.getLijstKamerTypes();
+            ArrayList<KamerType> kamerTypes = kamerTypeRepository.get();
             kamer.setKamerTypes(kamerTypes);
             melding.setTitel(" ");
             melding.setFoutmelding("Attentie! Deze kamernummer is reeds in gebruik");
@@ -236,8 +236,8 @@ public class BeherenController {
     }
     @PostMapping("/KamerTypeToevoegen")
     public String KamerTypeToevoegen( Model model,@ModelAttribute("KamerBeheer") KamerDto kamer){
-        kamerTypeRepository.KamerTypeToevoegen (kamer.getOmschrijving());
-        ArrayList<KamerType> kamerTypes=kamerTypeRepository.getLijstKamerTypes();
+        kamerTypeRepository.create(kamer.getOmschrijving());
+        ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
         kamer.setKamerTypes(kamerTypes);
         model.addAttribute("kamer",kamer);
         return "layouts/beheren/kamerToevoegen";
