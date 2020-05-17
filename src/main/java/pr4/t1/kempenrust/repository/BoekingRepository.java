@@ -20,6 +20,9 @@ public class BoekingRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private BoekingDetailRepository boekingDetailRepository;
+
     public Boeking getBoeking(int boekingID) {
         Boeking boeking = new Boeking();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
@@ -43,9 +46,6 @@ public class BoekingRepository {
         }
         return boeking;
     }
-
-    @Autowired
-    private BoekingDetailRepository boekingDetailRepository;
 
     public Boeking getReservatieByID(int boekingID) {
         Boeking boeking = null;
@@ -210,7 +210,6 @@ public class BoekingRepository {
         }
         return  boeking;
     }
-
 
     public Boeking getBoekingVoorKlant(int klantId) {
         Boeking boeking = new Boeking();

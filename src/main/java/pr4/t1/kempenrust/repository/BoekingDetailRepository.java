@@ -153,6 +153,7 @@ public class BoekingDetailRepository {
 
         return details;
     }
+
     public ArrayList<BoekingDetail> getAlleDetailsMetDatums(Date datumVan,Date datumTot){
         ArrayList<BoekingDetail> details = new ArrayList<>();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(
@@ -223,7 +224,6 @@ public class BoekingDetailRepository {
 
         return details;
     }
-
 
     public List<BoekingDetail> getBoekingenZonderHuidigeBoeking(int boekingId, Date datumVan, Date datumTot){
         List<BoekingDetail> detailsBoekingen = new ArrayList<>();

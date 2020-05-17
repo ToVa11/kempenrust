@@ -24,6 +24,7 @@ import java.util.List;
 public class PrijsRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
     public void prijsVerwijderen(int kamerID){
         jdbcTemplate.update("DELETE FROM Prijzen WHERE KamerID =? ",kamerID);
     }

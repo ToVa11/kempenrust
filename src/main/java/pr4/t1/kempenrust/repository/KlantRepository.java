@@ -78,32 +78,32 @@ public class KlantRepository {
         return keyHolder.getKey().intValue();
     }
 
-    public int klantToevoegen(String voornaam, String achternaam, String telefoonnummer,
-                              String email, String straat, String huisnummer, String postcode, String gemeente){
-        String SqlInsertStatement = "" +
-                "INSERT INTO Klanten (Voornaam, Naam, Telefoonnummer, Email, Straat, Huisnummer, Postcode, Gemeente) " +
-                "VALUES (?, ?, ?, ?,?,?,?,?)";
-
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection
-                    .prepareStatement(SqlInsertStatement, new String[] {"KlantID"});
-            ps.setString(1, voornaam.trim());
-            ps.setString(2, achternaam.trim());
-            ps.setString(3, telefoonnummer.trim());
-            ps.setString(4, email.trim());
-            ps.setString(5, straat.trim());
-            ps.setString(6, huisnummer.trim());
-            ps.setString(7, postcode.trim());
-            ps.setString(8, gemeente.trim());
-
-            return ps;
-        }, keyHolder);
-
-        // returns the PK of the newly created record
-        return keyHolder.getKey().intValue();
-    }
+//    public int klantToevoegen(String voornaam, String achternaam, String telefoonnummer,
+//                              String email, String straat, String huisnummer, String postcode, String gemeente){
+//        String SqlInsertStatement = "" +
+//                "INSERT INTO Klanten (Voornaam, Naam, Telefoonnummer, Email, Straat, Huisnummer, Postcode, Gemeente) " +
+//                "VALUES (?, ?, ?, ?,?,?,?,?)";
+//
+//        KeyHolder keyHolder = new GeneratedKeyHolder();
+//
+//        jdbcTemplate.update(connection -> {
+//            PreparedStatement ps = connection
+//                    .prepareStatement(SqlInsertStatement, new String[] {"KlantID"});
+//            ps.setString(1, voornaam.trim());
+//            ps.setString(2, achternaam.trim());
+//            ps.setString(3, telefoonnummer.trim());
+//            ps.setString(4, email.trim());
+//            ps.setString(5, straat.trim());
+//            ps.setString(6, huisnummer.trim());
+//            ps.setString(7, postcode.trim());
+//            ps.setString(8, gemeente.trim());
+//
+//            return ps;
+//        }, keyHolder);
+//
+//        // returns the PK of the newly created record
+//        return keyHolder.getKey().intValue();
+//    }
 
 
     public boolean customerExists(String email) {

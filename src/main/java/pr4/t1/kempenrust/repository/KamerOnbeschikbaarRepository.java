@@ -35,6 +35,7 @@ public class KamerOnbeschikbaarRepository {
     }
     return  onbeschikbaarKamer;
     }
+
     public ArrayList<KamerOnbeschikbaar> getOnbeschikbaarKamerTussenTweeDatums(java.sql.Date van, java.sql.Date tot) {
         ArrayList<KamerOnbeschikbaar> lijstKamerOnbeschikbaar = new ArrayList<>();
 
@@ -69,16 +70,16 @@ public class KamerOnbeschikbaarRepository {
         return lijstKamerOnbeschikbaar;
     }
 
-
-
     public void KamerOnbeschikbaarMaken(int kamerID, Date datumVan,Date datumTot){
         jdbcTemplate.update("INSERT INTO KamersOnbeschikbaar (KamerID, DatumVan, DatumTot)" +
                 " VALUES (?, ?, ?)",kamerID,datumVan,datumTot);
     }
+
     public void  wijzigOnbeschikbaarheid(int kamerId, Date datumVan, Date datumTot){
         jdbcTemplate.update("UPDATE KamersOnbeschikbaar SET DatumVan = ? , DatumTot = ? " +
                 " WHERE KamerID = ? ", datumVan, datumTot, kamerId);
     }
+
     public void KamerBeschikbaarMaken(int kamerID){
         jdbcTemplate.update("DELETE FROM KAMERSONBESCHIKBAAR WHERE KamerID =? ",kamerID);
 
