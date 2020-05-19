@@ -216,6 +216,8 @@ public class BoekingController {
         BoekingDetailDto boeking=new BoekingDetailDto();
         ArrayList<BoekingDetail> details = boekingDetailRepository.getVerleden();
         MeldingDto melding=new MeldingDto();
+        Date datumGisteren= Date.valueOf(LocalDate.now().minusDays(1));
+        boeking.setDatumTot(datumGisteren.toString());
         melding.setTitel("Afgelopen Reservaties");
         model.addAttribute("details",details);
         model.addAttribute("boeking",boeking);
@@ -227,7 +229,7 @@ public class BoekingController {
     public String getAfgelopenBoekingen(Model model, @ModelAttribute("Boeking") BoekingDetailDto boeking) {
         MeldingDto melding=new MeldingDto();
         var datumVan = Date.valueOf(boeking.getDatumVan());
-        var datumTot = Date.valueOf(boeking.getDatumTot());
+        var datumTot = Date.valueOf(LocalDate.now().minusDays(1));
         if (datumVan !=null && datumTot!=null && datumVan.before(datumTot))
         {
             ArrayList<BoekingDetail> details = boekingDetailRepository
@@ -242,7 +244,8 @@ public class BoekingController {
             {
                 melding.setTitel("Geen reservaties gevonden tussen "+startDatum+" en "+endDatum);
             }
-
+            Date datumGisteren= Date.valueOf(LocalDate.now().minusDays(1));
+            boeking.setDatumTot(datumGisteren.toString());
             model.addAttribute("details",details);
             model.addAttribute("melding",melding);
             model.addAttribute("boeking",boeking);
