@@ -23,9 +23,9 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
 
-    <h1 th:text="${melding.titel} ? ${melding.titel} :'Nieuwe Kamer Toevoegen'"></h1>
-    <div th:if="${melding.foutmelding != null}" class="alert alert-secondary">
-        <h3 th:text="${melding.foutmelding}"></h3>
+    <h1 th:text="${melding.titel} ? ${melding.titel} :'Nieuwe kamer toevoegen'"></h1>
+    <div th:if="${melding.foutmelding != null}" class="alert alert-secondary col-md-8">
+        <span th:text="${melding.foutmelding}"></span>
     </div>
 
       <form th:action="@{/KamerToevoegen}" method="post" th:object="${kamer}" >
@@ -56,10 +56,10 @@
           <div class="form-group col-md-8">
               <div class="form-row">
                   <div class="form-group col-md-6">
-                      <a th:href="@{/kamers}" class="btn btn-primary form-control" >Cancel</a>
+                      <button type="submit" class="btn btn-primary form-control">Voeg toe</button>
                   </div>
                   <div class="form-group col-md-6">
-                      <button type="submit" class="btn btn-primary form-control">Toevoegen</button>
+                      <a th:href="@{/kamers}" class="btn btn-secondary form-control" >Annuleer</a>
                   </div>
             </div>
           </div>
@@ -74,9 +74,7 @@
                   </div>
 
                   <div class="form-group col-md-8">
-                  <div class="form-group col-md-4">
-                      <button type="submit" class="btn btn-primary w-100">Toevoegen</button>
-                  </div>
+                      <button type="submit" class="btn btn-primary w-100">Voeg toe</button>
                   </div>
               </form>
           </div>

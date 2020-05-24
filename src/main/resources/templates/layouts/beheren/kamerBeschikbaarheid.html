@@ -22,23 +22,24 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1 th:text="'Kamer '+ ${kamer.kamer.kamerNummer}+ ' Beschikbaarheid'"></h1>
+    <h1 th:text="'Kamer '+ ${kamer.kamer.kamerNummer}+ ' beschikbaar'"></h1>
     <table class="table" th:if="${kamer.datumVan}">
         <thead>
         <tr>
-            <th>Kamer Nummer</th>
+            <th>Kamernummer</th>
             <th>Onbeschikbaar Van</th>
             <th>Onbeschikbaar Tot</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
         <tr>
             <td th:text="${kamer.kamer.kamerNummer}"></td>
-            <td th:text="${kamer.datumVan}"></td>
-            <td th:text="${kamer.datumTot}"></td>
-            <td><a th:href="@{/kamerBeschikbaarMaken(kamerId=${kamer.kamerID})}"
+            <td th:text="${#dates.format(kamer.datumVan, 'dd/MM/yy')}"></td>
+            <td th:text="${#dates.format(kamer.datumTot, 'dd/MM/yy')}"></td>
+            <td class="text-right"><a th:href="@{/kamerBeschikbaarMaken(kamerId=${kamer.kamerID})}"
                    class="btn btn-primary">
-                   Beschikbaar Maken
+                   Beschikbaar
                 </a>
             </td>
         </tr>
@@ -58,10 +59,10 @@
             <div class="form-group col-md-8">
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <a th:href="@{/kamers}" class="btn btn-primary form-control" >Cancel</a>
+                    <button type="submit" class="btn btn-primary form-control">Onbeschikbaar</button>
                 </div>
                 <div class="form-group col-md-6">
-                    <button type="submit" class="btn btn-primary form-control">Onbeschikbaar Maken</button>
+                    <a th:href="@{/kamers}" class="btn btn-secondary form-control" >Annuleer</a>
                 </div>
             </div>
             </div>

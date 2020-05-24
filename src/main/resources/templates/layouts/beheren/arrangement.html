@@ -22,7 +22,7 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1>Arrangement Aanpassen</h1>
+    <h1>Arrangement aanpassen</h1>
     <form action="#" data-th-action="@{/update/arrangement}" th:object="${arrangement}"  method="post">
         <input type="hidden" th:field="*{verblijfsKeuze.verblijfskeuzeID}">
         <div class="row">
@@ -49,15 +49,15 @@
             </div>
             <div class="form-group col-md-4">
                 <label for="prijs">Prijs</label>
-                <input class="form-control" type="number" id="prijs" th:field="*{kamerPrijzen[__${i.index}__].prijsPerKamer}">
+                <input class="form-control" type="number" id="prijs" th:field="*{kamerPrijzen[__${i.index}__].prijsPerKamer}" required>
             </div>
         </div>
-        <div class="row">
-            <div class="form-group col-md-4">
-                <a th:href="@{/arrangementen}" class="btn btn-primary w-100">Cancel</a>
+            <div class="row"><div class="form-group col-md-4">
+                <button type="submit" class="btn btn-primary w-100">Wijzig</button>
             </div>
+
             <div class="form-group col-md-4">
-                <button type="submit" class="btn btn-primary w-100">Update</button>
+                <a th:href="@{/arrangementen}" class="btn btn-secondary w-100">Annuleer</a>
             </div>
         </div>
     </form>

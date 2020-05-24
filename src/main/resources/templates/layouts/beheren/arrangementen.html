@@ -30,21 +30,21 @@
         <tr>
             <th class="align-middle">Naam</th>
             <th class="align-middle">Omschrijving</th>
-            <th class="align-middle">
+            <th class="align-middle text-right">
                 <a th:href="@{/toevoegen/arrangement}"><button class="btn btn-secondary"><i class="fas fa-plus"></i></button></a>
             </th>
         </tr>
         <tr th:each="verblijfskeuze: ${verblijfskeuzes}">
             <td th:text="${verblijfskeuze.getNaam()}" class="align-middle"></td>
             <td th:text="${verblijfskeuze.getOmschrijving()}" class="align-middle"></td>
-            <td>
+            <td class="text-right">
                 <a th:href="@{/arrangement(verblijfskeuzeID=${verblijfskeuze.getVerblijfskeuzeID()})}"><button class="btn btn-secondary"><i class="fas fa-pen"></i></button></a>
                 <button class="btn btn-secondary" data-toggle="modal" th:data-target="${'#deleteConfirmation'+verblijfskeuze.getVerblijfskeuzeID()}"><i class="fas fa-trash"></i></button>
                 <div class="modal fade" th:id="${'deleteConfirmation'+verblijfskeuze.getVerblijfskeuzeID()}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalCenterTitle">Verwijder Arrangement?</h5>
+                                <h5 class="modal-title" id="exampleModalCenterTitle">Verwijder arrangement?</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -53,11 +53,11 @@
                                 Ben je zeker dat je het arrangement <span th:text="${verblijfskeuze.getNaam()}"></span> wil verwijderen?
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleer</button>
                                 <form th:action="@{/delete/arrangement}" method="post">
                                     <input type="hidden" name="verblijfskeuzeID" th:value="${verblijfskeuze.getVerblijfskeuzeID()}">
                                     <button type="submit" class="btn btn-primary">Verwijder</button>
                                 </form>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleer</button>
                             </div>
                         </div>
                     </div>

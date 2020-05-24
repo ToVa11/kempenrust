@@ -20,8 +20,10 @@
 </div>
 
 <div id="main-content-kempenrust">
-    <h2>Reservatie boeken</h2>
-    <div th:if="${message}" th:text="${message}" class="alert alert-primary"></div>
+    <h1>Reservatie boeken</h1>
+    <div th:if="${message != null}" class="alert alert-secondary col-md-8">
+        <span th:text="${message}"></span>
+    </div>
 
     <form action="#" data-th-action="@{/zoekkamers}" th:object="${reserveringDetails}" method="post">
         <input hidden th:field="*{kamers}">
