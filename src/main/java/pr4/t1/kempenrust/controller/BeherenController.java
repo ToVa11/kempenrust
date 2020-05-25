@@ -158,8 +158,13 @@ public class BeherenController {
     @RequestMapping("/kamerAanpassen")
     public String getKamerUpdateForm(Model model, HttpServletRequest request){
         int kamerId= Integer.parseInt(request.getParameter("kamerId"));
-        Kamer kamer=kamerRepository.getById(kamerId);
+        Kamer selectedkamer=kamerRepository.getById(kamerId);
         ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
+        KamerDto kamer=new KamerDto();
+        kamer.setKamerID(selectedkamer.getKamerID());
+        kamer.setKamerNummer(selectedkamer.getKamerNummer());
+        kamer.setKamerTypes(kamerTypes);
+        kamer.setWijziging(true);
         model.addAttribute("kamerTypes",kamerTypes);
         model.addAttribute("kamer",kamer);
         return "layouts/beheren/kamerAanpassen";
@@ -207,9 +212,20 @@ public class BeherenController {
         kamerTypeRepository.create(kamer.getOmschrijving());
         ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
         kamer.setKamerTypes(kamerTypes);
-        model.addAttribute("kamer",kamer);
-        return "layouts/beheren/kamerToevoegen";
+
+        if (kamer.getWijziging() == false)
+        {
+            model.addAttribute("kamer",kamer);
+            return "layouts/beheren/kamerToevoegen";
+        }
+        else
+        {
+            model.addAttribute("kamer",kamer);
+            return "layouts/beheren/kamerAanpassen";
+        }
+
     }
+
     //endregion
 
     //region KamerOnbeschikbaar
