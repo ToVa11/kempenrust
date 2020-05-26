@@ -24,7 +24,7 @@
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
 
     <h1>Nieuwe Kamer Toevoegen</h1>
-    <div th:if="${melding != null && melding.foutmelding != null}" class="alert alert-secondary">
+    <div th:if="${melding?.foutmelding != null}" class="alert alert-secondary">
         <h3 th:text="${melding.foutmelding}"></h3>
     </div>
 
