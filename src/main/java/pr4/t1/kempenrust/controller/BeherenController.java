@@ -32,6 +32,8 @@ import java.math.BigDecimal;
 
 import java.text.SimpleDateFormat;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +56,11 @@ public class BeherenController {
     private KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
     @Autowired
     private PrijsRepository prijsRepository;
+    //endregion
+
+    //region class variables
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     //endregion
 
     //region Klanten
@@ -428,11 +435,10 @@ public class BeherenController {
         Date nieuweDatumVan = Date.valueOf(reservering.getDatumVan());
         Date nieuweDatumTot = Date.valueOf(reservering.getDatumTot());
         String message = null;
+        message = checkDatums(reservering.getDatumVan(), reservering.getDatumTot());
 
-        if(nieuweDatumVan.after(nieuweDatumTot) ) {
-            message="De aankomst datum mag niet na de vertrek datum liggen.";
-            redirectAttributes.addFlashAttribute("message", message);
-
+        if(message!=null) {
+            redirectAttributes.addFlashAttribute("message",message);
             return "redirect:/reservering?Id="+reservering.getBoekingID();
         }
 
@@ -543,6 +549,24 @@ public class BeherenController {
             kamerPrijzen.get(i).setDatumVanaf(datum);
         }
         return kamerPrijzen;
+    }
+
+    private String checkDatums(String datumAankomst, String datumVertrek) {
+        LocalDate aankomst = LocalDate.parse(datumAankomst,formatter);
+        LocalDate vertrek = LocalDate.parse(datumVertrek, formatter);
+        String message=null;
+
+        if(aankomst.isBefore(LocalDate.now()) || vertrek.isBefore(LocalDate.now()) ) {
+            message = "Gelieve een datum in de toekomst te kiezen.";
+        }
+        else if(vertrek.isBefore(aankomst)) {
+            message = "De vertrekdatum kan niet voor de aankomstdatum liggen.";
+        }
+        else if(vertrek.isEqual(aankomst)) {
+            message = "De vertrekdatum en aankomstdatum kunnen niet op dezelfde dag liggen.";
+        }
+
+        return message;
     }
     //endregion
 }
