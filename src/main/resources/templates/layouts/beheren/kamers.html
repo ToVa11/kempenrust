@@ -24,8 +24,9 @@
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Kamers</h1>
 
-    <div th:if="${melding.melding != null}" class="alert alert-secondary">
-        <span th:text="${melding.melding}"></span>
+
+    <div th:if="${melding !=null && melding.melding != null}" class="alert alert-secondary">
+        <h3 th:text="${melding.melding}"></h3>
     </div>
 
     <table class="table" th:if="${kamers.size()!=0}">
@@ -53,12 +54,12 @@
                    th:href="@{/kamerAanpassen(kamerId=${kamer.kamerID})}">
                     <li class="fas fa-pen"></li></a>
                 <button class="btn btn-secondary" data-toggle="modal"
-                        data-target="#deleteConfirmation">
+                        th:data-target="${'#deleteConfirmation'+kamer.kamerID}">
                     <i class="fas fa-trash"></i></button>
                 <a class="btn btn-secondary"
                    th:href="@{/kamerBeschikbaarheid(kamerId=${kamer.kamerID})}">
                     <i class="far fa-calendar-check"></i></a>
-                <div class="modal fade" id="deleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal fade" th:id="${'deleteConfirmation'+kamer.kamerID}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
