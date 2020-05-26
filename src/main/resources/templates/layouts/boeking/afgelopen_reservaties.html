@@ -52,7 +52,7 @@
             <td th:text="${detail.getBoeking().getKlant().getEmail()}" class="align-middle"></td>
             <td th:text="'Kamer ' + ${detail.getKamer().getKamerNummer()}" class="align-middle"></td>
             <td>
-                <a th:href="@{/reservering(Id=${detail.boeking.boekingID})}"><button class="btn btn-secondary"><i class="fas fa-pen"></i></button></a>
+                <a th:href="@{/reservering(Id=${detail.boekingID})}"><button class="btn btn-secondary"><i class="fas fa-pen"></i></button></a>
             </td>
         </tr>
     </table>
