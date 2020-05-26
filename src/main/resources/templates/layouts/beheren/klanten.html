@@ -23,8 +23,8 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Klanten</h1>
-    <div th:if="${melding.melding != null}" class="alert alert-dismissible alert-success">
-        <h3 th:text="${melding.melding} ? ${melding.melding}"></h3>
+    <div th:if="${melding.melding != null}" class="alert alert-secondary">
+        <span th:text="${melding.melding} ? ${melding.melding}"></span>
     </div>
     <table class="table" th:if="${klanten.size()!=0}">
         <thead>
@@ -33,6 +33,7 @@
             <th class="align-middle">Telefoon</th>
             <th class="align-middle">Email</th>
             <th class="align-middle">Adres</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -40,13 +41,14 @@
             <td th:text="${klant.voornaam}+ ' '+ ${klant.naam}" class="align-middle"></td>
             <td th:text="${klant.telefoonnummer}" class="align-middle"></td>
             <td th:text="${klant.email}" class="align-middle"></td>
+
             <td class="align-middle">
                 <span th:if="${klant.straat}" th:text="${klant.straat}"></span>&nbsp;
                 <span th:if="${klant.huisnummer}" th:text="${klant.huisnummer} + ','"></span>
                 <span th:if="${klant.postcode}" th:text="${klant.postcode}"></span>&nbsp;
                 <span th:if="${klant.gemeente}" th:text="${klant.gemeente}"></span>
             </td>
-            <td>
+            <td class="text-right">
                 <a class="btn btn-secondary"
                     th:href="@{/KlantgegevensAanpassen(klantId=${klant.klantID})}">
                     <li class="fas fa-pen"></li></a>
@@ -66,8 +68,8 @@
                                 Ben je zeker dat je de klant <span th:text="${klant.voornaam} + ' '+ ${klant.naam}"></span> wil verwijderen?
                             </div>
                             <div class="modal-footer">
+                                <a class="btn btn-primary" th:href="@{/klantVerwijderen(klantId=${klant.klantID})}">Verwijder</a>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleer</button>
-                                <a class="btn btn-secondary" th:href="@{/klantVerwijderen(klantId=${klant.klantID})}">Verwijder</li></a>
                             </div>
                         </div>
                     </div>

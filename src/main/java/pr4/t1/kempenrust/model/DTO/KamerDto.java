@@ -16,10 +16,15 @@ public  class KamerDto {
     private Date datumTot;
     private String omschrijving;
     private ArrayList<KamerType> kamerTypes;
+    private Boolean isWijziging;
 
+    public Boolean getWijziging() {
+        return isWijziging;
+    }
 
-
-
+    public void setWijziging(Boolean wijziging) {
+        isWijziging = wijziging;
+    }
 
     public String getOmschrijving() {
         return omschrijving;

@@ -12,7 +12,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
     <!-- Kan je aanpassen = tabblad titel-->
-    <title>Afgelopen Reservaties</title>
+    <title>Afgelopen reserveringen</title>
 </head>
 <body>
 
@@ -23,8 +23,8 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1 th:text="${melding.titel}"></h1>
-    <div th:if="${melding.foutmelding != null}" class="alert alert-danger">
-        <h3 th:text="${melding.foutmelding}"></h3>
+    <div th:if="${melding.foutmelding != null}" class="alert alert-secondary">
+        <span th:text="${melding.foutmelding}"></span>
     </div>
     <form class="form-inline" th:action="@{/afgelopen_reservaties}" method="post" th:object="${boeking}">
         <div class="form-group mb-2">
