@@ -22,9 +22,11 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1 th:text="${melding.titel} ? ${melding.titel} :'Nieuwe kamer toevoegen'"></h1>
-    <div th:if="${melding.foutmelding != null}" class="alert alert-secondary col-md-8">
-        <span th:text="${melding.foutmelding}"></span>
+
+    
+    <h1>Nieuwe Kamer Toevoegen</h1>
+    <div th:if="${melding?.foutmelding != null}" class="alert alert-secondary">
+        <h3 th:text="${melding.foutmelding}"></h3>
     </div>
 
       <form th:action="@{/KamerToevoegen}" method="post" th:object="${kamer}" class="ml-custom">
@@ -64,8 +66,13 @@
           </div>
       </form>
 
+<<<<<<< HEAD
+      <div id="kamerTypeToevoegen" class="collapse">
+          <h1>Nieuw kamertype toevoegen</h1>
+=======
           <div id="kamerTypeToevoegen" class="collapse">
               <h1>Nieuw Type Kamer Toevoegen</h1>
+>>>>>>> Development
               <form th:action="@{/KamerTypeToevoegen}" method="post" th:object="${kamer}" >
                   <div class="form-group col-md-8">
                       <label for="omschrijving1">Omschrijving</label>

@@ -24,8 +24,7 @@
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Kamers</h1>
 
-
-    <div th:if="${melding !=null && melding.melding != null}" class="alert alert-secondary">
+    <div th:if="${melding?.melding != null}" class="alert alert-secondary">
         <h3 th:text="${melding.melding}"></h3>
     </div>
 
