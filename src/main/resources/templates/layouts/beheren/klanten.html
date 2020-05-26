@@ -40,11 +40,12 @@
             <td th:text="${klant.voornaam}+ ' '+ ${klant.naam}" class="align-middle"></td>
             <td th:text="${klant.telefoonnummer}" class="align-middle"></td>
             <td th:text="${klant.email}" class="align-middle"></td>
-            <td th:text="${klant.straat} +' '+
-             ${klant.huisnummer} +', '+
-             ${klant.postcode} +' '+
-             ${klant.gemeente}"
-            class="align-middle"></td>
+            <td class="align-middle">
+                <span th:if="${klant.straat}" th:text="${klant.straat}"></span>&nbsp;
+                <span th:if="${klant.huisnummer}" th:text="${klant.huisnummer} + ','"></span>
+                <span th:if="${klant.postcode}" th:text="${klant.postcode}"></span>&nbsp;
+                <span th:if="${klant.gemeente}" th:text="${klant.gemeente}"></span>
+            </td>
             <td>
                 <a class="btn btn-secondary"
                     th:href="@{/KlantgegevensAanpassen(klantId=${klant.klantID})}">
