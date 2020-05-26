@@ -24,7 +24,7 @@
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
 
    <h1 th:text="'Kamer ' + ${kamer.kamerNummer} + ' beheren'"></h1>
-   <form th:action="@{/wijzigKamer}" method="post" th:object="${kamer}" >
+   <form th:action="@{/wijzigKamer}" method="post" th:object="${kamer}" class="ml-custom">
        <input type="hidden"  th:field="*{kamerID}">
        <input type="hidden"  th:field="*{kamerNummer}">
 

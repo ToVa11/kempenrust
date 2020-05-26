@@ -22,13 +22,12 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-
     <h1 th:text="${melding.titel} ? ${melding.titel} :'Nieuwe kamer toevoegen'"></h1>
     <div th:if="${melding.foutmelding != null}" class="alert alert-secondary col-md-8">
         <span th:text="${melding.foutmelding}"></span>
     </div>
 
-      <form th:action="@{/KamerToevoegen}" method="post" th:object="${kamer}" >
+      <form th:action="@{/KamerToevoegen}" method="post" th:object="${kamer}" class="ml-custom">
           <input type="hidden" name="kamerID" th:field="*{kamerID}">
           <div class="form-group col-md-8">
               <label for="kamerNummer">Kamer Nummer</label>
