@@ -22,7 +22,7 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <div th:if="${melding != null}" class="alert alert-secondary">
-        <h3 th:text="${melding.foutmelding}"></h3>
+        <span th:text="${melding.foutmelding}"></span>
     </div>
     <table class="table">
             <thead>
@@ -46,7 +46,6 @@
                 </tr>
             </tbody>
         </table>
-
     </div>
 <div id="footer-kempenrust" th:replace="~{/fragments/app-fragments :: copyright}">
     Footer

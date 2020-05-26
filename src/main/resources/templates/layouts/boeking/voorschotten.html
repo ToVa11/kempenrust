@@ -22,8 +22,10 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1>Voorschotten Bevestigen</h1>
-    <div th:if="${message}" th:text="${message}" class="alert alert-primary"></div>
+    <h1>Voorschotten bevestigen</h1>
+    <div th:if="${message != null}" class="alert alert-secondary">
+        <span th:text="${message}"></span>
+    </div>
     <table class="table">
         <tr>
             <th class="align-middle">Aankomst</th>
@@ -38,13 +40,13 @@
             <td th:text="${#dates.format(boeking.getDatumTot(), 'dd/MM/yy')}" class="align-middle"></td>
             <td th:text="${boeking.getKlant().getNaam()} + ' ' + ${boeking.getKlant().getVoornaam()}" class="align-middle"></td>
             <td th:text="${boeking.getBedragVoorschot()}" class="align-middle"></td>
-            <td>
+            <td class="text-right">
                 <button class="btn btn-secondary" data-toggle="modal" th:data-target="${'#confirm'+boeking.boekingID}"><i class="fas fa-cash-register"></i></button>
                 <div class="modal fade" th:id="${'confirm'+boeking.boekingID}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalCenterTitle">Verwijder reservatie?</h5>
+                                <h5 class="modal-title" id="exampleModalCenterTitle">Voorschot betaald?</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -53,7 +55,7 @@
                                 Ben je zeker dat het voorschot betaalt is <span th:text="${boeking.getKlant().getNaam() + ' '+ boeking.getKlant().getVoornaam()}"></span>?
                             </div>
                             <div class="modal-footer">
-                                <a th:href="@{/reservering/bevestig/voorschot(boekingID=${boeking.boekingID})}" class="btn btn-secondary">Bevestig</a>
+                                <a th:href="@{/reservering/bevestig/voorschot(boekingID=${boeking.boekingID})}" class="btn btn-primary">Bevestig</a>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleer</button>
                             </div>
                         </div>

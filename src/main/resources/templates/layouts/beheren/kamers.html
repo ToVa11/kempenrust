@@ -24,7 +24,8 @@
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Kamers</h1>
 
-    <div th:if="${melding.melding != null}" class="alert alert-secondary">
+
+    <div th:if="${melding !=null && melding.melding != null}" class="alert alert-secondary">
         <h3 th:text="${melding.melding}"></h3>
     </div>
 
@@ -35,7 +36,7 @@
             <th class="align-middle">Omschrijving</th>
             <th class="align-middle">Onbeschikbaar Van</th>
             <th class="align-middle">Onbeschikbaar Tot</th>
-            <th>
+            <th class="text-right">
                 <a th:href="@{/nieweKamerToeveogen}"
                    class="btn btn-secondary">
                     <i class="fas fa-plus"></i></a>
@@ -46,16 +47,19 @@
         <tr  th:each="kamer :${kamers}">
             <td th:text="${kamer.kamer.kamerNummer}" class="align-middle"></td>
             <td th:text="${kamer.kamer.kamerType.omschrijving}" class="align-middle"></td>
-            <td th:text="${#dates.format(kamer.datumVan,'dd/MM/yyyy')}" class="align-middle"></td>
-            <td th:text="${#dates.format(kamer.datumTot,'dd/MM/yyyy')}" class="align-middle"></td>
-            <td>
+            <td th:text="${#dates.format(kamer.datumVan,'dd/MM/yy')}" class="align-middle"></td>
+            <td th:text="${#dates.format(kamer.datumTot,'dd/MM/yy')}" class="align-middle"></td>
+            <td class="text-right">
                 <a class="btn btn-secondary"
                    th:href="@{/kamerAanpassen(kamerId=${kamer.kamerID})}">
                     <li class="fas fa-pen"></li></a>
                 <button class="btn btn-secondary" data-toggle="modal"
-                        data-target="#deleteConfirmation">
+                        th:data-target="${'#deleteConfirmation'+kamer.kamerID}">
                     <i class="fas fa-trash"></i></button>
-                <div class="modal fade" id="deleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <a class="btn btn-secondary"
+                   th:href="@{/kamerBeschikbaarheid(kamerId=${kamer.kamerID})}">
+                    <i class="far fa-calendar-check"></i></a>
+                <div class="modal fade" th:id="${'deleteConfirmation'+kamer.kamerID}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -68,18 +72,12 @@
                                 Ben je zeker dat je deze kamer wil verwijderen?
                             </div>
                             <div class="modal-footer">
+                                <a class="btn btn-primary" th:href="@{/kamerVerwijderen(kamerId=${kamer.kamerID})}">Verwijder</a>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleer</button>
-                                <a class="btn btn-secondary" th:href="@{/kamerVerwijderen(kamerId=${kamer.kamerID})}">Verwijder</li></a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </td>
-            </td>
-            <td>
-                <a class="btn btn-secondary"
-                   th:href="@{/kamerBeschikbaarheid(kamerId=${kamer.kamerID})}">
-                    Beschikbaarheid</a>
             </td>
         </tr>
         </tbody>

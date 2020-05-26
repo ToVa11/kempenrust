@@ -23,8 +23,8 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Klanten</h1>
-    <div th:if="${melding.melding != null}" class="alert alert-dismissible alert-success">
-        <h3 th:text="${melding.melding} ? ${melding.melding}"></h3>
+    <div th:if="${melding.melding != null}" class="alert alert-secondary">
+        <span th:text="${melding.melding} ? ${melding.melding}"></span>
     </div>
     <table class="table" th:if="${klanten.size()!=0}">
         <thead>
@@ -33,6 +33,7 @@
             <th class="align-middle">Telefoon</th>
             <th class="align-middle">Email</th>
             <th class="align-middle">Adres</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -40,19 +41,21 @@
             <td th:text="${klant.voornaam}+ ' '+ ${klant.naam}" class="align-middle"></td>
             <td th:text="${klant.telefoonnummer}" class="align-middle"></td>
             <td th:text="${klant.email}" class="align-middle"></td>
-            <td th:text="${klant.straat} +' '+
-             ${klant.huisnummer} +', '+
-             ${klant.postcode} +' '+
-             ${klant.gemeente}"
-            class="align-middle"></td>
-            <td>
+
+            <td class="align-middle">
+                <span th:if="${klant.straat}" th:text="${klant.straat}"></span>&nbsp;
+                <span th:if="${klant.huisnummer}" th:text="${klant.huisnummer} + ','"></span>
+                <span th:if="${klant.postcode}" th:text="${klant.postcode}"></span>&nbsp;
+                <span th:if="${klant.gemeente}" th:text="${klant.gemeente}"></span>
+            </td>
+            <td class="text-right">
                 <a class="btn btn-secondary"
                     th:href="@{/KlantgegevensAanpassen(klantId=${klant.klantID})}">
                     <li class="fas fa-pen"></li></a>
                 <button class="btn btn-secondary" data-toggle="modal"
-                        data-target="#deleteConfirmation">
+                        th:data-target="${'#deleteConfirmation'+klant.getKlantID()}">
                     <i class="fas fa-trash"></i></button>
-                <div class="modal fade" id="deleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal fade" th:id="${'deleteConfirmation'+klant.getKlantID()}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -62,11 +65,11 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                Ben je zeker dat je deze klant wil verwijderen?
+                                Ben je zeker dat je de klant <span th:text="${klant.voornaam} + ' '+ ${klant.naam}"></span> wil verwijderen?
                             </div>
                             <div class="modal-footer">
+                                <a class="btn btn-primary" th:href="@{/klantVerwijderen(klantId=${klant.klantID})}">Verwijder</a>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleer</button>
-                                <a class="btn btn-secondary" th:href="@{/klantVerwijderen(klantId=${klant.klantID})}">Verwijder</li></a>
                             </div>
                         </div>
                     </div>
