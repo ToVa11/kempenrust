@@ -376,6 +376,9 @@ public class BoekingController {
         else if(vertrek.isBefore(aankomst)) {
             message = "De vertrekdatum kan niet voor de aankomstdatum liggen.";
         }
+        else if(vertrek.isEqual(aankomst)) {
+            message = "De vertrekdatum en aankomstdatum kunnen niet op dezelfde dag liggen.";
+        }
 
         return message;
     }
