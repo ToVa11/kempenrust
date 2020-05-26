@@ -37,7 +37,7 @@
         </div>
         <button type="submit" style="margin: 0px 0px 10px 50px"  class="btn btn-secondary">Zoeken</button>
     </form>
-    <table class="table">
+    <table class="table" th:if="${details != null}">
         <tr>
             <th class="align-middle">Aankomst</th>
             <th class="align-middle">Vertrek</th>
