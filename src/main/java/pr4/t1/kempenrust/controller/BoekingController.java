@@ -252,7 +252,7 @@ public class BoekingController {
             return "layouts/boeking/afgelopen_reservaties";
         }
         else {
-            melding.setTitel(" ");
+            melding.setTitel("Geen reservaties gevonden");
             melding.setFoutmelding("Gelieve de datums te controleren");
             model.addAttribute("melding", melding);
             model.addAttribute("boeking", boeking);
