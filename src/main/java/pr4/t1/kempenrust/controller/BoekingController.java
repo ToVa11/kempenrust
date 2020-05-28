@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pr4.t1.kempenrust.Helpers.helper;
 import pr4.t1.kempenrust.model.*;
 import pr4.t1.kempenrust.model.DTO.*;
 import pr4.t1.kempenrust.model.BoekingDetail;
@@ -52,7 +53,6 @@ public class BoekingController {
     //region Class variables
     private SimpleDateFormat simpleFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private Date datumAankomst;
     private Date datumVertrek;
 
@@ -87,7 +87,7 @@ public class BoekingController {
     @RequestMapping("/zoekkamers")
     public String getBeschikbareKamers(@ModelAttribute("reserveringDetails") ReserveringDto reserveringDetails, Model model, RedirectAttributes redirectAttributes) {
         String message = null;
-        message = checkDatums(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
+        message = helper.checkDatums(reserveringDetails.getDatumAankomst(), reserveringDetails.getDatumVertrek());
 
         if(message!=null) {
             redirectAttributes.addFlashAttribute("message",message);
@@ -365,22 +365,5 @@ public class BoekingController {
         }
     }
 
-    private String checkDatums(String datumAankomst, String datumVertrek) {
-        LocalDate aankomst = LocalDate.parse(datumAankomst,formatter);
-        LocalDate vertrek = LocalDate.parse(datumVertrek, formatter);
-        String message=null;
-
-        if(aankomst.isBefore(LocalDate.now()) || vertrek.isBefore(LocalDate.now()) ) {
-            message = "Gelieve een datum in de toekomst te kiezen.";
-        }
-        else if(vertrek.isBefore(aankomst)) {
-            message = "De vertrekdatum kan niet voor de aankomstdatum liggen.";
-        }
-        else if(vertrek.isEqual(aankomst)) {
-            message = "De vertrekdatum en aankomstdatum kunnen niet op dezelfde dag liggen.";
-        }
-
-        return message;
-    }
     //endregion
 }
