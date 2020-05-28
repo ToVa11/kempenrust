@@ -22,7 +22,10 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1 th:text="'Kamer '+ ${kamer.kamer.kamerNummer}+ ' beschikbaar'"></h1>
+    <h1 th:text="'Kamer '+ ${kamer.kamerNummer}+ ' beschikbaar'"></h1>
+    <div th:if="${melding?.foutmelding != null}" class="alert alert-secondary">
+        <span th:text="${melding.foutmelding}"></span>
+    </div>
     <table class="table" th:if="${kamer.datumVan}">
         <thead>
         <tr>
@@ -34,7 +37,7 @@
         </thead>
         <tbody>
         <tr>
-            <td th:text="${kamer.kamer.kamerNummer}"></td>
+            <td th:text="${kamer.kamerNummer}"></td>
             <td th:text="${#dates.format(kamer.datumVan, 'dd/MM/yy')}"></td>
             <td th:text="${#dates.format(kamer.datumTot, 'dd/MM/yy')}"></td>
             <td class="text-right"><a th:href="@{/kamerBeschikbaarMaken(kamerId=${kamer.kamerID})}"
