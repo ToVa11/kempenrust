@@ -22,7 +22,10 @@
 
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
-    <h1 th:text="'Kamer '+ ${kamer.kamer.kamerNummer}+ ' beschikbaar'"></h1>
+    <h1 th:text="'Kamer '+ ${kamer.kamerNummer}+ ' beschikbaar'"></h1>
+    <div th:if="${melding?.foutmelding != null}" class="alert alert-secondary">
+        <span th:text="${melding.foutmelding}"></span>
+    </div>
     <table class="table" th:if="${kamer.datumVan}">
         <thead>
         <tr>
@@ -34,7 +37,7 @@
         </thead>
         <tbody>
         <tr>
-            <td th:text="${kamer.kamer.kamerNummer}"></td>
+            <td th:text="${kamer.kamerNummer}"></td>
             <td th:text="${#dates.format(kamer.datumVan, 'dd/MM/yy')}"></td>
             <td th:text="${#dates.format(kamer.datumTot, 'dd/MM/yy')}"></td>
             <td class="text-right"><a th:href="@{/kamerBeschikbaarMaken(kamerId=${kamer.kamerID})}"
@@ -47,16 +50,16 @@
     </table>
         <form th:action="@{/kamerOnBeschikbaarMaken}" method="post" th:object="${kamer}" >
             <input type="hidden" th:field="*{kamerID}">
-            <div class="form-group col-md-8">
+            <div class="form-group col-md-8 p-0">
                 <label for="datumVan">Datum Van</label>
                 <input th:field="*{datumVan}" id="datumVan" type="date" class="form-control" required/>
             </div>
-            <div class="form-group col-md-8">
+            <div class="form-group col-md-8 p-0">
                 <label for="datumTot">Datum Tot</label>
                 <input th:field="*{datumTot}" id="datumTot" type="date" class="form-control" required/>
             </div>
 
-            <div class="form-group col-md-8">
+            <div class="form-group col-md-8 p-0">
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <button type="submit" class="btn btn-primary form-control">Onbeschikbaar</button>

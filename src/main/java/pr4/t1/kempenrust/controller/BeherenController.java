@@ -34,6 +34,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 
 import java.time.LocalDate;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -236,7 +237,12 @@ public class BeherenController {
     @RequestMapping("/kamerBeschikbaarheid")
     public String getKamersOnbeschikbaar(Model model, HttpServletRequest request) throws ParseException {
         int kamerId= Integer.parseInt(request.getParameter("kamerId"));
-        KamerOnbeschikbaar kamer=kamerOnbeschikbaarRepository.getByKamerId(kamerId);
+        KamerOnbeschikbaar onbeschikbaarkamer=kamerOnbeschikbaarRepository.getByKamerId(kamerId);
+        KamerDto kamer = new KamerDto();
+        kamer.setKamerID(onbeschikbaarkamer.getKamerID());
+        kamer.setKamerNummer(onbeschikbaarkamer.getKamer().getKamerNummer());
+        kamer.setDatumVan(onbeschikbaarkamer.getDatumVan());
+        kamer.setDatumTot(onbeschikbaarkamer.getDatumTot());
         model.addAttribute("kamer",kamer);
         return "layouts/beheren/kamerBeschikbaarheid";
     }
@@ -244,18 +250,28 @@ public class BeherenController {
     @PostMapping("/kamerOnBeschikbaarMaken")
     public String createKamerOnbeschikbaar(Model model, @ModelAttribute("KamerDto") KamerDto kamer){
         KamerOnbeschikbaar kamerOnbeschikbaar= kamerOnbeschikbaarRepository.getByKamerId(kamer.getKamerID());
+        MeldingDto melding=new MeldingDto();
+        var datumVandag = Date.valueOf(LocalDate.now());
+        if(kamer.getDatumVan().before(datumVandag) || kamer.getDatumVan().after(kamer.getDatumTot()))
+        {
+            melding.setFoutmelding("Gelieve de datums te controleren");
+            kamer.setKamerNummer(kamerOnbeschikbaar.getKamer().getKamerNummer());
+            model.addAttribute("melding",melding);
+            model.addAttribute("kamer",kamer);
+            return "layouts/beheren/kamerBeschikbaarheid";
+        }
         if (kamerOnbeschikbaar.getDatumVan()!=null)
         {
             kamerOnbeschikbaarRepository.update(kamer.getKamerID(),
-                    kamer.getDatumVan(),kamer.getDatumTot());
-        }else {
+            kamer.getDatumVan(),kamer.getDatumTot());
+        }else
+        {
             kamerOnbeschikbaarRepository.create(kamer.getKamerID(),
-                    kamer.getDatumVan(), kamer.getDatumTot());
+            kamer.getDatumVan(), kamer.getDatumTot());
         }
         ArrayList<KamerOnbeschikbaar> kamers=kamerRepository.getWithKamerOnbeschikbaar();
         model.addAttribute("kamers",kamers);
         return "layouts/beheren/kamers";
-
     }
 
     @RequestMapping("/kamerBeschikbaarMaken")

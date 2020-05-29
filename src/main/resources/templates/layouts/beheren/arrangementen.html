@@ -26,7 +26,11 @@
     <div th:if="${message != null}" class="alert alert-secondary">
         <span th:text="${message}"></span>
     </div>
-    <table class="table">
+    <div th:if="${verblijfskeuzes.size() == 0}" class="alert alert-secondary">
+        <span>Momenteel geen verblijfskeuzes.</span>
+    </div>
+
+    <table class="table" th:if="${verblijfskeuzes.size() > 0}">
         <tr>
             <th class="align-middle">Naam</th>
             <th class="align-middle">Omschrijving</th>

@@ -26,7 +26,10 @@
     <div th:if="${melding.melding != null}" class="alert alert-secondary">
         <span th:text="${melding.melding} ? ${melding.melding}"></span>
     </div>
-    <table class="table" th:if="${klanten.size()!=0}">
+    <div th:if="${klanten.size() == 0}" class="alert alert-secondary">
+        <span>Momenteel geen klanten.</span>
+    </div>
+    <table class="table" th:if="${klanten.size() > 0}">
         <thead>
         <tr>
             <th class="align-middle">Klant Naam</th>
