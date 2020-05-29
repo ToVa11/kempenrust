@@ -27,7 +27,7 @@
         <span th:text="${melding.melding} ? ${melding.melding}"></span>
     </div>
     <div th:if="${klanten.size() == 0}" class="alert alert-secondary">
-        <span>Momenteel geen voorschotten te bevestig.</span>
+        <span>Momenteel geen klanten.</span>
     </div>
     <table class="table" th:if="${klanten.size() > 0}">
         <thead>

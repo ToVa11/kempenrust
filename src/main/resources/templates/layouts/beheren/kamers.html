@@ -28,7 +28,7 @@
         <h3 th:text="${melding.melding}"></h3>
     </div>
     <div th:if="${kamers.size() == 0}" class="alert alert-secondary">
-        <span>Momenteel geen kamer te zien.</span>
+        <span>Momenteel geen kamers.</span>
     </div>
     <table class="table" th:if="${kamers.size() > 0}">
         <thead>

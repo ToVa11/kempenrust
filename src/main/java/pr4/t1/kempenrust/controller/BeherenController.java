@@ -248,7 +248,7 @@ public class BeherenController {
     public String createKamerOnbeschikbaar(Model model, @ModelAttribute("KamerDto") KamerDto kamer){
         KamerOnbeschikbaar kamerOnbeschikbaar= kamerOnbeschikbaarRepository.getByKamerId(kamer.getKamerID());
         MeldingDto melding=new MeldingDto();
-        var datumVandag = Date.valueOf(LocalDate.now().minusDays(1));
+        var datumVandag = Date.valueOf(LocalDate.now());
         if(kamer.getDatumVan().before(datumVandag) || kamer.getDatumVan().after(kamer.getDatumTot()))
         {
             melding.setFoutmelding("Gelieve de datums te controleren");
