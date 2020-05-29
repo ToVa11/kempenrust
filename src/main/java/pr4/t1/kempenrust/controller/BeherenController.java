@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pr4.t1.kempenrust.Helpers.helper;
 import pr4.t1.kempenrust.model.*;
 
 import pr4.t1.kempenrust.model.DTO.KamerDto;
@@ -33,7 +34,8 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +58,7 @@ public class BeherenController {
     private KamerOnbeschikbaarRepository kamerOnbeschikbaarRepository;
     @Autowired
     private PrijsRepository prijsRepository;
+
     //endregion
 
     //region Klanten
@@ -461,11 +464,10 @@ public class BeherenController {
         Date nieuweDatumVan = Date.valueOf(reservering.getDatumVan());
         Date nieuweDatumTot = Date.valueOf(reservering.getDatumTot());
         String message = null;
+        message = helper.checkDatums(reservering.getDatumVan(), reservering.getDatumTot());
 
-        if(nieuweDatumVan.after(nieuweDatumTot) ) {
-            message="De aankomst datum mag niet na de vertrek datum liggen.";
-            redirectAttributes.addFlashAttribute("message", message);
-
+        if(message!=null) {
+            redirectAttributes.addFlashAttribute("message",message);
             return "redirect:/reservering?Id="+reservering.getBoekingID();
         }
 
@@ -577,5 +579,7 @@ public class BeherenController {
         }
         return kamerPrijzen;
     }
+
+
     //endregion
 }
