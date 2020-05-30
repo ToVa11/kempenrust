@@ -28,6 +28,9 @@
     <div th:if="${melding?.foutmelding != null}" class="alert alert-secondary">
         <h3 th:text="${melding.foutmelding}"></h3>
     </div>
+    <div th:if="${melding?.melding != null}" class="alert alert-secondary">
+        <span th:text="${melding.melding}"></span>
+    </div>
 
       <form th:action="@{/KamerToevoegen}" method="post" th:object="${kamer}" >
           <input type="hidden" name="kamerID" th:field="*{kamerID}">
@@ -69,13 +72,14 @@
 
           <div id="kamerTypeToevoegen" class="collapse">
               <h1>Nieuw Type Kamer Toevoegen</h1>
-              <form th:action="@{/KamerTypeToevoegen}" method="post" th:object="${kamer}" >
+              <form th:action="@{/KamerTypeToevoegen}" method="post" th:object="${kamer}">
                   <div class="form-group col-md-8 p-0">
+                      <input type="hidden"  th:field="*{wijziging}" >
                       <label for="omschrijving1">Omschrijving</label>
                       <input name="omschrijving1" th:field="*{omschrijving}" id="omschrijving1" type="text" class="form-control" required/>
                   </div>
 
-                  <div class="form-group col-md-8">
+                  <div class="form-group col-md-8 p-0">
                       <button type="submit" class="btn btn-primary w-100">Voeg toe</button>
                   </div>
               </form>

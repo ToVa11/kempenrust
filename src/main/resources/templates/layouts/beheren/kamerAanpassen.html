@@ -24,6 +24,9 @@
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
 
    <h1 th:text="'Kamer ' + ${kamer.kamerNummer} + ' beheren'"></h1>
+    <div th:if="${melding?.melding != null}" class="alert alert-secondary">
+        <span th:text="${melding.melding}"></span>
+    </div>
    <form th:action="@{/wijzigKamer}" method="post" th:object="${kamer}">
        <input type="hidden"  th:field="*{kamerID}">
        <input type="hidden"  th:field="*{kamerNummer}">
@@ -66,7 +69,7 @@
 
         <form th:action="@{/KamerTypeToevoegen}" method="post" th:object="${kamer}" >
             <input type="hidden"  th:field="*{wijziging}" >
-            <div class="form-group col-md-8">
+            <div class="form-group col-md-8 p-0">
                 <label for="omschrijving1">Omschrijving</label>
                 <input name="omschrijving1" th:field="*{omschrijving}" id="omschrijving1" type="text" class="form-control" required/>
             </div>

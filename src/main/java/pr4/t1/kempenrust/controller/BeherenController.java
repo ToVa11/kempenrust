@@ -129,6 +129,7 @@ public class BeherenController {
         MeldingDto melding=new MeldingDto();
         ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
         KamerDto kamer=new KamerDto();
+        kamer.setWijziging(false);
         kamer.setKamerTypes(kamerTypes);
         model.addAttribute("kamer",kamer);
         model.addAttribute("melding", melding);
@@ -214,17 +215,24 @@ public class BeherenController {
     //region Kamertypes
     @PostMapping("/KamerTypeToevoegen")
     public String createKamerType(Model model, @ModelAttribute("KamerBeheer") KamerDto kamer){
+        MeldingDto melding=new MeldingDto();
         kamerTypeRepository.create(kamer.getOmschrijving());
         ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
         kamer.setKamerTypes(kamerTypes);
 
         if (kamer.getWijziging() == false)
         {
+            melding.setMelding("Nieuwe kamertype is toegevoegd");
             model.addAttribute("kamer",kamer);
+            model.addAttribute("melding",melding);
             return "layouts/beheren/kamerToevoegen";
+
         }
         else
         {
+
+            melding.setMelding("Nieuwe kamertype is toegevoegd");
+            model.addAttribute("melding",melding);
             model.addAttribute("kamer",kamer);
             return "layouts/beheren/kamerAanpassen";
         }
