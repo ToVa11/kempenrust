@@ -100,12 +100,11 @@ public class BeherenController {
         Boeking boeking = boekingRepository.getByKlantId(klantId);
         if (boeking.getDatumVan() !=null && boeking.getDatumTot()!=null)
         {
-            melding.setFoutmelding("Attentie! Voor deze klant bestaat er reeds een boeking:");
-            melding.setBoekingDatumVan(boeking.getDatumVan());
-            melding.setBoekingDatumTot(boeking.getDatumTot());
-            melding.setKlant(true);
+            melding.setMelding("Er zijn nog reservaties voor dit klant.");
+            ArrayList<Klant> klanten=klantRepository.get();
+            model.addAttribute("klanten",klanten);
             model.addAttribute("melding",melding);
-            return "layouts/beheren/boodschap";
+            return "layouts/beheren/klanten";
         }
         klantRepository.delete(klantId);
         ArrayList<Klant> klanten=klantRepository.get();
@@ -129,6 +128,7 @@ public class BeherenController {
         MeldingDto melding=new MeldingDto();
         ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
         KamerDto kamer=new KamerDto();
+        kamer.setWijziging(false);
         kamer.setKamerTypes(kamerTypes);
         model.addAttribute("kamer",kamer);
         model.addAttribute("melding", melding);
@@ -214,18 +214,20 @@ public class BeherenController {
     //region Kamertypes
     @PostMapping("/KamerTypeToevoegen")
     public String createKamerType(Model model, @ModelAttribute("KamerBeheer") KamerDto kamer){
+        MeldingDto melding=new MeldingDto();
         kamerTypeRepository.create(kamer.getOmschrijving());
         ArrayList<KamerType> kamerTypes=kamerTypeRepository.get();
         kamer.setKamerTypes(kamerTypes);
+        melding.setMelding("Nieuwe kamertype is toegevoegd");
+        model.addAttribute("kamer",kamer);
+        model.addAttribute("melding",melding);
 
         if (kamer.getWijziging() == false)
         {
-            model.addAttribute("kamer",kamer);
             return "layouts/beheren/kamerToevoegen";
         }
         else
         {
-            model.addAttribute("kamer",kamer);
             return "layouts/beheren/kamerAanpassen";
         }
 
