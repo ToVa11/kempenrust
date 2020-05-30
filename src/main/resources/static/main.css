@@ -68,3 +68,7 @@ a.anchorTableLink {
     height: 50px;
 }
 
+a.nav-link {
+    cursor: pointer;
+}
+
