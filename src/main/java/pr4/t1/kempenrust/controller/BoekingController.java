@@ -52,6 +52,7 @@ public class BoekingController {
 
     //region Class variables
     private SimpleDateFormat simpleFormatter = new SimpleDateFormat("dd/MM/yyyy");
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private Date datumAankomst;
     private Date datumVertrek;
@@ -72,8 +73,11 @@ public class BoekingController {
         reserveringDto.setVerblijfsKeuzes(verblijfsKeuzeRepository.get());
 
         if(datum != null && kamerId != null) {
+            var vertrek = LocalDate.parse(datum, dateTimeFormatter);
+            vertrek = vertrek.plusDays(1);
+
             reserveringDto.setDatumAankomst(datum);
-            reserveringDto.setDatumVertrek(datum);
+            reserveringDto.setDatumVertrek(vertrek.toString());
             reserveringDto.setAantalPersonen(1);
             List<Integer> kamers = Arrays.asList(Integer.parseInt(kamerId));
             reserveringDto.setKamers(kamers);
