@@ -100,15 +100,17 @@ public class BeherenController {
         Boeking boeking = boekingRepository.getByKlantId(klantId);
         if (boeking.getDatumVan() !=null && boeking.getDatumTot()!=null)
         {
-            melding.setMelding("Er zijn nog reservaties voor dit klant.");
+            melding.setMelding("Er zijn nog reservaties voor deze klant.");
             ArrayList<Klant> klanten=klantRepository.get();
             model.addAttribute("klanten",klanten);
             model.addAttribute("melding",melding);
             return "layouts/beheren/klanten";
         }
         klantRepository.delete(klantId);
+        melding.setMelding("De klant is verwijderd.");
         ArrayList<Klant> klanten=klantRepository.get();
         model.addAttribute("klanten",klanten);
+        model.addAttribute("melding",melding);
         return "layouts/beheren/klanten";
     }
     //endregion
