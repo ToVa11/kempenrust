@@ -107,8 +107,10 @@ public class BeherenController {
             return "layouts/beheren/klanten";
         }
         klantRepository.delete(klantId);
+        melding.setMelding("De klant is verwijderd.");
         ArrayList<Klant> klanten=klantRepository.get();
         model.addAttribute("klanten",klanten);
+        model.addAttribute("melding",melding);
         return "layouts/beheren/klanten";
     }
     //endregion

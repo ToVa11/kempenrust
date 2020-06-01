@@ -16,6 +16,7 @@ INSERT INTO Klanten (Voornaam, Naam, Straat, Huisnummer, Postcode, Gemeente, Tel
 INSERT INTO Klanten (Voornaam, Naam, Straat, Huisnummer, Postcode, Gemeente, Telefoonnummer, Email) VALUES ('Atif', 'Khan', 'straat', '3', '3333', 'gemeente', '0555/666633','atif@hotmail.com');
 INSERT INTO Klanten (Voornaam, Naam, Straat, Huisnummer, Postcode, Gemeente, Telefoonnummer, Email) VALUES ('Jef', 'Vanuytsel', 'straat', '4', '4444', 'gemeente', '0666/446633','jef@hotmail.com');
 INSERT INTO Klanten (Voornaam, Naam, Straat, Huisnummer, Postcode, Gemeente, Telefoonnummer, Email) VALUES ('Cisse', 'Van Echelpoel', 'straat', '5', '5555', 'gemeente', '0555/446633','cisse@hotmail.com');
+INSERT INTO Klanten (Voornaam, Naam, Straat, Huisnummer, Postcode, Gemeente, Telefoonnummer, Email) VALUES ('Jan', 'Jansen','straat', '6', '6666', 'gemeente', '0564/334455','jan@jan.be' );
 
 CREATE TABLE VerblijfsKeuzes
 (
