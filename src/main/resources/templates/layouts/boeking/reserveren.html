@@ -75,22 +75,22 @@
         <div  class="row" th:if="*{prijsVrijeKamers != null}">
             <div class="form-group col-md-4 mt-3">
                 <label for="voornaam">Voornaam</label>
-                <input type="text" class="form-control" id="voornaam" th:field="*{voornaam}">
+                <input type="text" class="form-control" id="voornaam" th:field="*{voornaam}" maxlength="100">
             </div>
 
             <div class="form-group col-md-4 mt-md-3">
                 <label for="naam">Familienaam</label>
-                <input type="text" class="form-control" id="naam" th:field="*{naam}" required>
+                <input type="text" class="form-control" id="naam" th:field="*{naam}" required maxlength="100">
             </div>
 
             <div class="form-group col-md-8">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                <input type="email" class="form-control" id="email" th:field="*{email}" required maxlength="150">
             </div>
 
             <div class="form-group col-md-8">
                 <label for="telefoon">Telefoon</label>
-                <input type="tel" class="form-control" id="telefoon" th:field="*{telefoon}">
+                <input type="tel" class="form-control" id="telefoon" th:field="*{telefoon}" maxlength="20">
             </div>
 
             <div class="form-group col-md-8">
