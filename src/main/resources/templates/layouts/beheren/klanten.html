@@ -23,8 +23,8 @@
 <div id="main-content-kempenrust">
     <!-- Enkel hier en title aanpassen!! Rest laten staan-->
     <h1>Klanten</h1>
-    <div th:if="${melding.melding != null}" class="alert alert-secondary">
-        <span th:text="${melding.melding} ? ${melding.melding}"></span>
+    <div th:if="${melding?.melding != null}" class="alert alert-secondary">
+        <span th:text="${melding.melding}"></span>
     </div>
     <div th:if="${klanten.size() == 0}" class="alert alert-secondary">
         <span>Momenteel geen klanten.</span>
