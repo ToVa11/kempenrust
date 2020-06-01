@@ -43,7 +43,7 @@
             <div class="w-100"></div>
             <div class="form-group col-md-4">
                 <label for="datumVan">Datum vanaf?</label>
-                <input class="form-control" type="date" id="datumVan" th:field="*{datums[__${i.index}__]}">
+                <input class="form-control" type="date" id="datumVan" th:field="*{datums[__${i.index}__]}" max="9999-12-31">
             </div>
             <div class="form-group col-md-4">
                 <label for="prijs">Prijs</label>

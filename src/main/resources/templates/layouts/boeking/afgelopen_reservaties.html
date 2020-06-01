@@ -29,11 +29,11 @@
     <form class="form-inline" th:action="@{/afgelopen_reservaties}" method="post" th:object="${boeking}">
         <div class="form-group mb-2">
             <label for="datumVan" style="margin-right: 10px">Datum Van: </label>
-            <input type="date" th:field="*{datumVan}" class="form-control" id="datumVan" style="margin-right: 30px" required>
+            <input type="date" th:field="*{datumVan}" class="form-control" id="datumVan" style="margin-right: 30px" required max="9999-12-31">
         </div>
         <div class="form-group mx-sm-3 mb-2">
             <label for="datumTot" style="margin-right: 10px">Datum Tot: </label>
-            <input type="date" th:field="*{datumTot}" class="form-control" id="datumTot" style="margin-right: 30px" required >
+            <input type="date" th:field="*{datumTot}" class="form-control" id="datumTot" style="margin-right: 30px" required max="9999-12-31">
         </div>
         <button type="submit" style="margin: 0px 0px 10px 50px"  class="btn btn-secondary">Zoeken</button>
     </form>
