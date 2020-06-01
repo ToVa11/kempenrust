@@ -387,10 +387,10 @@ public class BeherenController {
         else if(verblijfsKeuze != null) {
             prijsRepository.deleteByVerblijfskeuzeId(verblijfskeuzeID);
             verblijfsKeuzeRepository.delete(verblijfskeuzeID);
-            message ="Reservatie verwijderd.";
+            message ="Arrangement verwijderd.";
         }
         else {
-            message ="Reservatie niet gevonden.";
+            message ="Arrangement niet gevonden.";
         }
         redirectAttributes.addFlashAttribute("message", message);
         return "redirect:/arrangementen";
