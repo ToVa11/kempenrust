@@ -36,7 +36,7 @@
           <input type="hidden" name="kamerID" th:field="*{kamerID}">
           <div class="form-group col-md-8 p-0">
               <label for="kamerNummer">Kamer Nummer</label>
-              <input name="kamerNummer" th:field="*{kamerNummer}" id="kamerNummer" type="text" class="form-control" required/>
+              <input name="kamerNummer" th:field="*{kamerNummer}" id="kamerNummer" type="number" class="form-control" required min="0"/>
           </div>
           <div class="form-group col-md-8 p-0">
               <label for="omschrijving">Omschrijving Kamer</label>
