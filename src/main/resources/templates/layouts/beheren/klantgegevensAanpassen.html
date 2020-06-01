@@ -30,12 +30,12 @@
 
             <div class="form-group col-md-4 mt-3">
                 <label for="voornaam">Voornaam</label>
-                <input type="text" class="form-control" id="voornaam" th:field="*{voornaam}" required>
+                <input type="text" class="form-control" id="voornaam" th:field="*{voornaam}" required maxlength="100">
             </div>
 
             <div class="form-group col-md-4 mt-md-3">
                 <label for="naam">Naam</label>
-                <input type="text" class="form-control" id="naam" th:field="*{naam}" required>
+                <input type="text" class="form-control" id="naam" th:field="*{naam}" required maxlength="100">
             </div>
 
             <!-- Force next columns to break to new line -->
@@ -43,12 +43,12 @@
 
             <div class="form-group col-md-4">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email"  required th:field="*{email}">
+                <input type="email" class="form-control" id="email"  required maxlength="150" th:field="*{email}">
             </div>
 
             <div class="form-group col-md-4">
                 <label for="telefoonnummer">Telefoonnummer</label>
-                <input type="text" class="form-control" id="telefoonnummer"  required th:field="*{telefoonnummer}">
+                <input type="text" class="form-control" id="telefoonnummer"  required maxlength="20" th:field="*{telefoonnummer}">
             </div>
 
             <!-- Force next columns to break to new line -->
@@ -56,12 +56,12 @@
 
             <div class="form-group col-md-4">
                 <label for="straat">Straat</label>
-                <input type="text" class="form-control" id="straat"  required th:field="*{straat}">
+                <input type="text" class="form-control" id="straat"  required maxlength="255" th:field="*{straat}">
             </div>
 
             <div class="form-group col-md-4">
                 <label for="huisnummer">Huisnummer</label>
-                <input type="text" class="form-control" id="huisnummer"  required th:field="*{huisnummer}" pattern="^[1-9]\d{0,3}(?:[a-zA-Z]{1,2}\d{0,3})?$">
+                <input type="text" class="form-control" id="huisnummer"  required maxlength="10" th:field="*{huisnummer}" pattern="^[1-9]\d{0,3}(?:[a-zA-Z]{1,2}\d{0,3})?$">
             </div>
 
             <!-- Force next columns to break to new line -->
@@ -69,12 +69,12 @@
 
             <div class="form-group col-md-4">
                 <label for="postcode">Postcode</label>
-                <input type="text" class="form-control" id="postcode"  required th:field="*{postcode}">
+                <input type="text" class="form-control" id="postcode"  required maxlength="6" th:field="*{postcode}">
             </div>
 
             <div class="form-group col-md-4">
                 <label for="huisnummer">Gemeente</label>
-                <input type="text" class="form-control" id="gemeente"  required th:field="*{gemeente}">
+                <input type="text" class="form-control" id="gemeente"  required maxlength="50" th:field="*{gemeente}">
             </div>
 
             <!-- Force next columns to break to new line -->
