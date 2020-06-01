@@ -61,7 +61,7 @@
 
             <div class="form-group col-md-4">
                 <label for="huisnummer">Huisnummer</label>
-                <input type="number" class="form-control" id="huisnummer"  required th:field="*{huisnummer}">
+                <input type="text" class="form-control" id="huisnummer"  required th:field="*{huisnummer}" pattern="^[1-9]\d{0,3}(?:[a-zA-Z]{1,2}\d{0,3})?$">
             </div>
 
             <!-- Force next columns to break to new line -->
