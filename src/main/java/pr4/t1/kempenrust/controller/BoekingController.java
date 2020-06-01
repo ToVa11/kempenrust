@@ -216,8 +216,6 @@ public class BoekingController {
         BoekingDetailDto boeking=new BoekingDetailDto();
         ArrayList<BoekingDetail> details = boekingDetailRepository.getVerleden();
         MeldingDto melding=new MeldingDto();
-        Date datumGisteren= Date.valueOf(LocalDate.now().minusDays(1));
-        boeking.setDatumTot(datumGisteren.toString());
         melding.setTitel("Afgelopen Reservaties");
         model.addAttribute("details",details);
         model.addAttribute("boeking",boeking);
@@ -229,8 +227,10 @@ public class BoekingController {
     public String getAfgelopenBoekingen(Model model, @ModelAttribute("Boeking") BoekingDetailDto boeking) {
         MeldingDto melding=new MeldingDto();
         var datumVan = Date.valueOf(boeking.getDatumVan());
-        var datumTot = Date.valueOf(LocalDate.now().minusDays(1));
-        if (datumVan !=null && datumTot!=null && datumVan.before(datumTot))
+        var datumTot = Date.valueOf(boeking.getDatumTot());
+        var datumGisteren = Date.valueOf(LocalDate.now().minusDays(1));
+
+        if (datumVan !=null && datumTot!=null && datumVan.before(datumTot) && datumTot.before(datumGisteren))
         {
             ArrayList<BoekingDetail> details = boekingDetailRepository
                     .getTussenTweeDatums(datumVan,datumTot);
@@ -244,16 +244,32 @@ public class BoekingController {
             {
                 melding.setTitel("Geen reservaties gevonden tussen "+startDatum+" en "+endDatum);
             }
-            Date datumGisteren= Date.valueOf(LocalDate.now().minusDays(1));
-            boeking.setDatumTot(datumGisteren.toString());
             model.addAttribute("details",details);
             model.addAttribute("melding",melding);
             model.addAttribute("boeking",boeking);
             return "layouts/boeking/afgelopen_reservaties";
         }
         else {
+
+            if(datumVan.after(datumTot)){
+
+                melding.setFoutmelding("Datum van mag niet groter zijn dan datum tot.");
+
+            }
+
+            if(datumTot.after(datumGisteren)){
+
+                melding.setFoutmelding("Datum tot mag niet groter zijn dan datum van gisteren.");
+
+            }
+
+            if(datumVan.after(datumGisteren)){
+
+                melding.setFoutmelding("Datum van mag niet groter zijn dan datum van gisteren.");
+
+            }
+            
             melding.setTitel("Geen reservaties gevonden");
-            melding.setFoutmelding("Gelieve de datums te controleren");
             model.addAttribute("melding", melding);
             model.addAttribute("boeking", boeking);
             return "layouts/boeking/afgelopen_reservaties";
