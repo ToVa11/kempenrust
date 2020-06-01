@@ -30,13 +30,13 @@
         <div class="row">
             <div class="form-group col-md-4 mt-3">
                 <label for="datumAankomst">Datum aankomst</label>
-                <input type="date" class="form-control" id="datumAankomst" th:field="*{datumAankomst}" required>
+                <input type="date" class="form-control" id="datumAankomst" th:field="*{datumAankomst}" required max="9999-12-31">
             </div>
 
             <!--Geen validatie of Datum vertrek na Datum aankomst ligt-->
             <div class="form-group col-md-4 mt-md-3">
                 <label for="datumVertrek">Datum vertrek</label>
-                <input type="date" class="form-control" id="datumVertrek" th:field="*{datumVertrek}" required>
+                <input type="date" class="form-control" id="datumVertrek" th:field="*{datumVertrek}" required max="9999-12-31">
             </div>
 
             <!-- Force next columns to break to new line -->
