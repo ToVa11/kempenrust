@@ -268,7 +268,7 @@ public class BoekingController {
                 melding.setFoutmelding("Datum van mag niet groter zijn dan datum van gisteren.");
 
             }
-            
+
             melding.setTitel("Geen reservaties gevonden");
             model.addAttribute("melding", melding);
             model.addAttribute("boeking", boeking);

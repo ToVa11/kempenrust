@@ -253,10 +253,27 @@ public class BeherenController {
     public String createKamerOnbeschikbaar(Model model, @ModelAttribute("KamerDto") KamerDto kamer){
         KamerOnbeschikbaar kamerOnbeschikbaar= kamerOnbeschikbaarRepository.getByKamerId(kamer.getKamerID());
         MeldingDto melding=new MeldingDto();
-        var datumVandag = Date.valueOf(LocalDate.now());
-        if(kamer.getDatumVan().before(datumVandag) || kamer.getDatumVan().after(kamer.getDatumTot()))
+        var datumVandaag = Date.valueOf(LocalDate.now());
+        if(kamer.getDatumVan().before(datumVandaag) ||
+           kamer.getDatumVan().after(kamer.getDatumTot()) ||
+           kamer.getDatumTot().before(datumVandaag))
         {
-            melding.setFoutmelding("Gelieve de datums te controleren");
+
+            if(kamer.getDatumVan().after(kamer.getDatumTot())){
+
+                melding.setFoutmelding("Datum van mag niet groter zijn dan datum tot.");
+            }
+            if(kamer.getDatumVan().before(datumVandaag)){
+
+                melding.setFoutmelding("Datum van mag niet kleiner zijn dan datum van vandaag.");
+            }
+
+            if (kamer.getDatumTot().before(datumVandaag)){
+
+                melding.setFoutmelding("Datum tot mag niet kleiner zijn dan datum van vandaag.");
+
+            }
+
             kamer.setKamerNummer(kamerOnbeschikbaar.getKamer().getKamerNummer());
             model.addAttribute("melding",melding);
             model.addAttribute("kamer",kamer);
