@@ -232,9 +232,10 @@ public class BoekingController {
         MeldingDto melding=new MeldingDto();
         var datumVan = Date.valueOf(boeking.getDatumVan());
         var datumTot = Date.valueOf(boeking.getDatumTot());
+        var vandaag = Date.valueOf(LocalDate.now());
         var datumGisteren = Date.valueOf(LocalDate.now().minusDays(1));
-
-        if (datumVan !=null && datumTot!=null && datumVan.before(datumTot) && datumTot.before(datumGisteren))
+        
+        if (datumVan !=null && datumTot!=null && datumVan.before(datumTot) && datumTot.before(vandaag))
         {
             ArrayList<BoekingDetail> details = boekingDetailRepository
                     .getTussenTweeDatums(datumVan,datumTot);
@@ -264,12 +265,6 @@ public class BoekingController {
             if(datumTot.after(datumGisteren)){
 
                 melding.setFoutmelding("Datum tot mag niet groter zijn dan datum van gisteren.");
-
-            }
-
-            if(datumVan.after(datumGisteren)){
-
-                melding.setFoutmelding("Datum van mag niet groter zijn dan datum van gisteren.");
 
             }
 
