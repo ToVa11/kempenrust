@@ -97,8 +97,7 @@ public class BoekingRepository {
                 "SELECT * FROM  " +
                         "boekingen INNER JOIN klanten ON boekingen.klantId = klanten.klantId " +
                         "WHERE " +
-                        "boekingen.KlantID = '"+klantId+"'" +
-                        "AND Boekingen.DatumTot > '"+Date.valueOf(LocalDate.now())+"' ");
+                        "boekingen.KlantID = '"+klantId+"'");
 
 
         while (rowSet.next()) {
@@ -148,7 +147,7 @@ public class BoekingRepository {
 
     public int getAantalByVerblijfskeuzeId(int verblijfskeuzeID) {
         return jdbcTemplate.queryForObject( "SELECT COUNT(*) FROM Boekingen " +
-                "WHERE verblijfskeuzeID = ? AND datumVan >= ? ", new Object[] { verblijfskeuzeID, new Date(System.currentTimeMillis()) }, Integer.class);
+                "WHERE verblijfskeuzeID = ?", new Object[] { verblijfskeuzeID }, Integer.class);
     }
     //endregion
 
